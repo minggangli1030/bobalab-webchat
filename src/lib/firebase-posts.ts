@@ -13,7 +13,7 @@ import {
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "./firebase";
-import { Post, Comment } from "./types";
+import { Post, Comment, User } from "./types";
 
 export const firebasePostUtils = {
   // Upload image to Firebase Storage
@@ -157,6 +157,21 @@ export const firebasePostUtils = {
     } catch (error) {
       console.error("Error toggling like:", error);
       return false;
+    }
+  },
+
+  // Get all users (admin only)
+  getAllUsers: async (): Promise<User[]> => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      return querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt.toDate(),
+      })) as User[];
+    } catch (error) {
+      console.error("Error getting users:", error);
+      return [];
     }
   },
 };

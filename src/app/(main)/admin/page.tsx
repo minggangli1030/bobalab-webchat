@@ -44,8 +44,10 @@ export default function AdminPage() {
       try {
         const allPosts = await firebasePostUtils.getAllPosts();
         setPosts(allPosts);
-        // TODO: Load users from Firebase when implemented
-        setUsers([]);
+
+        // Load all users from Firebase
+        const allUsers = await firebasePostUtils.getAllUsers();
+        setUsers(allUsers);
       } catch (error) {
         console.error("Error loading admin data:", error);
       } finally {
@@ -388,14 +390,54 @@ export default function AdminPage() {
       )}
 
       {activeTab === "users" && (
-        <Card>
-          <CardContent className="p-6">
-            <p className="text-gray-600 text-center py-8">
-              User management feature coming soon! This will show all registered
-              users with their activity and login history.
-            </p>
-          </CardContent>
-        </Card>
+        <div className="space-y-4">
+          {users.length === 0 ? (
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-gray-600 text-center py-8">
+                  No users found.
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            users.map((user) => (
+              <Card key={user.id}>
+                <CardContent className="p-6">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-3">
+                        <Badge
+                          variant={user.isAdmin ? "destructive" : "outline"}
+                        >
+                          {user.isAdmin ? "Admin" : "User"}
+                        </Badge>
+                        <span className="font-medium text-gray-900">
+                          {user.formalName} ({user.preferredName})
+                        </span>
+                        <span className="text-sm text-gray-500">
+                          {user.email}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-4 text-sm text-gray-600">
+                        <span>ID: {user.id}</span>
+                        <span>Joined: {formatDate(user.createdAt)}</span>
+                        {user.studentId && (
+                          <span>Student ID: {user.studentId}</span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex space-x-2 ml-4">
+                      <Badge variant="secondary">
+                        {posts.filter((p) => p.authorId === user.id).length}{" "}
+                        posts
+                      </Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </div>
       )}
     </div>
   );
