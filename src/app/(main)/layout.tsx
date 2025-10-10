@@ -69,6 +69,15 @@ export default function MainLayout({
                   <Plus className="h-4 w-4" />
                   <span>Create Post</span>
                 </Link>
+                {user?.isAdmin && (
+                  <Link
+                    href="/admin"
+                    className="flex items-center space-x-2 text-red-600 hover:text-red-700 transition-colors font-medium"
+                  >
+                    <User className="h-4 w-4" />
+                    <span>Admin</span>
+                  </Link>
+                )}
               </nav>
             </div>
 

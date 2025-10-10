@@ -5,6 +5,7 @@ export interface User {
   formalName: string;
   preferredName: string;
   createdAt: Date;
+  isAdmin?: boolean;
 }
 
 export interface Comment {

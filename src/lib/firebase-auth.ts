@@ -4,12 +4,31 @@ import {
   signOut,
   User as FirebaseUser,
   onAuthStateChanged,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
 import { User } from "./types";
 
 export const firebaseAuthUtils = {
+  // Admin login check
+  isAdminLogin: (email: string, password: string): boolean => {
+    return email === "admin123" && password === "admin123";
+  },
+
+  // Create admin user data
+  createAdminUser: (): User => {
+    return {
+      id: "admin",
+      email: "admin123",
+      studentId: "admin",
+      formalName: "Admin",
+      preferredName: "Admin",
+      createdAt: new Date(),
+      isAdmin: true,
+    };
+  },
+
   // Create user account with email/password
   signup: async (
     email: string,
@@ -19,6 +38,11 @@ export const firebaseAuthUtils = {
     studentId: string
   ): Promise<User | null> => {
     try {
+      // Check for admin login
+      if (firebaseAuthUtils.isAdminLogin(email, password)) {
+        return firebaseAuthUtils.createAdminUser();
+      }
+
       // Create Firebase user
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -35,6 +59,7 @@ export const firebaseAuthUtils = {
         formalName: formalName,
         preferredName: preferredName,
         createdAt: new Date(),
+        isAdmin: false,
       };
 
       await setDoc(doc(db, "users", firebaseUser.uid), userData);
@@ -48,6 +73,11 @@ export const firebaseAuthUtils = {
   // Sign in with email and password
   login: async (email: string, password: string): Promise<User | null> => {
     try {
+      // Check for admin login
+      if (firebaseAuthUtils.isAdminLogin(email, password)) {
+        return firebaseAuthUtils.createAdminUser();
+      }
+
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
@@ -89,6 +119,17 @@ export const firebaseAuthUtils = {
     } catch (error) {
       console.error("Error getting current user:", error);
       return null;
+    }
+  },
+
+  // Send password reset email
+  resetPassword: async (email: string): Promise<boolean> => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      return true;
+    } catch (error) {
+      console.error("Error sending password reset email:", error);
+      return false;
     }
   },
 
