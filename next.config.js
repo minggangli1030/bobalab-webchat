@@ -7,6 +7,17 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: false,
   },
+  // Configure image domains for Firebase Storage
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "firebasestorage.googleapis.com",
+        port: "",
+        pathname: "/v0/b/bobalab-web-chat.firebasestorage.app/o/**",
+      },
+    ],
+  },
 };
 
 module.exports = nextConfig;
