@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { User, AuthContextType } from "@/lib/types";
-import { authUtils } from "@/lib/auth";
+import { firebaseAuthUtils } from "@/lib/firebase-auth";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -11,15 +11,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing user session on mount
-    const savedUser = authUtils.getUser();
-    setUser(savedUser);
-    setIsLoading(false);
+    // Listen to Firebase auth state changes
+    const unsubscribe = firebaseAuthUtils.onAuthStateChanged((user) => {
+      setUser(user);
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  const login = async (email: string, studentId: string): Promise<boolean> => {
+  const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      const user = await authUtils.login(email, studentId);
+      const user = await firebaseAuthUtils.login(email, password);
       if (user) {
         setUser(user);
         return true;
@@ -33,16 +36,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signup = async (
     email: string,
-    studentId: string,
+    password: string,
     formalName: string,
-    preferredName: string
+    preferredName: string,
+    studentId: string
   ): Promise<boolean> => {
     try {
-      const user = await authUtils.signup(
+      const user = await firebaseAuthUtils.signup(
         email,
-        studentId,
+        password,
         formalName,
-        preferredName
+        preferredName,
+        studentId
       );
       if (user) {
         setUser(user);
@@ -55,9 +60,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const logout = () => {
-    authUtils.removeUser();
-    setUser(null);
+  const logout = async () => {
+    try {
+      await firebaseAuthUtils.logout();
+      setUser(null);
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
   const value: AuthContextType = {

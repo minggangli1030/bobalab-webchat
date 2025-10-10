@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Post } from "@/lib/types";
 import { useAuth } from "@/contexts/AuthContext";
-import { postUtils } from "@/lib/auth";
+import { firebasePostUtils } from "@/lib/firebase-posts";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,17 +24,19 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
   );
   const [likesCount, setLikesCount] = useState(post.likes.length);
 
-  const handleLike = () => {
+  const handleLike = async () => {
     if (!user) return;
 
-    const updatedLikes = isLiked
-      ? post.likes.filter((id) => id !== user.id)
-      : [...post.likes, user.id];
-
-    postUtils.updatePost(post.id, { likes: updatedLikes });
-    setIsLiked(!isLiked);
-    setLikesCount(updatedLikes.length);
-    onUpdate();
+    try {
+      const success = await firebasePostUtils.toggleLike(post.id, user.id);
+      if (success) {
+        setIsLiked(!isLiked);
+        setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
+        onUpdate();
+      }
+    } catch (error) {
+      console.error("Error toggling like:", error);
+    }
   };
 
   const formatDate = (date: Date) => {

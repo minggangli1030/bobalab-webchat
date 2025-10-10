@@ -17,7 +17,7 @@ import {
 export default function LoginPage() {
   const [formData, setFormData] = useState({
     email: "",
-    studentId: "",
+    password: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -31,12 +31,12 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const success = await login(formData.email, formData.studentId);
+      const success = await login(formData.email, formData.password);
 
       if (success) {
         router.push("/feed");
       } else {
-        setError("Invalid email or student ID");
+        setError("Invalid email or password");
       }
     } catch (err) {
       setError("An error occurred during login");
@@ -86,20 +86,20 @@ export default function LoginPage() {
 
             <div>
               <label
-                htmlFor="studentId"
+                htmlFor="password"
                 className="block text-sm font-medium text-gray-700"
               >
-                Student ID
+                Password
               </label>
               <Input
-                id="studentId"
-                name="studentId"
-                type="text"
+                id="password"
+                name="password"
+                type="password"
                 required
-                value={formData.studentId}
+                value={formData.password}
                 onChange={handleChange}
                 className="mt-1"
-                placeholder="Your student ID"
+                placeholder="Your password"
               />
             </div>
 

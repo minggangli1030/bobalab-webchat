@@ -30,14 +30,15 @@ export interface Post {
 
 export interface AuthContextType {
   user: User | null;
-  login: (email: string, studentId: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<boolean>;
   signup: (
     email: string,
-    studentId: string,
+    password: string,
     formalName: string,
-    preferredName: string
+    preferredName: string,
+    studentId: string
   ) => Promise<boolean>;
-  logout: () => void;
+  logout: () => Promise<void>;
   isLoading: boolean;
 }
 

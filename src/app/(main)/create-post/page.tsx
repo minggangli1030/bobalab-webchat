@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { postUtils } from "@/lib/auth";
+import { firebasePostUtils } from "@/lib/firebase-posts";
 import { Post } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,7 +27,7 @@ export default function CreatePostPage() {
     content: "",
     hashtags: "",
   });
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -49,17 +49,10 @@ export default function CreatePostPage() {
     const files = e.target.files;
     if (!files) return;
 
-    Array.from(files).forEach((file) => {
-      if (file.type.startsWith("image/")) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          if (event.target?.result) {
-            setImages((prev) => [...prev, event.target!.result as string]);
-          }
-        };
-        reader.readAsDataURL(file);
-      }
-    });
+    const imageFiles = Array.from(files).filter((file) =>
+      file.type.startsWith("image/")
+    );
+    setImages((prev) => [...prev, ...imageFiles]);
   };
 
   const removeImage = (index: number) => {
@@ -79,22 +72,34 @@ export default function CreatePostPage() {
         .map((tag) => tag.trim())
         .filter((tag) => tag.length > 0);
 
-      const newPost: Post = {
-        id: Date.now().toString(),
+      // Create post data without images first
+      const postData = {
         authorId: user.id,
         authorName: user.preferredName,
         content: formData.content,
-        images: images,
+        images: [], // Will be populated after upload
         hashtags: hashtagsArray,
         likes: [],
         comments: [],
-        createdAt: new Date(),
       };
 
-      postUtils.savePost(newPost);
+      // Create the post in Firestore first
+      const postId = await firebasePostUtils.createPost(postData);
+      if (!postId) {
+        throw new Error("Failed to create post");
+      }
+
+      // Upload images if any
+      if (images.length > 0) {
+        const imageUrls = await firebasePostUtils.uploadImages(images, postId);
+        // Update the post with image URLs
+        await firebasePostUtils.updatePost(postId, { images: imageUrls });
+      }
+
       router.push("/feed");
     } catch (err) {
       setError("Failed to create post. Please try again.");
+      console.error("Error creating post:", err);
     } finally {
       setIsLoading(false);
     }
@@ -168,7 +173,7 @@ export default function CreatePostPage() {
                         className="relative aspect-square rounded-lg overflow-hidden"
                       >
                         <Image
-                          src={image}
+                          src={URL.createObjectURL(image)}
                           alt={`Upload ${index + 1}`}
                           fill
                           className="object-cover"

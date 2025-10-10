@@ -17,6 +17,8 @@ import {
 export default function SignupPage() {
   const [formData, setFormData] = useState({
     email: "",
+    password: "",
+    confirmPassword: "",
     studentId: "",
     formalName: "",
     preferredName: "",
@@ -33,11 +35,18 @@ export default function SignupPage() {
     setError("");
 
     try {
+      if (formData.password !== formData.confirmPassword) {
+        setError("Passwords do not match");
+        setIsLoading(false);
+        return;
+      }
+
       const success = await signup(
         formData.email,
-        formData.studentId,
+        formData.password,
         formData.formalName,
-        formData.preferredName
+        formData.preferredName,
+        formData.studentId
       );
 
       if (success) {
@@ -67,7 +76,7 @@ export default function SignupPage() {
             Create Account
           </CardTitle>
           <CardDescription className="text-center">
-            Join the rating platform to share your ideas
+            Join the web chat to share your ideas
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -88,6 +97,44 @@ export default function SignupPage() {
                 onChange={handleChange}
                 className="mt-1"
                 placeholder="your.email@university.edu"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Password
+              </label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                required
+                value={formData.password}
+                onChange={handleChange}
+                className="mt-1"
+                placeholder="Create a password"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Confirm Password
+              </label>
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                required
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className="mt-1"
+                placeholder="Confirm your password"
               />
             </div>
 

@@ -51,7 +51,7 @@ export default function MainLayout({
             {/* Logo and Navigation */}
             <div className="flex items-center space-x-8">
               <Link href="/feed" className="text-xl font-bold text-gray-900">
-                Rating Platform
+                Web Chat
               </Link>
 
               <nav className="hidden md:flex space-x-6">

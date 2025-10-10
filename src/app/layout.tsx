@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Rating Platform",
-  description: "A platform for sharing ideas and ratings",
+  title: "Web Chat",
+  description: "A platform for chatting and sharing ideas",
 };
 
 export default function RootLayout({

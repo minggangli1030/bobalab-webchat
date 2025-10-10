@@ -1,6 +1,6 @@
-# Rating Platform
+# Web Chat
 
-A Yelp-like posting, rating, and commenting platform for internal data collection. Built with Next.js 14, TypeScript, Tailwind CSS, and shadcn/ui components.
+A modern chat and social platform for sharing ideas and connecting with others. Built with Next.js 14, TypeScript, Tailwind CSS, and shadcn/ui components.
 
 ## Features
 
@@ -31,7 +31,7 @@ A Yelp-like posting, rating, and commenting platform for internal data collectio
 
 ```bash
 git clone <repository-url>
-cd rating-platform
+cd web-chat
 ```
 
 2. Install dependencies:
@@ -112,15 +112,93 @@ src/
 
 The project is configured for Vercel deployment with the included `vercel.json` file.
 
-## Future Enhancements
+## Current Implementation
 
-- Firebase Authentication integration
-- Firebase Firestore for data persistence
-- Firebase Storage for images
+- ✅ Firebase Authentication integration
+- ✅ Firebase Firestore for data persistence
+- ✅ Firebase Storage for images
+
+## Firebase Setup
+
+This project is configured to use Firebase for:
+
+- **Authentication**: User signup/login with email and password
+- **Firestore**: Database for posts, users, and comments
+- **Storage**: Image uploads and file storage
+
+### Firebase Configuration
+
+The Firebase configuration is already set up in `src/lib/firebase.ts` with your project credentials:
+
+- **Project ID**: `bobalab-web-chat`
+- **Auth Domain**: `bobalab-web-chat.firebaseapp.com`
+- **Storage Bucket**: `bobalab-web-chat.firebasestorage.app`
+
+### Firebase Console Setup
+
+To complete the Firebase setup, you'll need to:
+
+1. **Enable Authentication**:
+
+   - Go to [Firebase Console](https://console.firebase.google.com/)
+   - Select your project: `bobalab-web-chat`
+   - Navigate to Authentication > Sign-in method
+   - Enable "Email/Password" authentication
+
+2. **Set up Firestore Database**:
+
+   - Navigate to Firestore Database
+   - Create database in production mode
+   - Set up security rules (see below)
+
+3. **Configure Storage**:
+   - Navigate to Storage
+   - Create storage bucket
+   - Set up security rules (see below)
+
+### Security Rules
+
+#### Firestore Rules
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can read/write their own user document
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Posts are readable by all authenticated users
+    // Only the author can update/delete their posts
+    match /posts/{postId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null &&
+        request.auth.uid == resource.data.authorId;
+    }
+  }
+}
+```
+
+#### Storage Rules
+
+```javascript
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /posts/{postId}/{allPaths=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+  }
+}
+```
+
 - Category filtering system
 - Email verification
 - Enhanced security features
-- Real-time updates
+- Real-time chat features
 - User profiles
 - Search functionality
 

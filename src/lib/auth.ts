@@ -1,9 +1,9 @@
 import { User } from "./types";
 
 const STORAGE_KEYS = {
-  USER: "rating_platform_user",
-  POSTS: "rating_platform_posts",
-  COMMENTS: "rating_platform_comments",
+  USER: "web_chat_user",
+  POSTS: "web_chat_posts",
+  COMMENTS: "web_chat_comments",
 };
 
 export const authUtils = {
@@ -60,14 +60,14 @@ export const authUtils = {
 
     users.push(newUser);
     localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(newUser));
-    localStorage.setItem("rating_platform_all_users", JSON.stringify(users));
+    localStorage.setItem("web_chat_all_users", JSON.stringify(users));
 
     return newUser;
   },
 
   getAllUsers: (): User[] => {
     if (typeof window === "undefined") return [];
-    const usersData = localStorage.getItem("rating_platform_all_users");
+    const usersData = localStorage.getItem("web_chat_all_users");
     return usersData ? JSON.parse(usersData) : [];
   },
 };

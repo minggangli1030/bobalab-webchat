@@ -44,14 +44,14 @@ export default function Home() {
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Welcome to</h1>
           <div className="text-5xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
-            Rating Platform
+            Web Chat
           </div>
           <p className="text-xl text-gray-600 mb-2">
-            Share your ideas and connect with others
+            Connect and chat with others
           </p>
           <p className="text-gray-500">
-            Join our community to share thoughts, rate experiences, and connect
-            with like-minded people.
+            Join our community to chat, share ideas, and connect with
+            like-minded people.
           </p>
         </div>
 
@@ -78,7 +78,7 @@ export default function Home() {
                   Get Started
                 </h2>
                 <p className="text-gray-600">
-                  Create your account or sign in to start sharing and rating
+                  Create your account or sign in to start chatting and sharing
                 </p>
               </div>
 

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Post } from "@/lib/types";
-import { postUtils } from "@/lib/auth";
+import { firebasePostUtils } from "@/lib/firebase-posts";
 import { PostCard } from "@/components/posts/PostCard";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -13,14 +13,26 @@ export default function FeedPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const allPosts = postUtils.getAllPosts();
-    setPosts(allPosts);
-    setIsLoading(false);
+    const loadPosts = async () => {
+      try {
+        const allPosts = await firebasePostUtils.getAllPosts();
+        setPosts(allPosts);
+      } catch (error) {
+        console.error("Error loading posts:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadPosts();
   }, []);
 
-  const refreshPosts = () => {
-    const allPosts = postUtils.getAllPosts();
-    setPosts(allPosts);
+  const refreshPosts = async () => {
+    try {
+      const allPosts = await firebasePostUtils.getAllPosts();
+      setPosts(allPosts);
+    } catch (error) {
+      console.error("Error refreshing posts:", error);
+    }
   };
 
   if (isLoading) {
