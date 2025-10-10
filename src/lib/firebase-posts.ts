@@ -60,6 +60,11 @@ export const firebasePostUtils = {
   // Get all posts (with pagination)
   getAllPosts: async (limitCount: number = 50): Promise<Post[]> => {
     try {
+      // Check if Firebase is initialized
+      if (!db) {
+        return [];
+      }
+
       const q = query(
         collection(db, "posts"),
         orderBy("createdAt", "desc"),
@@ -163,6 +168,11 @@ export const firebasePostUtils = {
   // Get all users (admin only)
   getAllUsers: async (): Promise<User[]> => {
     try {
+      // Check if Firebase is initialized
+      if (!db) {
+        return [];
+      }
+
       const querySnapshot = await getDocs(collection(db, "users"));
       return querySnapshot.docs.map((doc) => ({
         id: doc.id,

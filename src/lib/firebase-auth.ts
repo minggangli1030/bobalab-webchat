@@ -38,6 +38,11 @@ export const firebaseAuthUtils = {
     studentId?: string
   ): Promise<{ user: User | null; error: string | null }> => {
     try {
+      // Check if Firebase is initialized
+      if (!auth) {
+        return { user: null, error: "Firebase not initialized" };
+      }
+
       // Create Firebase user (this will work for both admin and regular users)
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -94,6 +99,11 @@ export const firebaseAuthUtils = {
   // Sign in with email and password
   login: async (email: string, password: string): Promise<User | null> => {
     try {
+      // Check if Firebase is initialized
+      if (!auth) {
+        return null;
+      }
+
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
@@ -159,6 +169,11 @@ export const firebaseAuthUtils = {
 
   // Listen to auth state changes
   onAuthStateChanged: (callback: (user: User | null) => void) => {
+    // Check if Firebase is initialized
+    if (!auth) {
+      return () => {};
+    }
+
     return onAuthStateChanged(
       auth,
       async (firebaseUser: FirebaseUser | null) => {
