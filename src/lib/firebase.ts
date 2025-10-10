@@ -29,21 +29,4 @@ export const auth = getAuth(app);
 export const analytics =
   typeof window !== "undefined" ? getAnalytics(app) : null;
 
-// Debug Firebase connection
-if (typeof window !== "undefined") {
-  console.log("Firebase initialized with config:", {
-    projectId: firebaseConfig.projectId,
-    authDomain: firebaseConfig.authDomain,
-    apiKey: firebaseConfig.apiKey.substring(0, 10) + "...",
-  });
-
-  // Test Firebase connection
-  auth.onAuthStateChanged((user) => {
-    console.log(
-      "Firebase Auth state changed:",
-      user ? "User logged in" : "No user"
-    );
-  });
-}
-
 export default app;

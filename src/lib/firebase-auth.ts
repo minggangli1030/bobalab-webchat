@@ -16,10 +16,10 @@ export const firebaseAuthUtils = {
     return email === "admin@123.com" && password === "admin123";
   },
 
-  // Create admin user data
-  createAdminUser: (): User => {
+  // Create admin user data with real Firebase UID
+  createAdminUser: (firebaseUid: string): User => {
     return {
-      id: "admin",
+      id: firebaseUid,
       email: "admin@123.com",
       studentId: "admin",
       formalName: "Admin",
@@ -38,20 +38,21 @@ export const firebaseAuthUtils = {
     studentId?: string
   ): Promise<{ user: User | null; error: string | null }> => {
     try {
-      // Check for admin login
-      if (firebaseAuthUtils.isAdminLogin(email, password)) {
-        return { user: firebaseAuthUtils.createAdminUser(), error: null };
-      }
-
-      // Create Firebase user
-      console.log("Creating Firebase user with email:", email);
+      // Create Firebase user (this will work for both admin and regular users)
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
       const firebaseUser = userCredential.user;
-      console.log("Firebase user created successfully:", firebaseUser.uid);
+
+      // Check if this is an admin user
+      if (firebaseAuthUtils.isAdminLogin(email, password)) {
+        const adminUser = firebaseAuthUtils.createAdminUser(firebaseUser.uid);
+        // Create admin user document in Firestore
+        await setDoc(doc(db, "users", firebaseUser.uid), adminUser);
+        return { user: adminUser, error: null };
+      }
 
       // Create user document in Firestore
       const userData: User = {
@@ -64,9 +65,7 @@ export const firebaseAuthUtils = {
         isAdmin: false,
       };
 
-      console.log("Creating user document in Firestore:", userData);
       await setDoc(doc(db, "users", firebaseUser.uid), userData);
-      console.log("User document created successfully");
       return { user: userData, error: null };
     } catch (error: any) {
       console.error("Error creating user:", error);
@@ -95,11 +94,6 @@ export const firebaseAuthUtils = {
   // Sign in with email and password
   login: async (email: string, password: string): Promise<User | null> => {
     try {
-      // Check for admin login
-      if (firebaseAuthUtils.isAdminLogin(email, password)) {
-        return firebaseAuthUtils.createAdminUser();
-      }
-
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
@@ -112,6 +106,14 @@ export const firebaseAuthUtils = {
       if (userDoc.exists()) {
         return userDoc.data() as User;
       }
+
+      // If user document doesn't exist but this is an admin login, create it
+      if (firebaseAuthUtils.isAdminLogin(email, password)) {
+        const adminUser = firebaseAuthUtils.createAdminUser(firebaseUser.uid);
+        await setDoc(doc(db, "users", firebaseUser.uid), adminUser);
+        return adminUser;
+      }
+
       return null;
     } catch (error) {
       console.error("Error signing in:", error);
@@ -166,7 +168,16 @@ export const firebaseAuthUtils = {
             if (userDoc.exists()) {
               callback(userDoc.data() as User);
             } else {
-              callback(null);
+              // If user document doesn't exist but this is an admin user, create it
+              if (firebaseUser.email === "admin@123.com") {
+                const adminUser = firebaseAuthUtils.createAdminUser(
+                  firebaseUser.uid
+                );
+                await setDoc(doc(db, "users", firebaseUser.uid), adminUser);
+                callback(adminUser);
+              } else {
+                callback(null);
+              }
             }
           } catch (error) {
             console.error("Error getting user data:", error);
