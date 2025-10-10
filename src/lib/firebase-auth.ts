@@ -36,20 +36,22 @@ export const firebaseAuthUtils = {
     formalName: string,
     preferredName: string,
     studentId?: string
-  ): Promise<User | null> => {
+  ): Promise<{ user: User | null; error: string | null }> => {
     try {
       // Check for admin login
       if (firebaseAuthUtils.isAdminLogin(email, password)) {
-        return firebaseAuthUtils.createAdminUser();
+        return { user: firebaseAuthUtils.createAdminUser(), error: null };
       }
 
       // Create Firebase user
+      console.log("Creating Firebase user with email:", email);
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
       const firebaseUser = userCredential.user;
+      console.log("Firebase user created successfully:", firebaseUser.uid);
 
       // Create user document in Firestore
       const userData: User = {
@@ -62,11 +64,31 @@ export const firebaseAuthUtils = {
         isAdmin: false,
       };
 
+      console.log("Creating user document in Firestore:", userData);
       await setDoc(doc(db, "users", firebaseUser.uid), userData);
-      return userData;
-    } catch (error) {
+      console.log("User document created successfully");
+      return { user: userData, error: null };
+    } catch (error: any) {
       console.error("Error creating user:", error);
-      return null;
+
+      // Provide specific error messages
+      let errorMessage = "An error occurred during signup";
+
+      if (error.code === "auth/email-already-in-use") {
+        errorMessage = "This email address is already in use";
+      } else if (error.code === "auth/invalid-email") {
+        errorMessage = "Please enter a valid email address";
+      } else if (error.code === "auth/weak-password") {
+        errorMessage = "Password should be at least 6 characters";
+      } else if (error.code === "auth/operation-not-allowed") {
+        errorMessage = "Email/password accounts are not enabled";
+      } else if (error.code === "auth/network-request-failed") {
+        errorMessage = "Network error. Please check your connection";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      return { user: null, error: errorMessage };
     }
   },
 

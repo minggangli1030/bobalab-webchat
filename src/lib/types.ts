@@ -38,7 +38,7 @@ export interface AuthContextType {
     formalName: string,
     preferredName: string,
     studentId?: string
-  ) => Promise<boolean>;
+  ) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   isLoading: boolean;
 }

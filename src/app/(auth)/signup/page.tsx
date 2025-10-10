@@ -40,7 +40,20 @@ export default function SignupPage() {
         return;
       }
 
-      const success = await signup(
+      if (formData.password.length < 6) {
+        setError("Password must be at least 6 characters long");
+        setIsLoading(false);
+        return;
+      }
+
+      console.log("Attempting signup with:", {
+        email: formData.email,
+        formalName: formData.formalName,
+        preferredName: formData.preferredName,
+        passwordLength: formData.password.length,
+      });
+
+      const result = await signup(
         formData.email,
         formData.password,
         formData.formalName,
@@ -48,13 +61,15 @@ export default function SignupPage() {
         "" // No student ID needed anymore
       );
 
-      if (success) {
+      console.log("Signup result:", result);
+
+      if (result.success) {
         router.push("/feed");
       } else {
-        setError("Account already exists or invalid information");
+        setError(result.error || "Account creation failed");
       }
     } catch (err) {
-      setError("An error occurred during signup");
+      setError("An unexpected error occurred during signup");
     } finally {
       setIsLoading(false);
     }

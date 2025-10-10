@@ -40,23 +40,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     formalName: string,
     preferredName: string,
     studentId?: string
-  ): Promise<boolean> => {
+  ): Promise<{ success: boolean; error?: string }> => {
     try {
-      const user = await firebaseAuthUtils.signup(
+      const result = await firebaseAuthUtils.signup(
         email,
         password,
         formalName,
         preferredName,
         studentId || ""
       );
-      if (user) {
-        setUser(user);
-        return true;
+      if (result.user) {
+        setUser(result.user);
+        return { success: true };
       }
-      return false;
+      return { success: false, error: result.error || "Signup failed" };
     } catch (error) {
       console.error("Signup error:", error);
-      return false;
+      return { success: false, error: "An unexpected error occurred" };
     }
   };
 
