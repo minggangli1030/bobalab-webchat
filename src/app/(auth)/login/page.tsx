@@ -212,7 +212,7 @@ export default function LoginPage() {
               Admin Access:
             </p>
             <p className="text-xs text-blue-600">
-              Username: admin123 | Password: admin123
+              Email: admin@123.com | Password: admin123
             </p>
           </div>
 
@@ -221,15 +221,20 @@ export default function LoginPage() {
             <p className="text-xs text-red-700 font-medium mb-2">
               Having trouble?
             </p>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={clearAllData}
-              className="w-full text-xs text-red-600 border-red-300 hover:bg-red-100"
-            >
-              Clear All Local Data & Start Fresh
-            </Button>
+            <div className="space-y-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={clearAllData}
+                className="w-full text-xs text-red-600 border-red-300 hover:bg-red-100"
+              >
+                Clear All Local Data & Start Fresh
+              </Button>
+              <p className="text-xs text-red-500 text-center">
+                This will clear localStorage and let you create new accounts
+              </p>
+            </div>
           </div>
 
           <div className="mt-6 text-center">

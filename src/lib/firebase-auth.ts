@@ -13,14 +13,14 @@ import { User } from "./types";
 export const firebaseAuthUtils = {
   // Admin login check
   isAdminLogin: (email: string, password: string): boolean => {
-    return email === "admin123" && password === "admin123";
+    return email === "admin@123.com" && password === "admin123";
   },
 
   // Create admin user data
   createAdminUser: (): User => {
     return {
       id: "admin",
-      email: "admin123",
+      email: "admin@123.com",
       studentId: "admin",
       formalName: "Admin",
       preferredName: "Admin",
@@ -35,7 +35,7 @@ export const firebaseAuthUtils = {
     password: string,
     formalName: string,
     preferredName: string,
-    studentId: string
+    studentId?: string
   ): Promise<User | null> => {
     try {
       // Check for admin login
@@ -55,7 +55,7 @@ export const firebaseAuthUtils = {
       const userData: User = {
         id: firebaseUser.uid,
         email: email,
-        studentId: studentId,
+        studentId: studentId || "",
         formalName: formalName,
         preferredName: preferredName,
         createdAt: new Date(),

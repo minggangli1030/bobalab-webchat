@@ -80,14 +80,14 @@ src/
 ### Creating an Account
 
 1. Navigate to the signup page
-2. Enter your email, student ID, formal name, and preferred name
+2. Enter your email, password, formal name, and preferred name
 3. Click "Create Account"
 
 ### Logging In
 
-1. Use your email address as username
-2. Use your student ID as password
-3. Click "Sign In"
+1. Use your email address and password
+2. Click "Sign In"
+3. Use "Forgot password?" to reset your password if needed
 
 ### Creating Posts
 

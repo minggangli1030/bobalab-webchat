@@ -39,7 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     password: string,
     formalName: string,
     preferredName: string,
-    studentId: string
+    studentId?: string
   ): Promise<boolean> => {
     try {
       const user = await firebaseAuthUtils.signup(
@@ -47,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         password,
         formalName,
         preferredName,
-        studentId
+        studentId || ""
       );
       if (user) {
         setUser(user);

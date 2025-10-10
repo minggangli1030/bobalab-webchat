@@ -19,7 +19,6 @@ export default function SignupPage() {
     email: "",
     password: "",
     confirmPassword: "",
-    studentId: "",
     formalName: "",
     preferredName: "",
   });
@@ -46,7 +45,7 @@ export default function SignupPage() {
         formData.password,
         formData.formalName,
         formData.preferredName,
-        formData.studentId
+        "" // No student ID needed anymore
       );
 
       if (success) {
@@ -135,25 +134,6 @@ export default function SignupPage() {
                 onChange={handleChange}
                 className="mt-1"
                 placeholder="Confirm your password"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="studentId"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Student ID
-              </label>
-              <Input
-                id="studentId"
-                name="studentId"
-                type="text"
-                required
-                value={formData.studentId}
-                onChange={handleChange}
-                className="mt-1"
-                placeholder="Your student ID"
               />
             </div>
 
