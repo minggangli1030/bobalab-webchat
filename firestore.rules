@@ -12,10 +12,12 @@ service cloud.firestore {
       // Anyone authenticated can read user data
       allow read: if request.auth != null;
 
-      // Users can only update their own profile, except for phase and isAdmin fields
-      // which can only be updated by the user themselves (for phase) or admins
+      // Users can update their own profile
+      // Users can update their own phase (automatically advanced after post creation)
+      // Users CANNOT update isAdmin field
+      // Admins can update anything
       allow update: if request.auth != null && (
-        // User can update their own profile (non-sensitive fields)
+        // User can update their own profile (including phase, but not isAdmin)
         (request.auth.uid == userId &&
          !request.resource.data.diff(resource.data).affectedKeys().hasAny(['isAdmin'])) ||
         // Admins can update anything

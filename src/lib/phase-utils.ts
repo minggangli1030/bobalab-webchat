@@ -57,7 +57,7 @@ export const phaseUtils = {
       case PHASES.PHASE_1:
         return "Phase 1: Initial Assessment";
       case PHASES.PHASE_2:
-        return "Phase 2: Advanced Analysis";
+        return "Phase 2: Peer Feedback";
       default:
         return "Unknown Phase";
     }
@@ -69,7 +69,7 @@ export const phaseUtils = {
       case PHASES.PHASE_1:
         return "Create and share initial business compatibility assessments";
       case PHASES.PHASE_2:
-        return "Advanced analysis and detailed compatibility studies";
+        return "View and interact with other students' business compatibility posts";
       default:
         return "Unknown phase";
     }

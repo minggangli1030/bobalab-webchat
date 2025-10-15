@@ -174,23 +174,21 @@ export default function FeedPage() {
           <p className="text-gray-600 mt-1">Customer Compatibility Exercise</p>
           {user && (
             <p className="text-sm text-blue-600 mt-1">
-              {phaseUtils.getPhaseName(phaseUtils.getCurrentPhase(user))}
+              {userHasCreatedPost
+                ? phaseUtils.getPhaseName(2)
+                : phaseUtils.getPhaseName(phaseUtils.getCurrentPhase(user))}
             </p>
           )}
         </div>
         <div className="flex items-center space-x-3">
-          {user &&
-            phaseUtils.canCreateInPhase(
-              user,
-              phaseUtils.getCurrentPhase(user)
-            ) && (
-              <Link href="/create-post">
-                <Button className="flex items-center space-x-2">
-                  <Plus className="h-4 w-4" />
-                  <span>Create Post</span>
-                </Button>
-              </Link>
-            )}
+          {user && !userHasCreatedPost && phaseUtils.getCurrentPhase(user) === 1 && (
+            <Link href="/create-post">
+              <Button className="flex items-center space-x-2">
+                <Plus className="h-4 w-4" />
+                <span>Create Post</span>
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
 
