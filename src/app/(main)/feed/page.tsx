@@ -18,8 +18,8 @@ export default function FeedPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedHashtag, setSelectedHashtag] = useState("");
-  const [sortBy, setSortBy] = useState<"time" | "interactions" | "category">(
-    "interactions"
+  const [sortBy, setSortBy] = useState<"time" | "highlights" | "category">(
+    "highlights"
   );
 
   useEffect(() => {
@@ -109,12 +109,9 @@ export default function FeedPage() {
           (a, b) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
-      case "interactions":
+      case "highlights":
         return filtered.sort(
-          (a, b) =>
-            b.likes.length +
-            b.comments.length -
-            (a.likes.length + a.comments.length)
+          (a, b) => (b.highlights?.length || 0) - (a.highlights?.length || 0)
         );
       case "category":
         return filtered.sort((a, b) =>
@@ -270,13 +267,11 @@ export default function FeedPage() {
             <select
               value={sortBy}
               onChange={(e) =>
-                setSortBy(
-                  e.target.value as "time" | "interactions" | "category"
-                )
+                setSortBy(e.target.value as "time" | "highlights" | "category")
               }
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="interactions">Most Interactions</option>
+              <option value="highlights">Most Highlighted</option>
               <option value="time">Most Recent</option>
               <option value="category">By Category</option>
             </select>

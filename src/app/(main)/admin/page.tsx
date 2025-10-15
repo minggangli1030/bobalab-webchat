@@ -19,7 +19,7 @@ import {
   Eye,
   Users,
   MessageSquare,
-  Heart,
+  Flag,
   Calendar,
   ArrowUp,
 } from "lucide-react";
@@ -184,7 +184,10 @@ export default function AdminPage() {
       weekAgo.setDate(weekAgo.getDate() - 7);
       return postDate > weekAgo;
     }).length,
-    totalLikes: posts.reduce((sum, post) => sum + post.likes.length, 0),
+    totalHighlights: posts.reduce(
+      (sum, post) => sum + (post.highlights?.length || 0),
+      0
+    ),
   };
 
   return (
@@ -376,7 +379,7 @@ export default function AdminPage() {
                       </div>
                       <div className="flex items-center space-x-2">
                         <Badge variant="secondary">
-                          {post.likes.length} likes
+                          {post.highlights?.length || 0} highlights
                         </Badge>
                         <Badge variant="outline">
                           {post.comments.length} comments
@@ -396,10 +399,12 @@ export default function AdminPage() {
             <CardContent>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Average likes per post</span>
+                  <span className="text-gray-600">
+                    Average highlights per post
+                  </span>
                   <span className="font-semibold">
                     {stats.totalPosts > 0
-                      ? (stats.totalLikes / stats.totalPosts).toFixed(1)
+                      ? (stats.totalHighlights / stats.totalPosts).toFixed(1)
                       : 0}
                   </span>
                 </div>
@@ -444,8 +449,8 @@ export default function AdminPage() {
                     <p className="text-gray-800 mb-3">{post.content}</p>
                     <div className="flex items-center space-x-4 text-sm text-gray-600">
                       <span className="flex items-center">
-                        <Heart className="h-4 w-4 mr-1" />
-                        {post.likes.length} likes
+                        <Flag className="h-4 w-4 mr-1" />
+                        {post.highlights?.length || 0} highlights
                       </span>
                       <span className="flex items-center">
                         <MessageSquare className="h-4 w-4 mr-1" />

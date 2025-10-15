@@ -57,6 +57,13 @@ export interface ServiceExperience {
   lifeDisruptiveness: number; // 0-100 scale
 }
 
+export interface Highlight {
+  userId: string;
+  userName: string;
+  reason: string;
+  createdAt: Date;
+}
+
 export interface Post {
   id: string;
   authorId: string;
@@ -66,8 +73,7 @@ export interface Post {
   images: string[];
   hashtags: string[];
   category?: string; // Limited category options
-  likes: string[];
-  likedBy?: User[]; // Public list of users who liked
+  highlights: Highlight[]; // Array of highlight objects with reasons
   comments: Comment[];
   createdAt: Date;
   phase?: number; // Which phase this post belongs to

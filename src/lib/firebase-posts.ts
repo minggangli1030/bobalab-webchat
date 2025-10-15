@@ -111,32 +111,11 @@ export const firebasePostUtils = {
       if (postDoc.exists()) {
         const data = postDoc.data();
 
-        // Fetch user info for each user who liked the post
-        const likedBy: User[] = [];
-        if (data.likes && data.likes.length > 0) {
-          for (const userId of data.likes) {
-            try {
-              const userDoc = await getDoc(doc(db, "users", userId));
-              if (userDoc.exists()) {
-                const userData = userDoc.data();
-                likedBy.push({
-                  id: userDoc.id,
-                  ...userData,
-                  createdAt: userData.createdAt?.toDate
-                    ? userData.createdAt.toDate()
-                    : new Date(userData.createdAt),
-                } as User);
-              }
-            } catch (err) {
-              console.error(`Error fetching user ${userId}:`, err);
-            }
-          }
-        }
+        // Highlights are already stored with user info, no need to fetch separately
 
         return {
           id: postDoc.id,
           ...data,
-          likedBy, // Add the populated likedBy array
           createdAt: data.createdAt?.toDate
             ? data.createdAt.toDate()
             : new Date(data.createdAt),
@@ -156,7 +135,7 @@ export const firebasePostUtils = {
     }
   },
 
-  // Update a post (for likes, comments, etc.)
+  // Update a post (for highlights, comments, etc.)
   updatePost: async (
     postId: string,
     updates: Partial<Post>
@@ -210,21 +189,66 @@ export const firebasePostUtils = {
     }
   },
 
-  // Toggle like on a post
-  toggleLike: async (postId: string, userId: string): Promise<boolean> => {
+  // Add highlight to a post
+  addHighlight: async (
+    postId: string,
+    userId: string,
+    userName: string,
+    reason: string
+  ): Promise<boolean> => {
     try {
       const post = await firebasePostUtils.getPostById(postId);
       if (!post) return false;
 
-      const isLiked = post.likes.includes(userId);
-      const updatedLikes = isLiked
-        ? post.likes.filter((id) => id !== userId)
-        : [...post.likes, userId];
+      // Check if user already highlighted this post
+      const existingHighlight = post.highlights?.find(
+        (h) => h.userId === userId
+      );
+      if (existingHighlight) {
+        // Remove existing highlight
+        const updatedHighlights = post.highlights.filter(
+          (h) => h.userId !== userId
+        );
+        await firebasePostUtils.updatePost(postId, {
+          highlights: updatedHighlights,
+        });
+        return true;
+      }
 
-      await firebasePostUtils.updatePost(postId, { likes: updatedLikes });
+      // Add new highlight
+      const newHighlight = {
+        userId,
+        userName,
+        reason,
+        createdAt: new Date(),
+      };
+
+      const updatedHighlights = [...(post.highlights || []), newHighlight];
+      await firebasePostUtils.updatePost(postId, {
+        highlights: updatedHighlights,
+      });
       return true;
     } catch (error) {
-      console.error("Error toggling like:", error);
+      console.error("Error adding highlight:", error);
+      return false;
+    }
+  },
+
+  // Remove highlight from a post
+  removeHighlight: async (postId: string, userId: string): Promise<boolean> => {
+    try {
+      const post = await firebasePostUtils.getPostById(postId);
+      if (!post) return false;
+
+      const updatedHighlights = (post.highlights || []).filter(
+        (h) => h.userId !== userId
+      );
+      await firebasePostUtils.updatePost(postId, {
+        highlights: updatedHighlights,
+      });
+      return true;
+    } catch (error) {
+      console.error("Error removing highlight:", error);
       return false;
     }
   },

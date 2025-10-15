@@ -7,9 +7,10 @@ import { firebasePostUtils } from "@/lib/firebase-posts";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, MessageCircle, Eye } from "lucide-react";
+import { Flag, MessageCircle, Eye } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { HighlightModal } from "@/components/HighlightModal";
 
 interface PostCardProps {
   post: Post;
@@ -18,23 +19,38 @@ interface PostCardProps {
 
 export function PostCard({ post, onUpdate }: PostCardProps) {
   const { user } = useAuth();
-  const [isLiked, setIsLiked] = useState(
-    user ? post.likes.includes(user.id) : false
+  const [isHighlighted, setIsHighlighted] = useState(
+    user ? post.highlights?.some((h) => h.userId === user.id) : false
   );
-  const [likesCount, setLikesCount] = useState(post.likes.length);
+  const [highlightCount, setHighlightCount] = useState(
+    post.highlights?.length || 0
+  );
+  const [showHighlightModal, setShowHighlightModal] = useState(false);
 
-  const handleLike = async () => {
+  const handleHighlightClick = () => {
+    if (!user) return;
+    setShowHighlightModal(true);
+  };
+
+  const handleHighlightConfirm = async (reason: string) => {
     if (!user) return;
 
     try {
-      const success = await firebasePostUtils.toggleLike(post.id, user.id);
+      const success = await firebasePostUtils.addHighlight(
+        post.id,
+        user.id,
+        user.preferredName,
+        reason
+      );
       if (success) {
-        setIsLiked(!isLiked);
-        setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
+        setIsHighlighted(!isHighlighted);
+        setHighlightCount(
+          isHighlighted ? highlightCount - 1 : highlightCount + 1
+        );
         onUpdate();
       }
     } catch (error) {
-      console.error("Error toggling like:", error);
+      console.error("Error highlighting post:", error);
     }
   };
 
@@ -124,13 +140,15 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={handleLike}
+                onClick={handleHighlightClick}
                 className={`flex items-center space-x-1 p-1 h-auto ${
-                  isLiked ? "text-red-600" : "text-gray-600"
+                  isHighlighted ? "text-orange-600" : "text-gray-600"
                 }`}
               >
-                <Heart className={`h-4 w-4 ${isLiked ? "fill-current" : ""}`} />
-                <span className="text-xs">{likesCount}</span>
+                <Flag
+                  className={`h-4 w-4 ${isHighlighted ? "fill-current" : ""}`}
+                />
+                <span className="text-xs">{highlightCount}</span>
               </Button>
 
               <Link href={`/post/${post.id}`}>
@@ -157,6 +175,15 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
           </div>
         </div>
       </CardContent>
+
+      {/* Highlight Modal */}
+      <HighlightModal
+        isOpen={showHighlightModal}
+        onClose={() => setShowHighlightModal(false)}
+        onConfirm={handleHighlightConfirm}
+        isHighlighted={isHighlighted}
+        highlightCount={highlightCount}
+      />
     </Card>
   );
 }

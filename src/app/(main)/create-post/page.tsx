@@ -49,7 +49,7 @@ export default function CreatePostPage() {
         images: [], // Images can be added later
         hashtags: [], // Can be derived from experience data
         category: experience.organizationType,
-        likes: [],
+        highlights: [],
         comments: [],
         phase: user.phase || PHASES.PHASE_1,
         serviceExperience: experience,

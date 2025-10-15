@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Heart, MessageCircle, ArrowLeft, Users } from "lucide-react";
+import { Flag, MessageCircle, ArrowLeft, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -22,9 +22,9 @@ export default function PostDetailPage() {
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(0);
-  const [showLikedBy, setShowLikedBy] = useState(false);
+  const [isHighlighted, setIsHighlighted] = useState(false);
+  const [highlightCount, setHighlightCount] = useState(0);
+  const [showHighlightedBy, setShowHighlightedBy] = useState(false);
 
   useEffect(() => {
     const loadPost = async () => {
@@ -33,8 +33,10 @@ export default function PostDetailPage() {
         const foundPost = await firebasePostUtils.getPostById(postId);
         setPost(foundPost);
         if (foundPost && user) {
-          setIsLiked(foundPost.likes.includes(user.id));
-          setLikesCount(foundPost.likes.length);
+          setIsHighlighted(
+            foundPost.highlights?.some((h) => h.userId === user.id) || false
+          );
+          setHighlightCount(foundPost.highlights?.length || 0);
         }
       } catch (error) {
         console.error("Error loading post:", error);
@@ -45,14 +47,21 @@ export default function PostDetailPage() {
     loadPost();
   }, [params.id, user]);
 
-  const handleLike = async () => {
+  const handleHighlight = async () => {
     if (!user || !post) return;
 
     try {
-      const success = await firebasePostUtils.toggleLike(post.id, user.id);
+      const success = await firebasePostUtils.addHighlight(
+        post.id,
+        user.id,
+        user.preferredName,
+        "Highlighted for discussion"
+      );
       if (success) {
-        setIsLiked(!isLiked);
-        setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
+        setIsHighlighted(!isHighlighted);
+        setHighlightCount(
+          isHighlighted ? highlightCount - 1 : highlightCount + 1
+        );
         // Refresh the post to get updated data
         const updatedPost = await firebasePostUtils.getPostById(post.id);
         if (updatedPost) {
@@ -60,7 +69,7 @@ export default function PostDetailPage() {
         }
       }
     } catch (error) {
-      console.error("Error toggling like:", error);
+      console.error("Error toggling highlight:", error);
     }
   };
 
@@ -226,23 +235,25 @@ export default function PostDetailPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={handleLike}
+                onClick={handleHighlight}
                 className={`flex items-center space-x-2 ${
-                  isLiked ? "text-red-600" : "text-gray-600"
+                  isHighlighted ? "text-orange-600" : "text-gray-600"
                 }`}
               >
-                <Heart className={`h-4 w-4 ${isLiked ? "fill-current" : ""}`} />
-                <span>{likesCount}</span>
+                <Flag
+                  className={`h-4 w-4 ${isHighlighted ? "fill-current" : ""}`}
+                />
+                <span>{highlightCount}</span>
               </Button>
 
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setShowLikedBy(!showLikedBy)}
+                onClick={() => setShowHighlightedBy(!showHighlightedBy)}
                 className="flex items-center space-x-2 text-gray-600"
               >
                 <Users className="h-4 w-4" />
-                <span>Who liked</span>
+                <span>Who highlighted</span>
               </Button>
 
               <div className="flex items-center space-x-2 text-gray-600">
@@ -252,26 +263,26 @@ export default function PostDetailPage() {
             </div>
           </div>
 
-          {/* Show who liked (if any) */}
-          {showLikedBy && post.likes.length > 0 && (
-            <div className="pt-3 border-t">
-              <p className="text-sm text-gray-600 mb-2">Liked by:</p>
-              <div className="flex flex-wrap gap-2">
-                {post.likes.map((userId, index) => {
-                  // Find the user's preferred name from the likes array
-                  const likedUser = post.likedBy?.find((u) => u.id === userId);
-                  const displayName =
-                    likedUser?.preferredName || `User ${userId.slice(-4)}`;
-
-                  return (
-                    <Badge key={index} variant="outline" className="text-xs">
-                      {displayName}
-                    </Badge>
-                  );
-                })}
+          {/* Show who highlighted (if any) */}
+          {showHighlightedBy &&
+            post.highlights &&
+            post.highlights.length > 0 && (
+              <div className="pt-3 border-t">
+                <p className="text-sm text-gray-600 mb-2">Highlighted by:</p>
+                <div className="space-y-2">
+                  {post.highlights.map((highlight, index) => (
+                    <div key={index} className="flex items-start space-x-2">
+                      <Badge variant="secondary" className="text-xs">
+                        {highlight.userName}
+                      </Badge>
+                      <span className="text-xs text-gray-500 italic">
+                        "{highlight.reason}"
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </CardContent>
       </Card>
 
