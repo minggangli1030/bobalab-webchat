@@ -99,17 +99,6 @@ export default function MainLayout({
                       <span>Gallery</span>
                     </Link>
                   )}
-                {user &&
-                  !user.isAdmin &&
-                  phaseUtils.getCurrentPhase(user) === 1 && (
-                    <Link
-                      href="/create-post"
-                      className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
-                    >
-                      <Plus className="h-4 w-4" />
-                      <span>Create Post</span>
-                    </Link>
-                  )}
                 {user?.isAdmin && (
                   <Link
                     href="/admin"
