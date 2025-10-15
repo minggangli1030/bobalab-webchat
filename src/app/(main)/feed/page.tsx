@@ -185,7 +185,9 @@ export default function FeedPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Business Gallery</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Phase 2: Peer Feedback
+          </h1>
           <p className="text-gray-600 mt-1">Customer Compatibility Exercise</p>
           {user && (
             <p className="text-sm text-blue-600 mt-1">

@@ -29,7 +29,12 @@ export default function MainLayout({
 
       // Allow Phase 1 users to access /feed (they'll see appropriate message there)
       // This prevents redirect loops when transitioning from Phase 1 to Phase 2
-      if (userPhase === 1 && pathname !== "/create-post" && pathname !== "/" && pathname !== "/feed") {
+      if (
+        userPhase === 1 &&
+        pathname !== "/create-post" &&
+        pathname !== "/" &&
+        pathname !== "/feed"
+      ) {
         console.log("Phase 1 user redirecting to create-post");
         router.push("/create-post");
         return;
@@ -96,7 +101,7 @@ export default function MainLayout({
                       className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
                     >
                       <Home className="h-4 w-4" />
-                      <span>Gallery</span>
+                      <span>Phase 2</span>
                     </Link>
                   )}
                 {user?.isAdmin && (

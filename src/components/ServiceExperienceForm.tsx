@@ -168,7 +168,7 @@ export default function ServiceExperienceForm({
     serviceAttributes: DEFAULT_ATTRIBUTES.map((name, index) => ({
       name,
       userRanking: index + 1, // Initialize with position-based ranking
-      performanceRating: 0,
+      performanceRating: 50, // Start at neutral (50)
     })),
     variabilityAssessments: VARIABILITY_TYPES.map((v) => ({
       type: v.type,
@@ -639,7 +639,7 @@ export default function ServiceExperienceForm({
               type="range"
               min="0"
               max="100"
-              value={formData.needsAlignment || 0}
+              value={formData.needsAlignment || 50}
               onChange={(e) =>
                 updateFormData({ needsAlignment: parseInt(e.target.value) })
               }
@@ -647,7 +647,7 @@ export default function ServiceExperienceForm({
             />
             <span className="text-sm text-gray-500">Very well aligned</span>
             <span className="text-sm font-medium w-12 text-center">
-              {formData.needsAlignment || 0}
+              {formData.needsAlignment || 50}
             </span>
           </div>
         </div>
@@ -662,7 +662,7 @@ export default function ServiceExperienceForm({
               type="range"
               min="0"
               max="100"
-              value={formData.satisfactionRating || 0}
+              value={formData.satisfactionRating || 50}
               onChange={(e) =>
                 updateFormData({ satisfactionRating: parseInt(e.target.value) })
               }
@@ -670,7 +670,7 @@ export default function ServiceExperienceForm({
             />
             <span className="text-sm text-gray-500">Very satisfied</span>
             <span className="text-sm font-medium w-12 text-center">
-              {formData.satisfactionRating || 0}
+              {formData.satisfactionRating || 50}
             </span>
           </div>
         </div>
@@ -685,7 +685,7 @@ export default function ServiceExperienceForm({
               type="range"
               min="0"
               max="100"
-              value={formData.loyaltyRating || 0}
+              value={formData.loyaltyRating || 50}
               onChange={(e) =>
                 updateFormData({ loyaltyRating: parseInt(e.target.value) })
               }
@@ -693,7 +693,7 @@ export default function ServiceExperienceForm({
             />
             <span className="text-sm text-gray-500">Very high</span>
             <span className="text-sm font-medium w-12 text-center">
-              {formData.loyaltyRating || 0}
+              {formData.loyaltyRating || 50}
             </span>
           </div>
         </div>
@@ -709,7 +709,7 @@ export default function ServiceExperienceForm({
               type="range"
               min="0"
               max="100"
-              value={formData.recommendationLikelihood || 0}
+              value={formData.recommendationLikelihood || 50}
               onChange={(e) =>
                 updateFormData({
                   recommendationLikelihood: parseInt(e.target.value),
@@ -719,7 +719,7 @@ export default function ServiceExperienceForm({
             />
             <span className="text-sm text-gray-500">Extremely likely</span>
             <span className="text-sm font-medium w-12 text-center">
-              {formData.recommendationLikelihood || 0}
+              {formData.recommendationLikelihood || 50}
             </span>
           </div>
         </div>
@@ -727,7 +727,7 @@ export default function ServiceExperienceForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Google Review Score (if applicable)
+              Google Review Score (look up and fill yourself)
             </label>
             <select
               value={formData.yelpScore || ""}
@@ -751,7 +751,7 @@ export default function ServiceExperienceForm({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Google Review Price Range (if applicable)
+              Google Review Price Range (look up and fill yourself)
             </label>
             <select
               value={formData.yelpPriceRange || ""}
@@ -793,7 +793,7 @@ export default function ServiceExperienceForm({
               type="range"
               min="0"
               max="100"
-              value={formData.operationDisruptiveness || 0}
+              value={formData.operationDisruptiveness || 50}
               onChange={(e) =>
                 updateFormData({
                   operationDisruptiveness: parseInt(e.target.value),
@@ -803,7 +803,7 @@ export default function ServiceExperienceForm({
             />
             <span className="text-sm text-gray-500">Extremely disruptive</span>
             <span className="text-sm font-medium w-12 text-center">
-              {formData.operationDisruptiveness || 0}
+              {formData.operationDisruptiveness || 50}
             </span>
           </div>
         </div>
@@ -819,7 +819,7 @@ export default function ServiceExperienceForm({
               type="range"
               min="0"
               max="100"
-              value={formData.lifeDisruptiveness || 0}
+              value={formData.lifeDisruptiveness || 50}
               onChange={(e) =>
                 updateFormData({ lifeDisruptiveness: parseInt(e.target.value) })
               }
@@ -827,7 +827,7 @@ export default function ServiceExperienceForm({
             />
             <span className="text-sm text-gray-500">Extremely disruptive</span>
             <span className="text-sm font-medium w-12 text-center">
-              {formData.lifeDisruptiveness || 0}
+              {formData.lifeDisruptiveness || 50}
             </span>
           </div>
         </div>

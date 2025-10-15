@@ -147,11 +147,6 @@ export default function CreatePostPage() {
             Document your service experience to contribute to the class
             discussion
           </CardDescription>
-          <div className="mt-2">
-            <Badge variant="outline" className="text-xs">
-              {phaseUtils.getPhaseName(currentPhase)}
-            </Badge>
-          </div>
           {currentPhase === 1 && (
             <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
               <p className="text-sm text-blue-700">
