@@ -22,7 +22,7 @@ import { X, Upload, Image as ImageIcon } from "lucide-react";
 import Image from "next/image";
 
 export default function CreatePostPage() {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -79,7 +79,28 @@ export default function CreatePostPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    console.log("Form submitted", { formData, user });
+
+    if (!user) {
+      console.error("No user found");
+      return;
+    }
+
+    if (!formData.content.trim()) {
+      setError("Please enter some content for your post");
+      return;
+    }
+
+    // Make business name and category optional for now
+    // if (!formData.businessName.trim()) {
+    //   setError("Please enter a business name");
+    //   return;
+    // }
+
+    // if (!formData.category) {
+    //   setError("Please select a category");
+    //   return;
+    // }
 
     setIsLoading(true);
     setError("");
@@ -105,7 +126,10 @@ export default function CreatePostPage() {
       };
 
       // Create the post in Firestore first
+      console.log("Creating post with data:", postData);
       const postId = await firebasePostUtils.createPost(postData);
+      console.log("Post created with ID:", postId);
+
       if (!postId) {
         throw new Error("Failed to create post");
       }
@@ -119,7 +143,15 @@ export default function CreatePostPage() {
 
       // Advance user to Phase 2 after creating their first post
       if (user.phase === 1) {
-        await firebasePostUtils.updateUserPhase(user.id, 2);
+        console.log("Advancing user from Phase 1 to Phase 2");
+        const success = await firebasePostUtils.updateUserPhase(user.id, 2);
+        if (success) {
+          console.log("User phase updated successfully");
+          // Refresh user context to get updated phase
+          await refreshUser();
+        } else {
+          console.error("Failed to update user phase");
+        }
       }
 
       router.push("/feed");
@@ -197,7 +229,6 @@ export default function CreatePostPage() {
                 value={formData.businessName}
                 onChange={handleBusinessNameChange}
                 placeholder="Enter the business name you're reviewing"
-                required
               />
             </div>
 
@@ -214,7 +245,6 @@ export default function CreatePostPage() {
                 value={formData.category}
                 onChange={handleCategoryChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                required
               >
                 <option value="">Select a category</option>
                 {POST_CATEGORIES.map((category) => (
@@ -349,10 +379,7 @@ export default function CreatePostPage() {
               >
                 Cancel
               </Button>
-              <Button
-                type="submit"
-                disabled={isLoading || !formData.content.trim()}
-              >
+              <Button type="submit" disabled={isLoading}>
                 {isLoading ? "Creating Post..." : "Create Post"}
               </Button>
             </div>

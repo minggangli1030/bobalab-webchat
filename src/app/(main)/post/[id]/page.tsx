@@ -257,11 +257,17 @@ export default function PostDetailPage() {
             <div className="pt-3 border-t">
               <p className="text-sm text-gray-600 mb-2">Liked by:</p>
               <div className="flex flex-wrap gap-2">
-                {post.likes.map((userId, index) => (
-                  <Badge key={index} variant="outline" className="text-xs">
-                    User {userId.slice(-4)}
-                  </Badge>
-                ))}
+                {post.likes.map((userId, index) => {
+                  // Find the user's preferred name from the likes array
+                  const likedUser = post.likedBy?.find(u => u.id === userId);
+                  const displayName = likedUser?.preferredName || `User ${userId.slice(-4)}`;
+                  
+                  return (
+                    <Badge key={index} variant="outline" className="text-xs">
+                      {displayName}
+                    </Badge>
+                  );
+                })}
               </div>
             </div>
           )}

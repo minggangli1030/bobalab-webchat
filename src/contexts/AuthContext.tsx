@@ -71,11 +71,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const refreshUser = async () => {
+    if (user) {
+      try {
+        const updatedUser = await firebaseAuthUtils.getCurrentUser();
+        if (updatedUser) {
+          setUser(updatedUser);
+        }
+      } catch (error) {
+        console.error("Error refreshing user:", error);
+      }
+    }
+  };
+
   const value: AuthContextType = {
     user,
     login,
     signup,
     logout,
+    refreshUser,
     isLoading,
   };
 

@@ -46,10 +46,19 @@ export const firebasePostUtils = {
     postData: Omit<Post, "id" | "createdAt">
   ): Promise<string | null> => {
     try {
+      console.log("Firebase createPost called with:", postData);
+
+      if (!db) {
+        console.error("Firebase not initialized");
+        return null;
+      }
+
       const postRef = await addDoc(collection(db, "posts"), {
         ...postData,
         createdAt: Timestamp.now(),
       });
+
+      console.log("Post created successfully with ID:", postRef.id);
       return postRef.id;
     } catch (error) {
       console.error("Error creating post:", error);

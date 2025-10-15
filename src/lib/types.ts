@@ -47,6 +47,7 @@ export interface AuthContextType {
     businessName?: string
   ) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
   isLoading: boolean;
 }
 
