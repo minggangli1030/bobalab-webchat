@@ -94,16 +94,15 @@ export default function CreatePostPage() {
 
     console.log("Form validation passed, proceeding with post creation...");
 
-    // Make business name and category optional for now
-    // if (!formData.businessName.trim()) {
-    //   setError("Please enter a business name");
-    //   return;
-    // }
+    if (!formData.businessName.trim()) {
+      setError("Please enter a business name");
+      return;
+    }
 
-    // if (!formData.category) {
-    //   setError("Please select a category");
-    //   return;
-    // }
+    if (!formData.category) {
+      setError("Please select a category");
+      return;
+    }
 
     setIsLoading(true);
     setError("");
@@ -150,6 +149,7 @@ export default function CreatePostPage() {
 
         // Update phase locally first to prevent redirect loops
         updateUserPhaseLocally(2);
+        console.log("Phase updated locally to 2");
 
         try {
           const success = await firebasePostUtils.updateUserPhase(user.id, 2);
@@ -168,20 +168,9 @@ export default function CreatePostPage() {
 
       console.log("Redirecting to feed...");
 
-      // Try router.push first, then fallback to window.location
-      try {
-        router.push("/feed");
-        // If router.push doesn't work, use window.location as fallback
-        setTimeout(() => {
-          if (window.location.pathname === "/create-post") {
-            console.log("Router.push failed, using window.location fallback");
-            window.location.href = "/feed";
-          }
-        }, 1000);
-      } catch (error) {
-        console.error("Router error:", error);
-        window.location.href = "/feed";
-      }
+      // Use window.location.href for more reliable redirect
+      // This bypasses any router issues and forces a full page reload
+      window.location.href = "/feed";
     } catch (err) {
       setError("Failed to create post. Please try again.");
       console.error("Error creating post:", err);
@@ -249,7 +238,7 @@ export default function CreatePostPage() {
                 htmlFor="businessName"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
-                Business Name
+                Business Name <span className="text-red-500">*</span>
               </label>
               <Input
                 id="businessName"
@@ -265,7 +254,7 @@ export default function CreatePostPage() {
                 htmlFor="category"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
-                Category
+                Category <span className="text-red-500">*</span>
               </label>
               <select
                 id="category"
@@ -288,7 +277,7 @@ export default function CreatePostPage() {
                 htmlFor="content"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
-                Your Experience
+                Your Experience <span className="text-red-500">*</span>
               </label>
               <Textarea
                 id="content"
@@ -411,6 +400,7 @@ export default function CreatePostPage() {
                   // Update phase locally first
                   if (user && user.phase === 1) {
                     updateUserPhaseLocally(2);
+                    console.log("Phase updated locally to 2 via manual button");
                   }
                   window.location.href = "/feed";
                 }}
