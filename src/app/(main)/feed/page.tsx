@@ -69,8 +69,11 @@ export default function FeedPage() {
     // Phase filter - only show posts user can view
     // Special case: if user is Phase 1 but has created posts, they can view all posts
     // (handles race condition during phase transition)
+    // Admins can always view all posts
     const canViewAllPosts =
-      phaseUtils.canViewPhasePosts(user, 1) || userHasCreatedPost;
+      user?.isAdmin ||
+      phaseUtils.canViewPhasePosts(user, 1) ||
+      userHasCreatedPost;
 
     filtered = filtered.filter((post) => {
       const postPhase = post.phase || 1;
@@ -120,7 +123,15 @@ export default function FeedPage() {
       default:
         return filtered;
     }
-  }, [posts, searchTerm, selectedCategory, selectedHashtag, sortBy, user, userHasCreatedPost]);
+  }, [
+    posts,
+    searchTerm,
+    selectedCategory,
+    selectedHashtag,
+    sortBy,
+    user,
+    userHasCreatedPost,
+  ]);
 
   if (isLoading) {
     return (
@@ -135,7 +146,13 @@ export default function FeedPage() {
 
   // Check if user is in Phase 1 (shouldn't be able to view posts yet)
   // BUT if they've already created a post, let them through (handles race condition during phase transition)
-  if (user && phaseUtils.getCurrentPhase(user) === 1 && !userHasCreatedPost) {
+  // Admins can always view the gallery for debugging
+  if (
+    user &&
+    !user.isAdmin &&
+    phaseUtils.getCurrentPhase(user) === 1 &&
+    !userHasCreatedPost
+  ) {
     console.log("Feed page: User in Phase 1, no posts created yet");
     return (
       <div className="text-center py-12">
@@ -145,7 +162,8 @@ export default function FeedPage() {
           </h2>
           <p className="text-gray-700 mb-6">
             You need to create your first post before you can view the gallery.
-            Share your business compatibility experience to unlock access to other posts!
+            Share your business compatibility experience to unlock access to
+            other posts!
           </p>
           <Link href="/create-post">
             <Button size="lg" className="flex items-center space-x-2">
@@ -174,21 +192,28 @@ export default function FeedPage() {
           <p className="text-gray-600 mt-1">Customer Compatibility Exercise</p>
           {user && (
             <p className="text-sm text-blue-600 mt-1">
-              {userHasCreatedPost
+              {user.isAdmin
+                ? "Admin View - Full Access"
+                : userHasCreatedPost
                 ? phaseUtils.getPhaseName(2)
                 : phaseUtils.getPhaseName(phaseUtils.getCurrentPhase(user))}
             </p>
           )}
         </div>
         <div className="flex items-center space-x-3">
-          {user && !userHasCreatedPost && phaseUtils.getCurrentPhase(user) === 1 && (
-            <Link href="/create-post">
-              <Button className="flex items-center space-x-2">
-                <Plus className="h-4 w-4" />
-                <span>Create Post</span>
-              </Button>
-            </Link>
-          )}
+          {user &&
+            (user.isAdmin ||
+              (!userHasCreatedPost &&
+                phaseUtils.getCurrentPhase(user) === 1)) && (
+              <Link href="/create-post">
+                <Button className="flex items-center space-x-2">
+                  <Plus className="h-4 w-4" />
+                  <span>
+                    {user.isAdmin ? "Create Test Post" : "Create Post"}
+                  </span>
+                </Button>
+              </Link>
+            )}
         </div>
       </div>
 
