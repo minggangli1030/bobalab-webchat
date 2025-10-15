@@ -135,7 +135,16 @@ export const firebasePostUtils = {
       const post = await firebasePostUtils.getPostById(postId);
 
       if (post) {
-        const updatedComments = [...post.comments, comment];
+        // Ensure comment has proper date format
+        const commentWithTimestamp = {
+          ...comment,
+          createdAt:
+            comment.createdAt instanceof Date
+              ? comment.createdAt
+              : new Date(comment.createdAt),
+        };
+
+        const updatedComments = [...post.comments, commentWithTimestamp];
         await updateDoc(postRef, { comments: updatedComments });
         return true;
       }
@@ -170,18 +179,66 @@ export const firebasePostUtils = {
     try {
       // Check if Firebase is initialized
       if (!db) {
+        console.error("Firebase not initialized");
         return [];
       }
 
       const querySnapshot = await getDocs(collection(db, "users"));
-      return querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt: doc.data().createdAt.toDate(),
-      })) as User[];
+      const users = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt?.toDate
+            ? data.createdAt.toDate()
+            : new Date(data.createdAt),
+        } as User;
+      });
+
+      console.log("Retrieved users:", users.length);
+      return users;
     } catch (error) {
       console.error("Error getting users:", error);
       return [];
+    }
+  },
+
+  // Update user phase (admin only)
+  updateUserPhase: async (
+    userId: string,
+    newPhase: number
+  ): Promise<boolean> => {
+    try {
+      const userRef = doc(db, "users", userId);
+      await updateDoc(userRef, { phase: newPhase });
+      return true;
+    } catch (error) {
+      console.error("Error updating user phase:", error);
+      return false;
+    }
+  },
+
+  // Delete all data (admin only)
+  deleteAllData: async (): Promise<boolean> => {
+    try {
+      // Delete all posts
+      const postsSnapshot = await getDocs(collection(db, "posts"));
+      const deletePostPromises = postsSnapshot.docs.map((doc) =>
+        deleteDoc(doc.ref)
+      );
+      await Promise.all(deletePostPromises);
+
+      // Delete all users except admin
+      const usersSnapshot = await getDocs(collection(db, "users"));
+      const deleteUserPromises = usersSnapshot.docs
+        .filter((doc) => !doc.data().isAdmin)
+        .map((doc) => deleteDoc(doc.ref));
+      await Promise.all(deleteUserPromises);
+
+      return true;
+    } catch (error) {
+      console.error("Error deleting all data:", error);
+      return false;
     }
   },
 };

@@ -26,6 +26,7 @@ export const firebaseAuthUtils = {
       preferredName: "Admin",
       createdAt: new Date(),
       isAdmin: true,
+      phase: 2, // Admin can access all phases
     };
   },
 

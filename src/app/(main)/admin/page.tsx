@@ -86,14 +86,53 @@ export default function AdminPage() {
       return;
 
     try {
-      // This would need to be implemented in firebase-posts.ts
-      // For now, we'll just show an alert
-      alert(
-        "Phase advancement functionality needs to be implemented in the backend."
+      const success = await firebasePostUtils.updateUserPhase(
+        userId,
+        currentPhase + 1
       );
+      if (success) {
+        // Refresh users list
+        const allUsers = await firebasePostUtils.getAllUsers();
+        setUsers(allUsers);
+        alert("User phase advanced successfully!");
+      } else {
+        alert("Failed to advance user phase.");
+      }
     } catch (error) {
       console.error("Error advancing user phase:", error);
       alert("Failed to advance user phase.");
+    }
+  };
+
+  const deleteAllData = async () => {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete ALL data? This action cannot be undone!"
+      )
+    )
+      return;
+    if (
+      !window.confirm(
+        "This will delete ALL posts and users (except admin). Are you absolutely sure?"
+      )
+    )
+      return;
+
+    try {
+      const success = await firebasePostUtils.deleteAllData();
+      if (success) {
+        // Refresh data
+        const allPosts = await firebasePostUtils.getAllPosts();
+        const allUsers = await firebasePostUtils.getAllUsers();
+        setPosts(allPosts);
+        setUsers(allUsers);
+        alert("All data deleted successfully!");
+      } else {
+        alert("Failed to delete all data.");
+      }
+    } catch (error) {
+      console.error("Error deleting all data:", error);
+      alert("Failed to delete all data.");
     }
   };
 
@@ -151,12 +190,24 @@ export default function AdminPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Admin Dashboard
-        </h1>
-        <p className="text-gray-600">
-          Manage users, posts, and view platform statistics
-        </p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Admin Dashboard
+            </h1>
+            <p className="text-gray-600">
+              Manage users, posts, and view platform statistics
+            </p>
+          </div>
+          <Button
+            variant="destructive"
+            onClick={deleteAllData}
+            className="flex items-center space-x-2"
+          >
+            <Trash2 className="h-4 w-4" />
+            <span>Delete All Data</span>
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}

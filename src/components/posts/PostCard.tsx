@@ -40,14 +40,23 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
     }
   };
 
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  const formatDate = (date: Date | string) => {
+    try {
+      const dateObj = date instanceof Date ? date : new Date(date);
+      if (isNaN(dateObj.getTime())) {
+        return "Invalid Date";
+      }
+      return dateObj.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Invalid Date";
+    }
   };
 
   return (
@@ -55,18 +64,20 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
       <CardContent className="p-4">
         {/* Gallery Header */}
         <div className="flex items-start justify-between mb-3">
-          <div className="flex-1">
-            <h3 className="font-bold text-lg text-gray-900 mb-1">
+          <div className="flex-1 min-w-0">
+            <h3 className="font-bold text-lg text-gray-900 mb-1 truncate">
               {post.businessName || "Business Name"}
             </h3>
             <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <span>by {post.authorName}</span>
+              <span className="truncate">by {post.authorName}</span>
               <span>•</span>
-              <span>{formatDate(post.createdAt)}</span>
+              <span className="whitespace-nowrap">
+                {formatDate(post.createdAt)}
+              </span>
             </div>
           </div>
           {post.category && (
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs ml-2 flex-shrink-0">
               {post.category}
             </Badge>
           )}
@@ -109,37 +120,39 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
 
         {/* Actions */}
         <div className="flex items-center justify-between pt-3 border-t">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             <Button
               variant="ghost"
               size="sm"
               onClick={handleLike}
-              className={`flex items-center space-x-2 ${
+              className={`flex items-center space-x-1 ${
                 isLiked ? "text-red-600" : "text-gray-600"
               }`}
             >
               <Heart className={`h-4 w-4 ${isLiked ? "fill-current" : ""}`} />
-              <span>{likesCount}</span>
+              <span className="text-xs sm:text-sm">{likesCount}</span>
             </Button>
 
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setShowLikedBy(!showLikedBy)}
-              className="flex items-center space-x-2 text-gray-600"
+              className="flex items-center space-x-1 text-gray-600"
             >
               <Users className="h-4 w-4" />
-              <span>Who liked</span>
+              <span className="hidden sm:inline text-xs sm:text-sm">
+                Who liked
+              </span>
             </Button>
 
             <Link href={`/post/${post.id}`}>
               <Button
                 variant="ghost"
                 size="sm"
-                className="flex items-center space-x-2 text-gray-600"
+                className="flex items-center space-x-1 text-gray-600"
               >
                 <Eye className="h-4 w-4" />
-                <span>View Details</span>
+                <span className="text-xs sm:text-sm">View</span>
               </Button>
             </Link>
           </div>
