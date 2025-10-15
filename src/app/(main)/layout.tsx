@@ -100,7 +100,8 @@ export default function MainLayout({
                     </Link>
                   )}
                 {user &&
-                  (user.isAdmin || phaseUtils.getCurrentPhase(user) === 1) && (
+                  !user.isAdmin &&
+                  phaseUtils.getCurrentPhase(user) === 1 && (
                     <Link
                       href="/create-post"
                       className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"

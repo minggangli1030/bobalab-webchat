@@ -16,12 +16,12 @@ export const phaseUtils = {
   // Check if user can create posts in a specific phase
   canCreateInPhase: (user: User | null, phase: number): boolean => {
     if (!user) return false;
-    if (user.isAdmin) return true; // Admins can create in any phase
+    if (user.isAdmin) return false; // Admins cannot create posts (view-only mode)
 
     const userPhase = user.phase || PHASES.PHASE_1;
 
-    // Users can only create posts in their current phase
-    return userPhase === phase;
+    // Only Phase 1 users can create posts
+    return userPhase === PHASES.PHASE_1;
   },
 
   // Check if user can view posts from a specific phase

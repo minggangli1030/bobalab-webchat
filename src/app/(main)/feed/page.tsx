@@ -63,9 +63,16 @@ export default function FeedPage() {
     let filtered = posts;
 
     // Phase filter - only show posts user can view
+    // Special case: if user is Phase 1 but has created posts, they can view all posts
+    // (handles race condition during phase transition)
+    const userHasCreatedPost =
+      user && posts.some((post) => post.authorId === user.id);
+    const canViewAllPosts =
+      phaseUtils.canViewPhasePosts(user, 1) || userHasCreatedPost;
+
     filtered = filtered.filter((post) => {
       const postPhase = post.phase || 1;
-      return phaseUtils.canViewPhasePosts(user, postPhase);
+      return canViewAllPosts || phaseUtils.canViewPhasePosts(user, postPhase);
     });
 
     // Search filter
@@ -112,6 +119,10 @@ export default function FeedPage() {
         return filtered;
     }
   }, [posts, searchTerm, selectedCategory, selectedHashtag, sortBy, user]);
+
+  // Check if user has created any posts (for handling phase transition)
+  const userHasCreatedPost =
+    user && posts.some((post) => post.authorId === user.id);
 
   if (isLoading) {
     return (
