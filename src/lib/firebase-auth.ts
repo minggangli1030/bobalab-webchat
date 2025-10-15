@@ -35,7 +35,8 @@ export const firebaseAuthUtils = {
     password: string,
     formalName: string,
     preferredName: string,
-    studentId?: string
+    studentId?: string,
+    businessName?: string
   ): Promise<{ user: User | null; error: string | null }> => {
     try {
       // Check if Firebase is initialized
@@ -66,8 +67,10 @@ export const firebaseAuthUtils = {
         studentId: studentId || "",
         formalName: formalName,
         preferredName: preferredName,
+        businessName: businessName || "",
         createdAt: new Date(),
         isAdmin: false,
+        phase: 1, // Default to phase 1
       };
 
       await setDoc(doc(db, "users", firebaseUser.uid), userData);

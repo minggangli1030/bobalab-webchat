@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { firebasePostUtils } from "@/lib/firebase-posts";
 import { Post } from "@/lib/types";
+import { POST_CATEGORIES, PHASES } from "@/lib/constants";
+import { phaseUtils } from "@/lib/phase-utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,6 +28,8 @@ export default function CreatePostPage() {
   const [formData, setFormData] = useState({
     content: "",
     hashtags: "",
+    businessName: "",
+    category: "",
   });
   const [images, setImages] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -42,6 +46,20 @@ export default function CreatePostPage() {
     setFormData((prev) => ({
       ...prev,
       hashtags: e.target.value,
+    }));
+  };
+
+  const handleBusinessNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({
+      ...prev,
+      businessName: e.target.value,
+    }));
+  };
+
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFormData((prev) => ({
+      ...prev,
+      category: e.target.value,
     }));
   };
 
@@ -76,11 +94,14 @@ export default function CreatePostPage() {
       const postData = {
         authorId: user.id,
         authorName: user.preferredName,
+        businessName: formData.businessName || user.businessName || "",
         content: formData.content,
         images: [], // Will be populated after upload
         hashtags: hashtagsArray,
+        category: formData.category,
         likes: [],
         comments: [],
+        phase: user.phase || PHASES.PHASE_1,
       };
 
       // Create the post in Firestore first
@@ -109,30 +130,101 @@ export default function CreatePostPage() {
     return null;
   }
 
+  // Check if user can create posts in their current phase
+  const currentPhase = phaseUtils.getCurrentPhase(user);
+  const canCreate = phaseUtils.canCreateInPhase(user, currentPhase);
+
+  if (!canCreate) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <Card>
+          <CardContent className="p-6 text-center">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              Cannot Create Posts
+            </h2>
+            <p className="text-gray-600 mb-4">
+              You cannot create posts in your current phase. Please contact an
+              administrator to advance your phase.
+            </p>
+            <Button onClick={() => router.push("/feed")}>
+              Back to Gallery
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-2xl mx-auto">
       <Card>
         <CardHeader>
           <CardTitle>Create a New Post</CardTitle>
           <CardDescription>
-            Share your ideas, experiences, or thoughts with the community
+            Share your business compatibility experiences and insights
           </CardDescription>
+          <div className="mt-2">
+            <Badge variant="outline" className="text-xs">
+              {phaseUtils.getPhaseName(currentPhase)}
+            </Badge>
+          </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Business Name */}
+            <div>
+              <label
+                htmlFor="businessName"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Business Name
+              </label>
+              <Input
+                id="businessName"
+                value={formData.businessName}
+                onChange={handleBusinessNameChange}
+                placeholder="Enter the business name you're reviewing"
+                required
+              />
+            </div>
+
+            {/* Category */}
+            <div>
+              <label
+                htmlFor="category"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Category
+              </label>
+              <select
+                id="category"
+                value={formData.category}
+                onChange={handleCategoryChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                required
+              >
+                <option value="">Select a category</option>
+                {POST_CATEGORIES.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             {/* Content */}
             <div>
               <label
                 htmlFor="content"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
-                What's on your mind?
+                Your Experience
               </label>
               <Textarea
                 id="content"
                 value={formData.content}
                 onChange={handleContentChange}
-                placeholder="Share your thoughts..."
+                placeholder="Share your business compatibility experience..."
                 className="min-h-[120px]"
                 required
               />

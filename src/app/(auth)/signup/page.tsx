@@ -21,6 +21,7 @@ export default function SignupPage() {
     confirmPassword: "",
     formalName: "",
     preferredName: "",
+    businessName: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -51,7 +52,8 @@ export default function SignupPage() {
         formData.password,
         formData.formalName,
         formData.preferredName,
-        "" // No student ID needed anymore
+        "", // No student ID needed anymore
+        formData.businessName
       );
 
       if (result.success) {
@@ -81,7 +83,7 @@ export default function SignupPage() {
             Create Account
           </CardTitle>
           <CardDescription className="text-center">
-            Join the web chat to share your ideas
+            Join the Customer Compatibility Exercise platform
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -178,6 +180,24 @@ export default function SignupPage() {
                 onChange={handleChange}
                 className="mt-1"
                 placeholder="Johnny"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="businessName"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Business Name (Optional)
+              </label>
+              <Input
+                id="businessName"
+                name="businessName"
+                type="text"
+                value={formData.businessName}
+                onChange={handleChange}
+                className="mt-1"
+                placeholder="Your business or company name"
               />
             </div>
 

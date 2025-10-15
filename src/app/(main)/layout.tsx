@@ -51,7 +51,7 @@ export default function MainLayout({
             {/* Logo and Navigation */}
             <div className="flex items-center space-x-8">
               <Link href="/feed" className="text-xl font-bold text-gray-900">
-                Web Chat
+                Customer Compatibility Exercise
               </Link>
 
               <nav className="hidden md:flex space-x-6">
@@ -60,7 +60,7 @@ export default function MainLayout({
                   className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
                 >
                   <Home className="h-4 w-4" />
-                  <span>Feed</span>
+                  <span>Gallery</span>
                 </Link>
                 <Link
                   href="/create-post"

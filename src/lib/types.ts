@@ -6,6 +6,8 @@ export interface User {
   preferredName: string;
   createdAt: Date;
   isAdmin?: boolean;
+  phase?: number; // 1 or 2 for phase-based access
+  businessName?: string; // For business compatibility exercise
 }
 
 export interface Comment {
@@ -21,12 +23,16 @@ export interface Post {
   id: string;
   authorId: string;
   authorName: string;
+  businessName?: string; // Business name for compatibility exercise
   content: string;
   images: string[];
   hashtags: string[];
+  category?: string; // Limited category options
   likes: string[];
+  likedBy?: User[]; // Public list of users who liked
   comments: Comment[];
   createdAt: Date;
+  phase?: number; // Which phase this post belongs to
 }
 
 export interface AuthContextType {
@@ -37,7 +43,8 @@ export interface AuthContextType {
     password: string,
     formalName: string,
     preferredName: string,
-    studentId?: string
+    studentId?: string,
+    businessName?: string
   ) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   isLoading: boolean;
@@ -47,4 +54,7 @@ export interface CreatePostData {
   content: string;
   images: string[];
   hashtags: string[];
+  businessName?: string;
+  category?: string;
+  phase?: number;
 }

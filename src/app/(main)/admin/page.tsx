@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { firebasePostUtils } from "@/lib/firebase-posts";
 import { Post, User } from "@/lib/types";
+import { phaseUtils } from "@/lib/phase-utils";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,6 +21,7 @@ import {
   MessageSquare,
   Heart,
   Calendar,
+  ArrowUp,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -70,6 +72,28 @@ export default function AdminPage() {
     } catch (error) {
       console.error("Error deleting post:", error);
       alert("Failed to delete post.");
+    }
+  };
+
+  const advanceUserPhase = async (userId: string, currentPhase: number) => {
+    if (
+      !window.confirm(
+        `Are you sure you want to advance this user to Phase ${
+          currentPhase + 1
+        }?`
+      )
+    )
+      return;
+
+    try {
+      // This would need to be implemented in firebase-posts.ts
+      // For now, we'll just show an alert
+      alert(
+        "Phase advancement functionality needs to be implemented in the backend."
+      );
+    } catch (error) {
+      console.error("Error advancing user phase:", error);
+      alert("Failed to advance user phase.");
     }
   };
 
@@ -424,6 +448,11 @@ export default function AdminPage() {
                         {user.studentId && (
                           <span>Student ID: {user.studentId}</span>
                         )}
+                        <Badge variant="outline" className="text-xs">
+                          {phaseUtils.getPhaseName(
+                            phaseUtils.getCurrentPhase(user)
+                          )}
+                        </Badge>
                       </div>
                     </div>
                     <div className="flex space-x-2 ml-4">
@@ -431,6 +460,22 @@ export default function AdminPage() {
                         {posts.filter((p) => p.authorId === user.id).length}{" "}
                         posts
                       </Badge>
+                      {!user.isAdmin && phaseUtils.canAdvancePhase(user) && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            advanceUserPhase(
+                              user.id,
+                              phaseUtils.getCurrentPhase(user)
+                            )
+                          }
+                          className="text-xs"
+                        >
+                          <ArrowUp className="h-3 w-3 mr-1" />
+                          Advance Phase
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </CardContent>

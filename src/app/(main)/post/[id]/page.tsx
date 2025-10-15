@@ -4,13 +4,13 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Post, Comment } from "@/lib/types";
 import { useAuth } from "@/contexts/AuthContext";
-import { postUtils } from "@/lib/auth";
+import { firebasePostUtils } from "@/lib/firebase-posts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Heart, MessageCircle, ArrowLeft } from "lucide-react";
+import { Heart, MessageCircle, ArrowLeft, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -22,24 +22,46 @@ export default function PostDetailPage() {
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
+  const [showLikedBy, setShowLikedBy] = useState(false);
 
   useEffect(() => {
-    const postId = params.id as string;
-    const foundPost = postUtils.getPostById(postId);
-    setPost(foundPost);
-    setIsLoading(false);
-  }, [params.id]);
+    const loadPost = async () => {
+      try {
+        const postId = params.id as string;
+        const foundPost = await firebasePostUtils.getPostById(postId);
+        setPost(foundPost);
+        if (foundPost && user) {
+          setIsLiked(foundPost.likes.includes(user.id));
+          setLikesCount(foundPost.likes.length);
+        }
+      } catch (error) {
+        console.error("Error loading post:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadPost();
+  }, [params.id, user]);
 
-  const handleLike = () => {
+  const handleLike = async () => {
     if (!user || !post) return;
 
-    const updatedLikes = post.likes.includes(user.id)
-      ? post.likes.filter((id) => id !== user.id)
-      : [...post.likes, user.id];
-
-    const updatedPost = { ...post, likes: updatedLikes };
-    postUtils.updatePost(post.id, { likes: updatedLikes });
-    setPost(updatedPost);
+    try {
+      const success = await firebasePostUtils.toggleLike(post.id, user.id);
+      if (success) {
+        setIsLiked(!isLiked);
+        setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
+        // Refresh the post to get updated data
+        const updatedPost = await firebasePostUtils.getPostById(post.id);
+        if (updatedPost) {
+          setPost(updatedPost);
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling like:", error);
+    }
   };
 
   const handleAddComment = async (e: React.FormEvent) => {
@@ -48,22 +70,30 @@ export default function PostDetailPage() {
 
     setIsSubmittingComment(true);
 
-    const comment: Comment = {
-      id: Date.now().toString(),
-      postId: post.id,
-      authorId: user.id,
-      authorName: user.preferredName,
-      content: newComment.trim(),
-      createdAt: new Date(),
-    };
+    try {
+      const comment: Comment = {
+        id: Date.now().toString(),
+        postId: post.id,
+        authorId: user.id,
+        authorName: user.preferredName,
+        content: newComment.trim(),
+        createdAt: new Date(),
+      };
 
-    const updatedComments = [...post.comments, comment];
-    const updatedPost = { ...post, comments: updatedComments };
-
-    postUtils.updatePost(post.id, { comments: updatedComments });
-    setPost(updatedPost);
-    setNewComment("");
-    setIsSubmittingComment(false);
+      const success = await firebasePostUtils.addComment(post.id, comment);
+      if (success) {
+        // Refresh the post to get updated comments
+        const updatedPost = await firebasePostUtils.getPostById(post.id);
+        if (updatedPost) {
+          setPost(updatedPost);
+        }
+        setNewComment("");
+      }
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    } finally {
+      setIsSubmittingComment(false);
+    }
   };
 
   const formatDate = (date: Date) => {
@@ -103,7 +133,7 @@ export default function PostDetailPage() {
     );
   }
 
-  const isLiked = user ? post.likes.includes(user.id) : false;
+  // Remove this line since we're using state now
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -118,19 +148,31 @@ export default function PostDetailPage() {
       {/* Post */}
       <Card>
         <CardHeader className="pb-3">
-          <div className="flex items-center space-x-3">
-            <Avatar className="h-10 w-10">
-              <AvatarFallback>
-                {post.authorName.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1">
-              <h3 className="font-semibold text-gray-900">{post.authorName}</h3>
-              <p className="text-sm text-gray-500">
-                {formatDate(post.createdAt)}
-              </p>
+          <div className="flex items-start justify-between">
+            <div className="flex items-center space-x-3">
+              <Avatar className="h-10 w-10">
+                <AvatarFallback>
+                  {post.authorName.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1">
+                <h3 className="font-semibold text-gray-900">
+                  {post.authorName}
+                </h3>
+                <p className="text-sm text-gray-500">
+                  {formatDate(post.createdAt)}
+                </p>
+              </div>
             </div>
+            {post.category && <Badge variant="outline">{post.category}</Badge>}
           </div>
+          {post.businessName && (
+            <div className="mt-2">
+              <h2 className="text-xl font-bold text-gray-900">
+                {post.businessName}
+              </h2>
+            </div>
+          )}
         </CardHeader>
 
         <CardContent className="space-y-4">
@@ -181,7 +223,17 @@ export default function PostDetailPage() {
                 }`}
               >
                 <Heart className={`h-4 w-4 ${isLiked ? "fill-current" : ""}`} />
-                <span>{post.likes.length}</span>
+                <span>{likesCount}</span>
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowLikedBy(!showLikedBy)}
+                className="flex items-center space-x-2 text-gray-600"
+              >
+                <Users className="h-4 w-4" />
+                <span>Who liked</span>
               </Button>
 
               <div className="flex items-center space-x-2 text-gray-600">
@@ -190,6 +242,20 @@ export default function PostDetailPage() {
               </div>
             </div>
           </div>
+
+          {/* Show who liked (if any) */}
+          {showLikedBy && post.likes.length > 0 && (
+            <div className="pt-3 border-t">
+              <p className="text-sm text-gray-600 mb-2">Liked by:</p>
+              <div className="flex flex-wrap gap-2">
+                {post.likes.map((userId, index) => (
+                  <Badge key={index} variant="outline" className="text-xs">
+                    User {userId.slice(-4)}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 

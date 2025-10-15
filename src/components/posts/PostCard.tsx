@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Heart, MessageCircle, Share } from "lucide-react";
+import { Heart, MessageCircle, Share, Eye, Users } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -23,6 +23,7 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
     user ? post.likes.includes(user.id) : false
   );
   const [likesCount, setLikesCount] = useState(post.likes.length);
+  const [showLikedBy, setShowLikedBy] = useState(false);
 
   const handleLike = async () => {
     if (!user) return;
@@ -51,61 +52,64 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
 
   return (
     <Card className="hover:shadow-md transition-shadow">
-      <CardHeader className="pb-3">
-        <div className="flex items-center space-x-3">
-          <Avatar className="h-10 w-10">
-            <AvatarFallback>
-              {post.authorName.charAt(0).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
+      <CardContent className="p-4">
+        {/* Gallery Header */}
+        <div className="flex items-start justify-between mb-3">
           <div className="flex-1">
-            <h3 className="font-semibold text-gray-900">{post.authorName}</h3>
-            <p className="text-sm text-gray-500">
-              {formatDate(post.createdAt)}
-            </p>
+            <h3 className="font-bold text-lg text-gray-900 mb-1">
+              {post.businessName || "Business Name"}
+            </h3>
+            <div className="flex items-center space-x-2 text-sm text-gray-600">
+              <span>by {post.authorName}</span>
+              <span>•</span>
+              <span>{formatDate(post.createdAt)}</span>
+            </div>
           </div>
-        </div>
-      </CardHeader>
-
-      <CardContent className="space-y-4">
-        {/* Post Content */}
-        <div className="prose max-w-none">
-          <p className="text-gray-800 whitespace-pre-wrap">{post.content}</p>
+          {post.category && (
+            <Badge variant="outline" className="text-xs">
+              {post.category}
+            </Badge>
+          )}
         </div>
 
-        {/* Images */}
+        {/* Photo Preview */}
         {post.images.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {post.images.map((image, index) => (
-              <div
-                key={index}
-                className="relative aspect-video rounded-lg overflow-hidden"
-              >
-                <Image
-                  src={image}
-                  alt={`Post image ${index + 1}`}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            ))}
+          <div className="mb-3">
+            <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
+              <Image
+                src={post.images[0]}
+                alt={`${post.businessName} preview`}
+                fill
+                className="object-cover"
+              />
+              {post.images.length > 1 && (
+                <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                  +{post.images.length - 1} more
+                </div>
+              )}
+            </div>
           </div>
         )}
 
         {/* Hashtags */}
         {post.hashtags.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {post.hashtags.map((hashtag, index) => (
+          <div className="flex flex-wrap gap-1 mb-3">
+            {post.hashtags.slice(0, 3).map((hashtag, index) => (
               <Badge key={index} variant="secondary" className="text-xs">
                 #{hashtag}
               </Badge>
             ))}
+            {post.hashtags.length > 3 && (
+              <Badge variant="outline" className="text-xs">
+                +{post.hashtags.length - 3} more
+              </Badge>
+            )}
           </div>
         )}
 
         {/* Actions */}
-        <div className="flex items-center justify-between pt-4 border-t">
-          <div className="flex items-center space-x-6">
+        <div className="flex items-center justify-between pt-3 border-t">
+          <div className="flex items-center space-x-4">
             <Button
               variant="ghost"
               size="sm"
@@ -118,27 +122,42 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
               <span>{likesCount}</span>
             </Button>
 
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowLikedBy(!showLikedBy)}
+              className="flex items-center space-x-2 text-gray-600"
+            >
+              <Users className="h-4 w-4" />
+              <span>Who liked</span>
+            </Button>
+
             <Link href={`/post/${post.id}`}>
               <Button
                 variant="ghost"
                 size="sm"
                 className="flex items-center space-x-2 text-gray-600"
               >
-                <MessageCircle className="h-4 w-4" />
-                <span>{post.comments.length}</span>
+                <Eye className="h-4 w-4" />
+                <span>View Details</span>
               </Button>
             </Link>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              className="flex items-center space-x-2 text-gray-600"
-            >
-              <Share className="h-4 w-4" />
-              <span>Share</span>
-            </Button>
           </div>
         </div>
+
+        {/* Show who liked (if any) */}
+        {showLikedBy && post.likes.length > 0 && (
+          <div className="mt-3 pt-3 border-t">
+            <p className="text-sm text-gray-600 mb-2">Liked by:</p>
+            <div className="flex flex-wrap gap-2">
+              {post.likes.map((userId, index) => (
+                <Badge key={index} variant="outline" className="text-xs">
+                  User {userId.slice(-4)}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
