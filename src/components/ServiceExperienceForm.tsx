@@ -20,11 +20,89 @@ import {
   ServiceAttribute,
   VariabilityAssessment,
 } from "@/lib/types";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface ServiceExperienceFormProps {
   onSubmit: (experience: ServiceExperience) => void;
   onCancel: () => void;
   isLoading?: boolean;
+}
+
+interface SortableAttributeItemProps {
+  attribute: ServiceAttribute;
+  index: number;
+  onRankingChange: (index: number, ranking: number) => void;
+}
+
+function SortableAttributeItem({
+  attribute,
+  index,
+  onRankingChange,
+}: SortableAttributeItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: attribute.name });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="flex items-center space-x-4 p-3 border rounded-lg bg-white"
+    >
+      <div
+        {...attributes}
+        {...listeners}
+        className="cursor-grab active:cursor-grabbing"
+      >
+        <GripVertical className="h-5 w-5 text-gray-400" />
+      </div>
+      <div className="flex-1">
+        <span className="font-medium">{attribute.name}</span>
+      </div>
+      <div className="flex items-center space-x-2">
+        <span className="text-sm text-gray-500">Rank:</span>
+        <select
+          value={attribute.userRanking}
+          onChange={(e) => onRankingChange(index, parseInt(e.target.value))}
+          className="px-2 py-1 border rounded text-sm"
+        >
+          <option value={0}>Select rank</option>
+          {[1, 2, 3, 4, 5, 6].map((rank) => (
+            <option key={rank} value={rank}>
+              {rank}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
 }
 
 const ORGANIZATION_TYPES = [
@@ -104,8 +182,44 @@ export default function ServiceExperienceForm({
 
   const totalSteps = 6;
 
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   const updateFormData = (updates: Partial<ServiceExperience>) => {
     setFormData((prev) => ({ ...prev, ...updates }));
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex =
+        formData.serviceAttributes?.findIndex(
+          (attr) => attr.name === active.id
+        ) ?? 0;
+      const newIndex =
+        formData.serviceAttributes?.findIndex(
+          (attr) => attr.name === over.id
+        ) ?? 0;
+
+      const newAttributes = arrayMove(
+        formData.serviceAttributes || [],
+        oldIndex,
+        newIndex
+      );
+
+      updateFormData({ serviceAttributes: newAttributes });
+    }
+  };
+
+  const handleRankingChange = (index: number, ranking: number) => {
+    const newAttributes = [...(formData.serviceAttributes || [])];
+    newAttributes[index].userRanking = ranking;
+    updateFormData({ serviceAttributes: newAttributes });
   };
 
   const nextStep = () => {
@@ -250,40 +364,27 @@ export default function ServiceExperienceForm({
         </p>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {formData.serviceAttributes?.map((attr, index) => (
-            <div
-              key={attr.name}
-              className="flex items-center space-x-4 p-3 border rounded-lg"
-            >
-              <GripVertical className="h-5 w-5 text-gray-400" />
-              <div className="flex-1">
-                <span className="font-medium">{attr.name}</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-500">Rank:</span>
-                <select
-                  value={attr.userRanking}
-                  onChange={(e) => {
-                    const newAttributes = [
-                      ...(formData.serviceAttributes || []),
-                    ];
-                    newAttributes[index].userRanking = parseInt(e.target.value);
-                    updateFormData({ serviceAttributes: newAttributes });
-                  }}
-                  className="px-2 py-1 border rounded text-sm"
-                >
-                  <option value={0}>Select rank</option>
-                  {[1, 2, 3, 4, 5, 6].map((rank) => (
-                    <option key={rank} value={rank}>
-                      {rank}
-                    </option>
-                  ))}
-                </select>
-              </div>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={formData.serviceAttributes?.map((attr) => attr.name) || []}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="space-y-4">
+              {formData.serviceAttributes?.map((attr, index) => (
+                <SortableAttributeItem
+                  key={attr.name}
+                  attribute={attr}
+                  index={index}
+                  onRankingChange={handleRankingChange}
+                />
+              ))}
             </div>
-          ))}
-        </div>
+          </SortableContext>
+        </DndContext>
       </CardContent>
     </Card>
   );
@@ -593,7 +694,7 @@ export default function ServiceExperienceForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Yelp Score (if applicable)
+              Google Review Score (if applicable)
             </label>
             <select
               value={formData.yelpScore || ""}
@@ -617,7 +718,7 @@ export default function ServiceExperienceForm({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Yelp Price Range (if applicable)
+              Google Review Price Range (if applicable)
             </label>
             <select
               value={formData.yelpPriceRange || ""}
