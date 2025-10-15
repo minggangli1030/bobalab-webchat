@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Flag, MessageCircle, ArrowLeft, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { HighlightModal } from "@/components/HighlightModal";
 
 export default function PostDetailPage() {
   const params = useParams();
@@ -25,6 +26,7 @@ export default function PostDetailPage() {
   const [isHighlighted, setIsHighlighted] = useState(false);
   const [highlightCount, setHighlightCount] = useState(0);
   const [showHighlightedBy, setShowHighlightedBy] = useState(false);
+  const [showHighlightModal, setShowHighlightModal] = useState(false);
 
   useEffect(() => {
     const loadPost = async () => {
@@ -47,7 +49,12 @@ export default function PostDetailPage() {
     loadPost();
   }, [params.id, user]);
 
-  const handleHighlight = async () => {
+  const handleHighlightClick = () => {
+    if (!user) return;
+    setShowHighlightModal(true);
+  };
+
+  const handleHighlightConfirm = async (reason: string) => {
     if (!user || !post) return;
 
     try {
@@ -55,7 +62,7 @@ export default function PostDetailPage() {
         post.id,
         user.id,
         user.preferredName,
-        "Highlighted for discussion"
+        reason
       );
       if (success) {
         setIsHighlighted(!isHighlighted);
@@ -69,7 +76,7 @@ export default function PostDetailPage() {
         }
       }
     } catch (error) {
-      console.error("Error toggling highlight:", error);
+      console.error("Error highlighting post:", error);
     }
   };
 
@@ -235,7 +242,7 @@ export default function PostDetailPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={handleHighlight}
+                onClick={handleHighlightClick}
                 className={`flex items-center space-x-2 ${
                   isHighlighted ? "text-orange-600" : "text-gray-600"
                 }`}
@@ -354,6 +361,15 @@ export default function PostDetailPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Highlight Modal */}
+      <HighlightModal
+        isOpen={showHighlightModal}
+        onClose={() => setShowHighlightModal(false)}
+        onConfirm={handleHighlightConfirm}
+        isHighlighted={isHighlighted}
+        highlightCount={highlightCount}
+      />
     </div>
   );
 }

@@ -40,8 +40,17 @@ service cloud.firestore {
       allow create: if request.auth != null &&
                       request.resource.data.authorId == request.auth.uid;
 
-      // Users can update/delete their own posts, or admins can do anything
-      allow update, delete: if request.auth != null && (
+      // Users can update their own posts, or admins can do anything
+      // Users can also update posts to add/remove highlights (but not modify other fields)
+      allow update: if request.auth != null && (
+        resource.data.authorId == request.auth.uid ||
+        isAdmin() ||
+        // Allow highlight updates (only highlights field can be modified)
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['highlights']))
+      );
+      
+      // Only post authors and admins can delete posts
+      allow delete: if request.auth != null && (
         resource.data.authorId == request.auth.uid ||
         isAdmin()
       );

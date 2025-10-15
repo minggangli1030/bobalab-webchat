@@ -25,7 +25,7 @@ export function HighlightModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {
-    if (!reason.trim()) return;
+    if (!isHighlighted && !reason.trim()) return;
 
     setIsSubmitting(true);
     try {
