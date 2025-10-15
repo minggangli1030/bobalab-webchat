@@ -326,4 +326,55 @@ export const firebasePostUtils = {
       return false;
     }
   },
+
+  // Delete a specific user and their posts (admin only)
+  deleteUser: async (userId: string): Promise<boolean> => {
+    try {
+      if (!db) {
+        console.error("Firebase not initialized");
+        return false;
+      }
+
+      // Delete all posts by this user
+      const postsSnapshot = await getDocs(collection(db, "posts"));
+      const userPosts = postsSnapshot.docs.filter(
+        (doc) => doc.data().authorId === userId
+      );
+
+      const deletePostPromises = userPosts.map((doc) => deleteDoc(doc.ref));
+      await Promise.all(deletePostPromises);
+
+      // Delete the user document
+      await deleteDoc(doc(db, "users", userId));
+
+      return true;
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      return false;
+    }
+  },
+
+  // Delete all posts by a specific user (admin only)
+  deleteUserPosts: async (userId: string): Promise<boolean> => {
+    try {
+      if (!db) {
+        console.error("Firebase not initialized");
+        return false;
+      }
+
+      // Delete all posts by this user
+      const postsSnapshot = await getDocs(collection(db, "posts"));
+      const userPosts = postsSnapshot.docs.filter(
+        (doc) => doc.data().authorId === userId
+      );
+
+      const deletePostPromises = userPosts.map((doc) => deleteDoc(doc.ref));
+      await Promise.all(deletePostPromises);
+
+      return true;
+    } catch (error) {
+      console.error("Error deleting user posts:", error);
+      return false;
+    }
+  },
 };

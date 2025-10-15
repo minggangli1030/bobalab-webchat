@@ -189,13 +189,9 @@ export default function FeedPage() {
             Phase 2: Peer Feedback
           </h1>
           <p className="text-gray-600 mt-1">Customer Compatibility Exercise</p>
-          {user && (
+          {user && user.isAdmin && (
             <p className="text-sm text-blue-600 mt-1">
-              {user.isAdmin
-                ? "Admin View - Full Access"
-                : userHasCreatedPost
-                ? phaseUtils.getPhaseName(2)
-                : phaseUtils.getPhaseName(phaseUtils.getCurrentPhase(user))}
+              Admin View - Full Access
             </p>
           )}
         </div>

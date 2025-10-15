@@ -147,6 +147,85 @@ export default function AdminPage() {
     });
   };
 
+  const handlePhaseChange = async (userId: string, newPhase: number) => {
+    const phaseName = phaseUtils.getPhaseName(newPhase);
+    if (
+      !window.confirm(
+        `Are you sure you want to move this user to ${phaseName}?`
+      )
+    )
+      return;
+
+    try {
+      const success = await firebasePostUtils.updateUserPhase(userId, newPhase);
+      if (success) {
+        // Refresh users list
+        const allUsers = await firebasePostUtils.getAllUsers();
+        setUsers(allUsers);
+        alert(`User moved to ${phaseName} successfully!`);
+      } else {
+        alert("Failed to change user phase.");
+      }
+    } catch (error) {
+      console.error("Error changing user phase:", error);
+      alert("Failed to change user phase.");
+    }
+  };
+
+  const handleDeleteUserPosts = async (userId: string) => {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete all posts by this user? This action cannot be undone!"
+      )
+    )
+      return;
+
+    try {
+      const success = await firebasePostUtils.deleteUserPosts(userId);
+      if (success) {
+        // Refresh posts and users lists
+        const allPosts = await firebasePostUtils.getAllPosts();
+        const allUsers = await firebasePostUtils.getAllUsers();
+        setPosts(allPosts);
+        setUsers(allUsers);
+        alert("User posts deleted successfully!");
+      } else {
+        alert("Failed to delete user posts.");
+      }
+    } catch (error) {
+      console.error("Error deleting user posts:", error);
+      alert("Failed to delete user posts.");
+    }
+  };
+
+  const handleDeleteUser = async (userId: string) => {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this user completely? This will delete their posts and user data. This action cannot be undone!"
+      )
+    )
+      return;
+
+    try {
+      const success = await firebasePostUtils.deleteUser(userId);
+      if (success) {
+        // Refresh posts and users lists
+        const allPosts = await firebasePostUtils.getAllPosts();
+        const allUsers = await firebasePostUtils.getAllUsers();
+        setPosts(allPosts);
+        setUsers(allUsers);
+        alert(
+          "User deleted successfully! Note: Firebase Auth account may still exist and needs to be manually deleted from Firebase Console."
+        );
+      } else {
+        alert("Failed to delete user.");
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      alert("Failed to delete user.");
+    }
+  };
+
   const downloadCSV = () => {
     // Create CSV data for all posts with their service experience data
     const csvData = posts.map((post) => {
@@ -547,7 +626,7 @@ export default function AdminPage() {
                 : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
             }`}
           >
-            Posts ({posts.length})
+            Post ({posts.length})
           </button>
           <button
             onClick={() => setActiveTab("users")}
@@ -557,7 +636,7 @@ export default function AdminPage() {
                 : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
             }`}
           >
-            Users ({users.length})
+            Gallery ({users.length})
           </button>
           <button
             onClick={() => setActiveTab("analysis")}
@@ -741,63 +820,156 @@ export default function AdminPage() {
               </CardContent>
             </Card>
           ) : (
-            users.map((user) => (
-              <Card key={user.id}>
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-3">
-                        <Badge
-                          variant={user.isAdmin ? "destructive" : "outline"}
-                        >
-                          {user.isAdmin ? "Admin" : "User"}
-                        </Badge>
-                        <span className="font-medium text-gray-900">
-                          {user.formalName} ({user.preferredName})
-                        </span>
-                        <span className="text-sm text-gray-500">
-                          {user.email}
-                        </span>
-                      </div>
-                      <div className="flex items-center space-x-4 text-sm text-gray-600">
-                        <span>ID: {user.id}</span>
-                        <span>Joined: {formatDate(user.createdAt)}</span>
-                        {user.studentId && (
-                          <span>Student ID: {user.studentId}</span>
+            users.map((user) => {
+              const userPosts = posts.filter((p) => p.authorId === user.id);
+              const userPost = userPosts[0]; // Since there's 1 post per user
+              const currentPhase = phaseUtils.getCurrentPhase(user);
+
+              return (
+                <Card key={user.id}>
+                  <CardContent className="p-6">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-3 mb-3">
+                          <Badge
+                            variant={user.isAdmin ? "destructive" : "outline"}
+                          >
+                            {user.isAdmin ? "Admin" : "User"}
+                          </Badge>
+                          <span className="font-medium text-gray-900">
+                            {user.formalName} ({user.preferredName})
+                          </span>
+                          <span className="text-sm text-gray-500">
+                            {user.email}
+                          </span>
+                        </div>
+
+                        {/* Business Name and Post Info */}
+                        {userPost && (
+                          <div className="mb-3 p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <h4 className="font-semibold text-gray-900">
+                                  {userPost.businessName || "No Business Name"}
+                                </h4>
+                                <p className="text-sm text-gray-600">
+                                  {userPost.serviceExperience
+                                    ?.organizationType || "Unknown Type"}
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <div className="flex items-center space-x-2 text-sm">
+                                  <Flag className="h-4 w-4 text-orange-500" />
+                                  <span>
+                                    {userPost.highlights?.length || 0}{" "}
+                                    highlights
+                                  </span>
+                                </div>
+                                <div className="flex items-center space-x-2 text-sm text-gray-500">
+                                  <MessageSquare className="h-4 w-4" />
+                                  <span>
+                                    {userPost.comments.length} comments
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         )}
-                        <Badge variant="outline" className="text-xs">
-                          {phaseUtils.getPhaseName(
-                            phaseUtils.getCurrentPhase(user)
+
+                        <div className="flex items-center space-x-4 text-sm text-gray-600">
+                          <span>ID: {user.id}</span>
+                          <span>Joined: {formatDate(user.createdAt)}</span>
+                          {user.studentId && (
+                            <span>Student ID: {user.studentId}</span>
                           )}
-                        </Badge>
+                          <Badge variant="outline" className="text-xs">
+                            {phaseUtils.getPhaseName(currentPhase)}
+                          </Badge>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col space-y-2 ml-4">
+                        <div className="flex space-x-2">
+                          <Badge variant="secondary">
+                            {userPosts.length} posts
+                          </Badge>
+                          {userPost && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                router.push(`/post/${userPost.id}`)
+                              }
+                              className="text-xs"
+                            >
+                              <Eye className="h-3 w-3 mr-1" />
+                              View Post
+                            </Button>
+                          )}
+                        </div>
+
+                        {/* User Management Buttons */}
+                        {!user.isAdmin && (
+                          <div className="flex space-x-2">
+                            {/* Phase Management */}
+                            <div className="flex space-x-1">
+                              {currentPhase > 1 && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() =>
+                                    handlePhaseChange(user.id, currentPhase - 1)
+                                  }
+                                  className="text-xs"
+                                >
+                                  ← Phase {currentPhase - 1}
+                                </Button>
+                              )}
+                              {currentPhase < 2 && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() =>
+                                    handlePhaseChange(user.id, currentPhase + 1)
+                                  }
+                                  className="text-xs"
+                                >
+                                  Phase {currentPhase + 1} →
+                                </Button>
+                              )}
+                            </div>
+
+                            {/* Delete User Posts */}
+                            {userPosts.length > 0 && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleDeleteUserPosts(user.id)}
+                                className="text-xs text-orange-600 hover:text-orange-700"
+                              >
+                                <Trash2 className="h-3 w-3 mr-1" />
+                                Delete Posts
+                              </Button>
+                            )}
+
+                            {/* Delete User Completely */}
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleDeleteUser(user.id)}
+                              className="text-xs"
+                            >
+                              <Trash2 className="h-3 w-3 mr-1" />
+                              Delete User
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     </div>
-                    <div className="flex space-x-2 ml-4">
-                      <Badge variant="secondary">
-                        {posts.filter((p) => p.authorId === user.id).length}{" "}
-                        posts
-                      </Badge>
-                      {!user.isAdmin && phaseUtils.canAdvancePhase(user) && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            advanceUserPhase(
-                              user.id,
-                              phaseUtils.getCurrentPhase(user)
-                            )
-                          }
-                          className="text-xs"
-                        >
-                          <ArrowUp className="h-3 w-3 mr-1" />
-                          Advance Phase
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
+                  </CardContent>
+                </Card>
+              );
+            })
           )}
         </div>
       )}
