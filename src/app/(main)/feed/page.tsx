@@ -125,7 +125,12 @@ export default function FeedPage() {
   }
 
   // Check if user is in Phase 1 (shouldn't be able to view posts yet)
-  if (user && phaseUtils.getCurrentPhase(user) === 1) {
+  // BUT if they've already created a post, let them through (handles race condition during phase transition)
+  const userHasCreatedPost =
+    user && posts.some((post) => post.authorId === user.id);
+
+  if (user && phaseUtils.getCurrentPhase(user) === 1 && !userHasCreatedPost) {
+    console.log("Feed page: User in Phase 1, no posts created yet");
     return (
       <div className="text-center py-12">
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-8 max-w-2xl mx-auto">
@@ -144,6 +149,13 @@ export default function FeedPage() {
           </Link>
         </div>
       </div>
+    );
+  }
+
+  // Log phase transition if user has created a post but phase hasn't updated yet
+  if (user && phaseUtils.getCurrentPhase(user) === 1 && userHasCreatedPost) {
+    console.log(
+      "Feed page: User in Phase 1 but has created a post - allowing access (phase transition in progress)"
     );
   }
 

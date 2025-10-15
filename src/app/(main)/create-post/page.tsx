@@ -152,23 +152,31 @@ export default function CreatePostPage() {
           const success = await firebasePostUtils.updateUserPhase(user.id, 2);
           if (success) {
             console.log("User phase updated successfully in Firebase");
+
+            // Update phase locally immediately for smooth transition
+            updateUserPhaseLocally(2);
+            console.log("Phase updated locally to 2");
+
+            // Also refresh user data from Firebase to ensure consistency
+            await refreshUser();
+            console.log("User data refreshed from Firebase");
           } else {
             console.error(
               "Failed to update user phase in Firebase - will retry when online"
             );
+            // Still update locally to allow offline progression
+            updateUserPhaseLocally(2);
           }
         } catch (error) {
           console.error("Error updating user phase in Firebase:", error);
+          // Still update locally in case of errors
+          updateUserPhaseLocally(2);
         }
-
-        // Update phase locally AFTER Firebase update
-        updateUserPhaseLocally(2);
-        console.log("Phase updated locally to 2");
       }
 
       console.log("Redirecting to feed...");
 
-      // Use Next.js router for navigation to maintain state
+      // Use Next.js router to maintain React state
       router.push("/feed");
     } catch (err) {
       setError("Failed to create post. Please try again.");
