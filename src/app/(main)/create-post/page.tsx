@@ -83,6 +83,7 @@ export default function CreatePostPage() {
 
     if (!user) {
       console.error("No user found");
+      setError("No user found. Please log in again.");
       return;
     }
 
@@ -90,6 +91,8 @@ export default function CreatePostPage() {
       setError("Please enter some content for your post");
       return;
     }
+
+    console.log("Form validation passed, proceeding with post creation...");
 
     // Make business name and category optional for now
     // if (!formData.businessName.trim()) {
@@ -144,17 +147,36 @@ export default function CreatePostPage() {
       // Advance user to Phase 2 after creating their first post
       if (user.phase === 1) {
         console.log("Advancing user from Phase 1 to Phase 2");
-        const success = await firebasePostUtils.updateUserPhase(user.id, 2);
-        if (success) {
-          console.log("User phase updated successfully");
-          // Refresh user context to get updated phase
-          await refreshUser();
-        } else {
-          console.error("Failed to update user phase");
+        try {
+          const success = await firebasePostUtils.updateUserPhase(user.id, 2);
+          if (success) {
+            console.log("User phase updated successfully");
+            // Refresh user context to get updated phase
+            await refreshUser();
+          } else {
+            console.error("Failed to update user phase");
+          }
+        } catch (error) {
+          console.error("Error updating user phase:", error);
         }
       }
 
-      router.push("/feed");
+      console.log("Redirecting to feed...");
+
+      // Try router.push first, then fallback to window.location
+      try {
+        router.push("/feed");
+        // If router.push doesn't work, use window.location as fallback
+        setTimeout(() => {
+          if (window.location.pathname === "/create-post") {
+            console.log("Router.push failed, using window.location fallback");
+            window.location.href = "/feed";
+          }
+        }, 1000);
+      } catch (error) {
+        console.error("Router error:", error);
+        window.location.href = "/feed";
+      }
     } catch (err) {
       setError("Failed to create post. Please try again.");
       console.error("Error creating post:", err);
@@ -370,6 +392,24 @@ export default function CreatePostPage() {
 
             {error && <div className="text-red-600 text-sm">{error}</div>}
 
+            {/* Temporary debug button */}
+            <div className="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+              <p className="text-sm text-yellow-700 mb-2">
+                If you're stuck on this page after creating a post, click the
+                button below:
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  console.log("Manual redirect to feed");
+                  window.location.href = "/feed";
+                }}
+              >
+                Go to Feed
+              </Button>
+            </div>
+
             {/* Submit Buttons */}
             <div className="flex justify-end space-x-3">
               <Button
@@ -379,7 +419,13 @@ export default function CreatePostPage() {
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isLoading}>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                onClick={(e) => {
+                  console.log("Create Post button clicked");
+                }}
+              >
                 {isLoading ? "Creating Post..." : "Create Post"}
               </Button>
             </div>

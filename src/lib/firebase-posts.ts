@@ -240,8 +240,14 @@ export const firebasePostUtils = {
     newPhase: number
   ): Promise<boolean> => {
     try {
+      if (!db) {
+        console.error("Firebase not initialized");
+        return false;
+      }
+
       const userRef = doc(db, "users", userId);
       await updateDoc(userRef, { phase: newPhase });
+      console.log(`User ${userId} phase updated to ${newPhase}`);
       return true;
     } catch (error) {
       console.error("Error updating user phase:", error);

@@ -259,9 +259,10 @@ export default function PostDetailPage() {
               <div className="flex flex-wrap gap-2">
                 {post.likes.map((userId, index) => {
                   // Find the user's preferred name from the likes array
-                  const likedUser = post.likedBy?.find(u => u.id === userId);
-                  const displayName = likedUser?.preferredName || `User ${userId.slice(-4)}`;
-                  
+                  const likedUser = post.likedBy?.find((u) => u.id === userId);
+                  const displayName =
+                    likedUser?.preferredName || `User ${userId.slice(-4)}`;
+
                   return (
                     <Badge key={index} variant="outline" className="text-xs">
                       {displayName}
