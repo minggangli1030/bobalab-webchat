@@ -110,9 +110,33 @@ export const firebasePostUtils = {
       const postDoc = await getDoc(doc(db, "posts", postId));
       if (postDoc.exists()) {
         const data = postDoc.data();
+
+        // Fetch user info for each user who liked the post
+        const likedBy: User[] = [];
+        if (data.likes && data.likes.length > 0) {
+          for (const userId of data.likes) {
+            try {
+              const userDoc = await getDoc(doc(db, "users", userId));
+              if (userDoc.exists()) {
+                const userData = userDoc.data();
+                likedBy.push({
+                  id: userDoc.id,
+                  ...userData,
+                  createdAt: userData.createdAt?.toDate
+                    ? userData.createdAt.toDate()
+                    : new Date(userData.createdAt),
+                } as User);
+              }
+            } catch (err) {
+              console.error(`Error fetching user ${userId}:`, err);
+            }
+          }
+        }
+
         return {
           id: postDoc.id,
           ...data,
+          likedBy, // Add the populated likedBy array
           createdAt: data.createdAt?.toDate
             ? data.createdAt.toDate()
             : new Date(data.createdAt),
