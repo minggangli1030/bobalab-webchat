@@ -58,6 +58,10 @@ export default function FeedPage() {
     return tags.sort();
   }, [posts]);
 
+  // Check if user has created any posts (for handling phase transition)
+  const userHasCreatedPost =
+    user && posts.some((post) => post.authorId === user.id);
+
   // Filter and sort posts
   const filteredAndSortedPosts = useMemo(() => {
     let filtered = posts;
@@ -65,8 +69,6 @@ export default function FeedPage() {
     // Phase filter - only show posts user can view
     // Special case: if user is Phase 1 but has created posts, they can view all posts
     // (handles race condition during phase transition)
-    const userHasCreatedPost =
-      user && posts.some((post) => post.authorId === user.id);
     const canViewAllPosts =
       phaseUtils.canViewPhasePosts(user, 1) || userHasCreatedPost;
 
@@ -118,11 +120,7 @@ export default function FeedPage() {
       default:
         return filtered;
     }
-  }, [posts, searchTerm, selectedCategory, selectedHashtag, sortBy, user]);
-
-  // Check if user has created any posts (for handling phase transition)
-  const userHasCreatedPost =
-    user && posts.some((post) => post.authorId === user.id);
+  }, [posts, searchTerm, selectedCategory, selectedHashtag, sortBy, user, userHasCreatedPost]);
 
   if (isLoading) {
     return (
@@ -137,9 +135,6 @@ export default function FeedPage() {
 
   // Check if user is in Phase 1 (shouldn't be able to view posts yet)
   // BUT if they've already created a post, let them through (handles race condition during phase transition)
-  const userHasCreatedPost =
-    user && posts.some((post) => post.authorId === user.id);
-
   if (user && phaseUtils.getCurrentPhase(user) === 1 && !userHasCreatedPost) {
     console.log("Feed page: User in Phase 1, no posts created yet");
     return (
