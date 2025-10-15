@@ -22,6 +22,7 @@ import {
   Flag,
   Calendar,
   ArrowUp,
+  Download,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -31,9 +32,9 @@ export default function AdminPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"posts" | "users" | "stats">(
-    "stats"
-  );
+  const [activeTab, setActiveTab] = useState<
+    "posts" | "users" | "stats" | "analysis"
+  >("stats");
 
   useEffect(() => {
     // Redirect if not admin
@@ -146,6 +147,215 @@ export default function AdminPage() {
     });
   };
 
+  const downloadCSV = () => {
+    // Create CSV data for all posts with their service experience data
+    const csvData = posts.map((post) => {
+      const serviceExp = post.serviceExperience;
+      const highlights = post.highlights || [];
+      const comments = post.comments || [];
+
+      return {
+        // Basic post info
+        "Post ID": post.id,
+        "Author ID": post.authorId,
+        "Author Name": post.authorName,
+        "Business Name": post.businessName || "",
+        Content: post.content,
+        "Created At": formatDate(post.createdAt),
+        Phase: post.phase || 1,
+        Category: post.category || "",
+        Hashtags: post.hashtags.join("; "),
+        "Images Count": post.images.length,
+
+        // Service Experience Data
+        "Organization Name": serviceExp?.organizationName || "",
+        "Organization Type": serviceExp?.organizationType || "",
+        "Relationship Length": serviceExp?.relationshipLength || "",
+        "Satisfaction Rating": serviceExp?.satisfactionRating || "",
+        "Loyalty Rating": serviceExp?.loyaltyRating || "",
+        "Recommendation Likelihood": serviceExp?.recommendationLikelihood || "",
+        "Needs Alignment": serviceExp?.needsAlignment || "",
+        "Google Score": serviceExp?.yelpScore || "",
+        "Google Price Range": serviceExp?.yelpPriceRange || "",
+        "Experience Narrative": serviceExp?.experienceNarrative || "",
+        "Generalizable Lesson": serviceExp?.generalizableLesson || "",
+        "Operation Disruptiveness": serviceExp?.operationDisruptiveness || "",
+        "Life Disruptiveness": serviceExp?.lifeDisruptiveness || "",
+
+        // Service Attributes (ranked 1-6)
+        "Price Ranking":
+          serviceExp?.serviceAttributes?.find((attr) => attr.name === "Price")
+            ?.userRanking || "",
+        "Convenience Ranking":
+          serviceExp?.serviceAttributes?.find(
+            (attr) => attr.name === "Convenience"
+          )?.userRanking || "",
+        "Speed Ranking":
+          serviceExp?.serviceAttributes?.find((attr) => attr.name === "Speed")
+            ?.userRanking || "",
+        "Atmosphere Ranking":
+          serviceExp?.serviceAttributes?.find(
+            (attr) => attr.name === "Atmosphere"
+          )?.userRanking || "",
+        "Taste/Quality Ranking":
+          serviceExp?.serviceAttributes?.find(
+            (attr) => attr.name === "Taste/Quality"
+          )?.userRanking || "",
+        "Social Experience Ranking":
+          serviceExp?.serviceAttributes?.find(
+            (attr) => attr.name === "Social Experience"
+          )?.userRanking || "",
+
+        // Performance Ratings (0-100)
+        "Price Performance":
+          serviceExp?.serviceAttributes?.find((attr) => attr.name === "Price")
+            ?.performanceRating || "",
+        "Convenience Performance":
+          serviceExp?.serviceAttributes?.find(
+            (attr) => attr.name === "Convenience"
+          )?.performanceRating || "",
+        "Speed Performance":
+          serviceExp?.serviceAttributes?.find((attr) => attr.name === "Speed")
+            ?.performanceRating || "",
+        "Atmosphere Performance":
+          serviceExp?.serviceAttributes?.find(
+            (attr) => attr.name === "Atmosphere"
+          )?.performanceRating || "",
+        "Taste/Quality Performance":
+          serviceExp?.serviceAttributes?.find(
+            (attr) => attr.name === "Taste/Quality"
+          )?.performanceRating || "",
+        "Social Experience Performance":
+          serviceExp?.serviceAttributes?.find(
+            (attr) => attr.name === "Social Experience"
+          )?.performanceRating || "",
+
+        // Variability Assessments
+        "Arrival Variability Applied":
+          serviceExp?.variabilityAssessments?.find((v) => v.type === "arrival")
+            ?.applied || false,
+        "Arrival Company Response":
+          serviceExp?.variabilityAssessments?.find((v) => v.type === "arrival")
+            ?.companyResponse || "",
+        "Arrival Description":
+          serviceExp?.variabilityAssessments?.find((v) => v.type === "arrival")
+            ?.description || "",
+        "Arrival Impact Rating":
+          serviceExp?.variabilityAssessments?.find((v) => v.type === "arrival")
+            ?.impactRating || "",
+
+        "Request Variability Applied":
+          serviceExp?.variabilityAssessments?.find((v) => v.type === "request")
+            ?.applied || false,
+        "Request Company Response":
+          serviceExp?.variabilityAssessments?.find((v) => v.type === "request")
+            ?.companyResponse || "",
+        "Request Description":
+          serviceExp?.variabilityAssessments?.find((v) => v.type === "request")
+            ?.description || "",
+        "Request Impact Rating":
+          serviceExp?.variabilityAssessments?.find((v) => v.type === "request")
+            ?.impactRating || "",
+
+        "Capability Variability Applied":
+          serviceExp?.variabilityAssessments?.find(
+            (v) => v.type === "capability"
+          )?.applied || false,
+        "Capability Company Response":
+          serviceExp?.variabilityAssessments?.find(
+            (v) => v.type === "capability"
+          )?.companyResponse || "",
+        "Capability Description":
+          serviceExp?.variabilityAssessments?.find(
+            (v) => v.type === "capability"
+          )?.description || "",
+        "Capability Impact Rating":
+          serviceExp?.variabilityAssessments?.find(
+            (v) => v.type === "capability"
+          )?.impactRating || "",
+
+        "Effort Variability Applied":
+          serviceExp?.variabilityAssessments?.find((v) => v.type === "effort")
+            ?.applied || false,
+        "Effort Company Response":
+          serviceExp?.variabilityAssessments?.find((v) => v.type === "effort")
+            ?.companyResponse || "",
+        "Effort Description":
+          serviceExp?.variabilityAssessments?.find((v) => v.type === "effort")
+            ?.description || "",
+        "Effort Impact Rating":
+          serviceExp?.variabilityAssessments?.find((v) => v.type === "effort")
+            ?.impactRating || "",
+
+        "Subjective Preference Variability Applied":
+          serviceExp?.variabilityAssessments?.find(
+            (v) => v.type === "subjective_preference"
+          )?.applied || false,
+        "Subjective Preference Company Response":
+          serviceExp?.variabilityAssessments?.find(
+            (v) => v.type === "subjective_preference"
+          )?.companyResponse || "",
+        "Subjective Preference Description":
+          serviceExp?.variabilityAssessments?.find(
+            (v) => v.type === "subjective_preference"
+          )?.description || "",
+        "Subjective Preference Impact Rating":
+          serviceExp?.variabilityAssessments?.find(
+            (v) => v.type === "subjective_preference"
+          )?.impactRating || "",
+
+        // Highlights and Comments
+        "Highlight Count": highlights.length,
+        "Highlight Reasons": highlights
+          .map((h) => `"${h.userName}: ${h.reason}"`)
+          .join("; "),
+        "Comment Count": comments.length,
+        Comments: comments
+          .map((c) => `"${c.authorName}: ${c.content}"`)
+          .join("; "),
+      };
+    });
+
+    // Convert to CSV
+    const headers = Object.keys(csvData[0] || {});
+    const csvContent = [
+      headers.join(","),
+      ...csvData.map((row) =>
+        headers
+          .map((header) => {
+            const value = (row as any)[header];
+            // Escape quotes and wrap in quotes if contains comma, quote, or newline
+            if (
+              typeof value === "string" &&
+              (value.includes(",") ||
+                value.includes('"') ||
+                value.includes("\n"))
+            ) {
+              return `"${value.replace(/"/g, '""')}"`;
+            }
+            return value;
+          })
+          .join(",")
+      ),
+    ].join("\n");
+
+    // Create and download file
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute(
+      "download",
+      `customer-compatibility-exercise-data-${
+        new Date().toISOString().split("T")[0]
+      }.csv`
+    );
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (!user || !user.isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -196,20 +406,29 @@ export default function AdminPage() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Admin Dashboard
+              Phase 3: Discovering Results
             </h1>
             <p className="text-gray-600">
-              Manage users, posts, and view platform statistics
+              Analyze data, manage users, and export comprehensive reports
             </p>
           </div>
-          <Button
-            variant="destructive"
-            onClick={deleteAllData}
-            className="flex items-center space-x-2"
-          >
-            <Trash2 className="h-4 w-4" />
-            <span>Delete All Data</span>
-          </Button>
+          <div className="flex space-x-3">
+            <Button
+              onClick={downloadCSV}
+              className="flex items-center space-x-2 bg-green-600 hover:bg-green-700"
+            >
+              <Download className="h-4 w-4" />
+              <span>Download CSV</span>
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={deleteAllData}
+              className="flex items-center space-x-2"
+            >
+              <Trash2 className="h-4 w-4" />
+              <span>Delete All Data</span>
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -339,6 +558,16 @@ export default function AdminPage() {
             }`}
           >
             Users ({users.length})
+          </button>
+          <button
+            onClick={() => setActiveTab("analysis")}
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              activeTab === "analysis"
+                ? "border-blue-500 text-blue-600"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+            }`}
+          >
+            Analysis
           </button>
         </nav>
       </div>
@@ -570,6 +799,137 @@ export default function AdminPage() {
               </Card>
             ))
           )}
+        </div>
+      )}
+
+      {activeTab === "analysis" && (
+        <div className="space-y-6">
+          {/* Data Table Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Respondent Experiences</CardTitle>
+              <CardDescription>
+                Comprehensive view of all service experiences with metrics
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left p-3 font-semibold">
+                        Organization
+                      </th>
+                      <th className="text-left p-3 font-semibold">
+                        Respondent
+                      </th>
+                      <th className="text-left p-3 font-semibold">
+                        Highlighted
+                      </th>
+                      <th className="text-left p-3 font-semibold">Tenure</th>
+                      <th className="text-left p-3 font-semibold">Alignment</th>
+                      <th className="text-left p-3 font-semibold">
+                        Satisfaction
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {posts.map((post) => {
+                      const serviceExp = post.serviceExperience;
+                      const highlightCount = post.highlights?.length || 0;
+
+                      return (
+                        <tr key={post.id} className="border-b hover:bg-gray-50">
+                          <td className="p-3">
+                            <div className="flex items-center space-x-2">
+                              <span className="font-medium">
+                                {post.businessName || "N/A"}
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => router.push(`/post/${post.id}`)}
+                                className="p-1 h-auto"
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </td>
+                          <td className="p-3">{post.authorName}</td>
+                          <td className="p-3">
+                            <div className="flex items-center space-x-1">
+                              <span>{highlightCount}</span>
+                              <Flag className="h-4 w-4 text-orange-500" />
+                            </div>
+                          </td>
+                          <td className="p-3">
+                            {serviceExp?.relationshipLength ===
+                            "long_time_customer"
+                              ? "100"
+                              : serviceExp?.relationshipLength ===
+                                "new_customer"
+                              ? "1"
+                              : "N/A"}
+                          </td>
+                          <td className="p-3">
+                            {serviceExp?.needsAlignment || "N/A"}
+                          </td>
+                          <td className="p-3">
+                            {serviceExp?.satisfactionRating || "N/A"}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Analysis Placeholder */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Data Analysis</CardTitle>
+              <CardDescription>
+                Advanced analytics and visualizations (coming soon)
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-blue-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <svg
+                    className="w-8 h-8 text-blue-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  Analysis Dashboard
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Interactive charts and correlation analysis will be available
+                  here.
+                </p>
+                <div className="flex justify-center space-x-4">
+                  <Button
+                    onClick={downloadCSV}
+                    className="bg-green-600 hover:bg-green-700"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Download Full Dataset
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       )}
     </div>
