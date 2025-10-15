@@ -22,7 +22,7 @@ import { X, Upload, Image as ImageIcon } from "lucide-react";
 import Image from "next/image";
 
 export default function CreatePostPage() {
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, updateUserPhaseLocally } = useAuth();
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -147,17 +147,22 @@ export default function CreatePostPage() {
       // Advance user to Phase 2 after creating their first post
       if (user.phase === 1) {
         console.log("Advancing user from Phase 1 to Phase 2");
+
+        // Update phase locally first to prevent redirect loops
+        updateUserPhaseLocally(2);
+
         try {
           const success = await firebasePostUtils.updateUserPhase(user.id, 2);
           if (success) {
-            console.log("User phase updated successfully");
-            // Refresh user context to get updated phase
-            await refreshUser();
+            console.log("User phase updated successfully in Firebase");
           } else {
-            console.error("Failed to update user phase");
+            console.error(
+              "Failed to update user phase in Firebase - will retry when online"
+            );
           }
         } catch (error) {
-          console.error("Error updating user phase:", error);
+          console.error("Error updating user phase in Firebase:", error);
+          // Phase is already updated locally, so continue
         }
       }
 
@@ -403,6 +408,10 @@ export default function CreatePostPage() {
                 size="sm"
                 onClick={() => {
                   console.log("Manual redirect to feed");
+                  // Update phase locally first
+                  if (user && user.phase === 1) {
+                    updateUserPhaseLocally(2);
+                  }
                   window.location.href = "/feed";
                 }}
               >

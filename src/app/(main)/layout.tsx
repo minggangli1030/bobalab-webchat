@@ -27,14 +27,15 @@ export default function MainLayout({
     if (user && !user.isAdmin) {
       const userPhase = phaseUtils.getCurrentPhase(user);
 
-      // Phase 1 users can only access create-post page
-      if (userPhase === 1 && pathname !== "/create-post") {
+      // Only redirect if we're not already on the correct page to prevent loops
+      if (userPhase === 1 && pathname !== "/create-post" && pathname !== "/") {
+        console.log("Phase 1 user redirecting to create-post");
         router.push("/create-post");
         return;
       }
 
-      // Phase 2 users can access feed and post details, but not create-post
       if (userPhase === 2 && pathname === "/create-post") {
+        console.log("Phase 2 user redirecting to feed");
         router.push("/feed");
         return;
       }
@@ -42,8 +43,10 @@ export default function MainLayout({
       // If user is on root path, redirect based on phase
       if (pathname === "/" || pathname === "") {
         if (userPhase === 1) {
+          console.log("Root redirect: Phase 1 -> create-post");
           router.push("/create-post");
         } else {
+          console.log("Root redirect: Phase 2 -> feed");
           router.push("/feed");
         }
         return;

@@ -84,12 +84,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateUserPhaseLocally = (newPhase: number) => {
+    if (user) {
+      const updatedUser = { ...user, phase: newPhase };
+      setUser(updatedUser);
+      console.log(`User phase updated locally to ${newPhase}`);
+    }
+  };
+
   const value: AuthContextType = {
     user,
     login,
     signup,
     logout,
     refreshUser,
+    updateUserPhaseLocally,
     isLoading,
   };
 

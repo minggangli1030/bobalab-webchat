@@ -48,6 +48,7 @@ export interface AuthContextType {
   ) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
+  updateUserPhaseLocally: (newPhase: number) => void;
   isLoading: boolean;
 }
 
