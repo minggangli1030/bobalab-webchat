@@ -293,11 +293,13 @@ export default function AdminPage() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
-              <Heart className="h-8 w-8 text-red-600" />
+              <Flag className="h-8 w-8 text-orange-600" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Likes</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Highlights
+                </p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {stats.totalLikes}
+                  {stats.totalHighlights}
                 </p>
               </div>
             </div>
@@ -417,7 +419,7 @@ export default function AdminPage() {
                   <span className="font-semibold">
                     {stats.totalPosts > 0
                       ? (
-                          (stats.totalLikes +
+                          (stats.totalHighlights +
                             posts.reduce(
                               (sum, p) => sum + p.comments.length,
                               0

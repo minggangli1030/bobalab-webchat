@@ -3,14 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Flag } from "lucide-react";
 
 interface HighlightModalProps {
@@ -51,23 +44,25 @@ export function HighlightModal({
     onClose();
   };
 
+  if (!isOpen) return null;
+
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
             <Flag className="h-5 w-5 text-orange-500" />
             {isHighlighted ? "Remove Highlight" : "Highlight Experience"}
-          </DialogTitle>
-          <DialogDescription>
+          </CardTitle>
+          <p className="text-sm text-gray-600">
             {isHighlighted
               ? "This experience is currently highlighted. Click confirm to remove the highlight."
               : "Why are you highlighting this experience for discussion?"}
-          </DialogDescription>
-        </DialogHeader>
+          </p>
+        </CardHeader>
 
-        {!isHighlighted && (
-          <div className="space-y-4">
+        <CardContent className="space-y-4">
+          {!isHighlighted && (
             <div>
               <Textarea
                 placeholder="Explain why this experience is worth discussing in class..."
@@ -88,34 +83,35 @@ export function HighlightModal({
                 )}
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <DialogFooter className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={handleClose}
-            disabled={isSubmitting}
-          >
-            {isHighlighted ? "Cancel" : "Do Not Highlight"}
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={isSubmitting || (!isHighlighted && !reason.trim())}
-            className={
-              isHighlighted
-                ? "bg-gray-600 hover:bg-gray-700"
-                : "bg-orange-600 hover:bg-orange-700"
-            }
-          >
-            {isSubmitting
-              ? "Processing..."
-              : isHighlighted
-              ? "Remove Highlight"
-              : "Highlight"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <div className="flex gap-2 pt-4">
+            <Button
+              variant="outline"
+              onClick={handleClose}
+              disabled={isSubmitting}
+              className="flex-1"
+            >
+              {isHighlighted ? "Cancel" : "Do Not Highlight"}
+            </Button>
+            <Button
+              onClick={handleSubmit}
+              disabled={isSubmitting || (!isHighlighted && !reason.trim())}
+              className={`flex-1 ${
+                isHighlighted
+                  ? "bg-gray-600 hover:bg-gray-700"
+                  : "bg-orange-600 hover:bg-orange-700"
+              }`}
+            >
+              {isSubmitting
+                ? "Processing..."
+                : isHighlighted
+                ? "Remove Highlight"
+                : "Highlight"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
