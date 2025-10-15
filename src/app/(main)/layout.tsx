@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { phaseUtils } from "@/lib/phase-utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Link from "next/link";
@@ -15,12 +16,30 @@ export default function MainLayout({
 }) {
   const { user, logout, isLoading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!isLoading && !user) {
       router.push("/login");
+      return;
     }
-  }, [user, isLoading, router]);
+
+    if (user && !user.isAdmin) {
+      const userPhase = phaseUtils.getCurrentPhase(user);
+
+      // Phase 1 users can only access create-post page
+      if (userPhase === 1 && pathname !== "/create-post") {
+        router.push("/create-post");
+        return;
+      }
+
+      // Phase 2 users can access feed and post details, but not create-post
+      if (userPhase === 2 && pathname === "/create-post") {
+        router.push("/feed");
+        return;
+      }
+    }
+  }, [user, isLoading, router, pathname]);
 
   if (isLoading) {
     return (
@@ -55,20 +74,26 @@ export default function MainLayout({
               </Link>
 
               <nav className="hidden md:flex space-x-6">
-                <Link
-                  href="/feed"
-                  className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
-                >
-                  <Home className="h-4 w-4" />
-                  <span>Gallery</span>
-                </Link>
-                <Link
-                  href="/create-post"
-                  className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
-                >
-                  <Plus className="h-4 w-4" />
-                  <span>Create Post</span>
-                </Link>
+                {user &&
+                  (user.isAdmin || phaseUtils.getCurrentPhase(user) >= 2) && (
+                    <Link
+                      href="/feed"
+                      className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+                    >
+                      <Home className="h-4 w-4" />
+                      <span>Gallery</span>
+                    </Link>
+                  )}
+                {user &&
+                  (user.isAdmin || phaseUtils.getCurrentPhase(user) === 1) && (
+                    <Link
+                      href="/create-post"
+                      className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+                    >
+                      <Plus className="h-4 w-4" />
+                      <span>Create Post</span>
+                    </Link>
+                  )}
                 {user?.isAdmin && (
                   <Link
                     href="/admin"

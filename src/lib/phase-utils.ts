@@ -31,8 +31,9 @@ export const phaseUtils = {
 
     const userPhase = user.phase || PHASES.PHASE_1;
 
-    // Users can view posts from their current phase and below
-    return userPhase >= phase;
+    // Users in Phase 1 cannot view any posts (including their own)
+    // Users in Phase 2 can view all posts
+    return userPhase >= PHASES.PHASE_2;
   },
 
   // Get user's current phase

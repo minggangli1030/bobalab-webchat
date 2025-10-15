@@ -72,11 +72,23 @@ export const firebasePostUtils = {
       );
       const querySnapshot = await getDocs(q);
 
-      return querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt: doc.data().createdAt.toDate(),
-      })) as Post[];
+      return querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt?.toDate
+            ? data.createdAt.toDate()
+            : new Date(data.createdAt),
+          comments:
+            data.comments?.map((comment: any) => ({
+              ...comment,
+              createdAt: comment.createdAt?.toDate
+                ? comment.createdAt.toDate()
+                : new Date(comment.createdAt),
+            })) || [],
+        } as Post;
+      });
     } catch (error) {
       console.error("Error getting posts:", error);
       return [];
@@ -92,7 +104,16 @@ export const firebasePostUtils = {
         return {
           id: postDoc.id,
           ...data,
-          createdAt: data.createdAt.toDate(),
+          createdAt: data.createdAt?.toDate
+            ? data.createdAt.toDate()
+            : new Date(data.createdAt),
+          comments:
+            data.comments?.map((comment: any) => ({
+              ...comment,
+              createdAt: comment.createdAt?.toDate
+                ? comment.createdAt.toDate()
+                : new Date(comment.createdAt),
+            })) || [],
         } as Post;
       }
       return null;
@@ -135,13 +156,14 @@ export const firebasePostUtils = {
       const post = await firebasePostUtils.getPostById(postId);
 
       if (post) {
-        // Ensure comment has proper date format
+        // Ensure comment has proper date format using Timestamp
         const commentWithTimestamp = {
           ...comment,
-          createdAt:
+          createdAt: Timestamp.fromDate(
             comment.createdAt instanceof Date
               ? comment.createdAt
-              : new Date(comment.createdAt),
+              : new Date(comment.createdAt)
+          ),
         };
 
         const updatedComments = [...post.comments, commentWithTimestamp];

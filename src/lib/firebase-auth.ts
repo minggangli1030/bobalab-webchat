@@ -6,7 +6,7 @@ import {
   onAuthStateChanged,
   sendPasswordResetEmail,
 } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, Timestamp } from "firebase/firestore";
 import { auth, db } from "./firebase";
 import { User } from "./types";
 
@@ -57,7 +57,11 @@ export const firebaseAuthUtils = {
       if (firebaseAuthUtils.isAdminLogin(email, password)) {
         const adminUser = firebaseAuthUtils.createAdminUser(firebaseUser.uid);
         // Create admin user document in Firestore
-        await setDoc(doc(db, "users", firebaseUser.uid), adminUser);
+        await setDoc(doc(db, "users", firebaseUser.uid), {
+          ...adminUser,
+          createdAt: Timestamp.fromDate(adminUser.createdAt),
+        });
+        console.log("Admin user created successfully:", adminUser);
         return { user: adminUser, error: null };
       }
 
@@ -74,7 +78,11 @@ export const firebaseAuthUtils = {
         phase: 1, // Default to phase 1
       };
 
-      await setDoc(doc(db, "users", firebaseUser.uid), userData);
+      await setDoc(doc(db, "users", firebaseUser.uid), {
+        ...userData,
+        createdAt: Timestamp.fromDate(userData.createdAt),
+      });
+      console.log("User created successfully:", userData);
       return { user: userData, error: null };
     } catch (error: any) {
       console.error("Error creating user:", error);

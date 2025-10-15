@@ -117,6 +117,11 @@ export default function CreatePostPage() {
         await firebasePostUtils.updatePost(postId, { images: imageUrls });
       }
 
+      // Advance user to Phase 2 after creating their first post
+      if (user.phase === 1) {
+        await firebasePostUtils.updateUserPhase(user.id, 2);
+      }
+
       router.push("/feed");
     } catch (err) {
       setError("Failed to create post. Please try again.");
@@ -140,11 +145,11 @@ export default function CreatePostPage() {
         <Card>
           <CardContent className="p-6 text-center">
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              Cannot Create Posts
+              Phase 2: View Only
             </h2>
             <p className="text-gray-600 mb-4">
-              You cannot create posts in your current phase. Please contact an
-              administrator to advance your phase.
+              You have completed Phase 1! You can now view the gallery and
+              interact with posts, but cannot create new posts.
             </p>
             <Button onClick={() => router.push("/feed")}>
               Back to Gallery
@@ -168,6 +173,14 @@ export default function CreatePostPage() {
               {phaseUtils.getPhaseName(currentPhase)}
             </Badge>
           </div>
+          {currentPhase === 1 && (
+            <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-sm text-blue-700">
+                <strong>Phase 1:</strong> Create your first post to unlock the
+                gallery and view other posts!
+              </p>
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
