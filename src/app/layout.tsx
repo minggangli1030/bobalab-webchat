@@ -14,8 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Web Chat",
-  description: "A platform for chatting and sharing ideas",
+  title: "Customer Compatibility Exercise",
+  description:
+    "A Harvard Business School exercise exploring customer variability and service operations",
 };
 
 export default function RootLayout({
