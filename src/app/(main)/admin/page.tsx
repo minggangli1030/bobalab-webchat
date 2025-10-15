@@ -215,7 +215,7 @@ export default function AdminPage() {
         setPosts(allPosts);
         setUsers(allUsers);
         alert(
-          "User deleted successfully! Note: Firebase Auth account may still exist and needs to be manually deleted from Firebase Console."
+          "User deleted successfully! Firebase Authentication account has been completely removed."
         );
       } else {
         alert("Failed to delete user.");

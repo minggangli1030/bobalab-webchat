@@ -11,8 +11,9 @@ import {
   limit,
   Timestamp,
 } from "firebase/firestore";
+import { httpsCallable } from "firebase/functions";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db, storage } from "./firebase";
+import { db, storage, functions } from "./firebase";
 import { Post, Comment, User } from "./types";
 
 export const firebasePostUtils = {
@@ -327,26 +328,18 @@ export const firebasePostUtils = {
     }
   },
 
-  // Delete a specific user and their posts (admin only)
+  // Delete a specific user and their posts (admin only) - now uses Cloud Function
   deleteUser: async (userId: string): Promise<boolean> => {
     try {
-      if (!db) {
-        console.error("Firebase not initialized");
+      if (!functions) {
+        console.error("Firebase Functions not initialized");
         return false;
       }
 
-      // Delete all posts by this user
-      const postsSnapshot = await getDocs(collection(db, "posts"));
-      const userPosts = postsSnapshot.docs.filter(
-        (doc) => doc.data().authorId === userId
-      );
+      const deleteUserFunction = httpsCallable(functions, "deleteUser");
+      const result = await deleteUserFunction({ userId });
 
-      const deletePostPromises = userPosts.map((doc) => deleteDoc(doc.ref));
-      await Promise.all(deletePostPromises);
-
-      // Delete the user document
-      await deleteDoc(doc(db, "users", userId));
-
+      console.log("User deleted successfully:", result.data);
       return true;
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -354,23 +347,21 @@ export const firebasePostUtils = {
     }
   },
 
-  // Delete all posts by a specific user (admin only)
+  // Delete all posts by a specific user (admin only) - now uses Cloud Function
   deleteUserPosts: async (userId: string): Promise<boolean> => {
     try {
-      if (!db) {
-        console.error("Firebase not initialized");
+      if (!functions) {
+        console.error("Firebase Functions not initialized");
         return false;
       }
 
-      // Delete all posts by this user
-      const postsSnapshot = await getDocs(collection(db, "posts"));
-      const userPosts = postsSnapshot.docs.filter(
-        (doc) => doc.data().authorId === userId
+      const deleteUserPostsFunction = httpsCallable(
+        functions,
+        "deleteUserPosts"
       );
+      const result = await deleteUserPostsFunction({ userId });
 
-      const deletePostPromises = userPosts.map((doc) => deleteDoc(doc.ref));
-      await Promise.all(deletePostPromises);
-
+      console.log("User posts deleted successfully:", result.data);
       return true;
     } catch (error) {
       console.error("Error deleting user posts:", error);
