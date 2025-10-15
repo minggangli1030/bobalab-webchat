@@ -43,16 +43,9 @@ export default function Home() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Welcome to</h1>
-          <div className="text-5xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
-            Web Chat
+          <div className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
+            Customer Compatibility Exercise
           </div>
-          <p className="text-xl text-gray-600 mb-2">
-            Connect and chat with others
-          </p>
-          <p className="text-gray-500">
-            Join our community to chat, share ideas, and connect with
-            like-minded people.
-          </p>
         </div>
 
         <Card className="w-full shadow-xl border-0 bg-white/80 backdrop-blur-sm">
@@ -78,7 +71,7 @@ export default function Home() {
                   Get Started
                 </h2>
                 <p className="text-gray-600">
-                  Create your account or sign in to start chatting and sharing
+                  Create your account or sign in to participate
                 </p>
               </div>
 
@@ -98,60 +91,9 @@ export default function Home() {
                   </Button>
                 </Link>
               </div>
-
-              <div className="text-center text-sm text-gray-500">
-                <p>Join thousands of users sharing their experiences</p>
-              </div>
             </div>
           </CardContent>
         </Card>
-
-        <div className="mt-8 text-center">
-          <div className="flex justify-center space-x-8 text-sm text-gray-500">
-            <div className="flex items-center">
-              <svg
-                className="w-4 h-4 mr-2 text-green-500"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              Free to use
-            </div>
-            <div className="flex items-center">
-              <svg
-                className="w-4 h-4 mr-2 text-green-500"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              Community driven
-            </div>
-            <div className="flex items-center">
-              <svg
-                className="w-4 h-4 mr-2 text-green-500"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              Secure
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
