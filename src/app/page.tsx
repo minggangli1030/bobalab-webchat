@@ -43,16 +43,63 @@ export default function Home() {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">
-            STUDENT VIEW
-          </h1>
-          <div className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-6">
+          <h1 className="text-5xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-6">
             Customer Compatibility Exercise
-          </div>
+          </h1>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
-          {/* Left Column - About Content */}
+        <div className="max-w-4xl mx-auto space-y-8">
+          {/* Login/Signup Section - Now on top */}
+          <div className="flex justify-center">
+            <Card className="w-full max-w-md shadow-xl border-0 bg-white/90 backdrop-blur-sm">
+              <CardContent className="p-8">
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+                      <svg
+                        className="w-8 h-8 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 10V3L4 14h7v7l9-11h-7z"
+                        />
+                      </svg>
+                    </div>
+                    <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+                      Get Started
+                    </h2>
+                    <p className="text-gray-600">
+                      Create your account or sign in to participate
+                    </p>
+                  </div>
+
+                  <div className="space-y-4">
+                    <Link href="/signup" className="block">
+                      <Button className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200">
+                        Create Account
+                      </Button>
+                    </Link>
+
+                    <Link href="/login" className="block">
+                      <Button
+                        variant="outline"
+                        className="w-full h-12 text-lg font-semibold border-2 hover:bg-gray-50 transition-all duration-200"
+                      >
+                        Sign In
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* About Content - Now below login/signup */}
           <div className="space-y-8">
             {/* About This Exercise */}
             <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
@@ -134,65 +181,6 @@ export default function Home() {
               </CardContent>
             </Card>
           </div>
-
-          {/* Right Column - Login/Signup */}
-          <div className="flex items-center justify-center">
-            <Card className="w-full max-w-md shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-              <CardContent className="p-8">
-                <div className="space-y-6">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                      <svg
-                        className="w-8 h-8 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13 10V3L4 14h7v7l9-11h-7z"
-                        />
-                      </svg>
-                    </div>
-                    <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-                      Get Started
-                    </h2>
-                    <p className="text-gray-600">
-                      Create your account or sign in to participate
-                    </p>
-                  </div>
-
-                  <div className="space-y-4">
-                    <Link href="/signup" className="block">
-                      <Button className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200">
-                        Create Account
-                      </Button>
-                    </Link>
-
-                    <Link href="/login" className="block">
-                      <Button
-                        variant="outline"
-                        className="w-full h-12 text-lg font-semibold border-2 hover:bg-gray-50 transition-all duration-200"
-                      >
-                        Sign In
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="mt-16 text-center text-sm text-gray-500">
-          <p>Courseware #620-707</p>
-          <p className="mt-2">
-            Copyright ©2021 President and Fellows of Harvard College. All rights
-            reserved.
-          </p>
         </div>
       </div>
     </div>
