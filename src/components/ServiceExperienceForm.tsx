@@ -89,11 +89,10 @@ function SortableAttributeItem({
       <div className="flex items-center space-x-2">
         <span className="text-sm text-gray-500">Rank:</span>
         <select
-          value={attribute.userRanking}
+          value={index + 1} // Show current position as rank
           onChange={(e) => onRankingChange(index, parseInt(e.target.value))}
           className="px-2 py-1 border rounded text-sm"
         >
-          <option value={0}>Select rank</option>
           {[1, 2, 3, 4, 5, 6].map((rank) => (
             <option key={rank} value={rank}>
               {rank}
@@ -166,9 +165,9 @@ export default function ServiceExperienceForm({
 }: ServiceExperienceFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<Partial<ServiceExperience>>({
-    serviceAttributes: DEFAULT_ATTRIBUTES.map((name) => ({
+    serviceAttributes: DEFAULT_ATTRIBUTES.map((name, index) => ({
       name,
-      userRanking: 0,
+      userRanking: index + 1, // Initialize with position-based ranking
       performanceRating: 0,
     })),
     variabilityAssessments: VARIABILITY_TYPES.map((v) => ({
@@ -212,14 +211,48 @@ export default function ServiceExperienceForm({
         newIndex
       );
 
-      updateFormData({ serviceAttributes: newAttributes });
+      // Update ranks based on new positions (1 = top, 6 = bottom)
+      const updatedAttributes = newAttributes.map((attr, index) => ({
+        ...attr,
+        userRanking: index + 1,
+      }));
+
+      updateFormData({ serviceAttributes: updatedAttributes });
     }
   };
 
   const handleRankingChange = (index: number, ranking: number) => {
-    const newAttributes = [...(formData.serviceAttributes || [])];
-    newAttributes[index].userRanking = ranking;
-    updateFormData({ serviceAttributes: newAttributes });
+    if (ranking === 0) {
+      // If "Select rank" is chosen, just update the ranking without reordering
+      const newAttributes = [...(formData.serviceAttributes || [])];
+      newAttributes[index].userRanking = ranking;
+      updateFormData({ serviceAttributes: newAttributes });
+      return;
+    }
+
+    const currentAttributes = [...(formData.serviceAttributes || [])];
+    const itemToMove = currentAttributes[index];
+
+    // Remove the item from its current position
+    const attributesWithoutItem = currentAttributes.filter(
+      (_, i) => i !== index
+    );
+
+    // Insert the item at the new position (ranking - 1 because array is 0-indexed)
+    const newPosition = Math.min(ranking - 1, attributesWithoutItem.length);
+    const newAttributes = [
+      ...attributesWithoutItem.slice(0, newPosition),
+      { ...itemToMove, userRanking: ranking },
+      ...attributesWithoutItem.slice(newPosition),
+    ];
+
+    // Update all rankings to reflect the new order
+    const updatedAttributes = newAttributes.map((attr, idx) => ({
+      ...attr,
+      userRanking: idx + 1,
+    }));
+
+    updateFormData({ serviceAttributes: updatedAttributes });
   };
 
   const nextStep = () => {
@@ -359,8 +392,8 @@ export default function ServiceExperienceForm({
       <CardHeader>
         <CardTitle>Service Attributes - Your Perspective</CardTitle>
         <p className="text-sm text-gray-600">
-          Rank these attributes by importance from your perspective (drag to
-          reorder)
+          Rank these attributes by importance from your perspective. Drag to
+          reorder or use the dropdown to set specific ranks.
         </p>
       </CardHeader>
       <CardContent>
@@ -861,9 +894,7 @@ export default function ServiceExperienceForm({
           formData.organizationType
         );
       case 2:
-        return formData.serviceAttributes?.every(
-          (attr) => attr.userRanking > 0
-        );
+        return formData.serviceAttributes?.length === 6; // All 6 attributes are present
       case 3:
         return formData.serviceAttributes?.every(
           (attr) => (attr.performanceRating || 0) > 0
