@@ -147,10 +147,7 @@ export default function CreatePostPage() {
       if (user.phase === 1) {
         console.log("Advancing user from Phase 1 to Phase 2");
 
-        // Update phase locally first to prevent redirect loops
-        updateUserPhaseLocally(2);
-        console.log("Phase updated locally to 2");
-
+        // Update phase in Firebase first
         try {
           const success = await firebasePostUtils.updateUserPhase(user.id, 2);
           if (success) {
@@ -162,15 +159,17 @@ export default function CreatePostPage() {
           }
         } catch (error) {
           console.error("Error updating user phase in Firebase:", error);
-          // Phase is already updated locally, so continue
         }
+
+        // Update phase locally AFTER Firebase update
+        updateUserPhaseLocally(2);
+        console.log("Phase updated locally to 2");
       }
 
       console.log("Redirecting to feed...");
 
-      // Use window.location.href for more reliable redirect
-      // This bypasses any router issues and forces a full page reload
-      window.location.href = "/feed";
+      // Use Next.js router for navigation to maintain state
+      router.push("/feed");
     } catch (err) {
       setError("Failed to create post. Please try again.");
       console.error("Error creating post:", err);

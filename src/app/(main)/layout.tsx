@@ -27,13 +27,15 @@ export default function MainLayout({
     if (user && !user.isAdmin) {
       const userPhase = phaseUtils.getCurrentPhase(user);
 
-      // Only redirect if we're not already on the correct page to prevent loops
-      if (userPhase === 1 && pathname !== "/create-post" && pathname !== "/") {
+      // Allow Phase 1 users to access /feed (they'll see appropriate message there)
+      // This prevents redirect loops when transitioning from Phase 1 to Phase 2
+      if (userPhase === 1 && pathname !== "/create-post" && pathname !== "/" && pathname !== "/feed") {
         console.log("Phase 1 user redirecting to create-post");
         router.push("/create-post");
         return;
       }
 
+      // Only redirect Phase 2 users away from create-post if they manually navigate there
       if (userPhase === 2 && pathname === "/create-post") {
         console.log("Phase 2 user redirecting to feed");
         router.push("/feed");
