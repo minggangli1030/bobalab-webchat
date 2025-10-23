@@ -23,6 +23,7 @@ import {
   Calendar,
   ArrowUp,
   Download,
+  Star,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -527,7 +528,7 @@ export default function AdminPage() {
 
   const stats = {
     totalPosts: posts.length,
-    totalUsers: users.length,
+    totalUsers: users.filter(user => !user.isAdmin).length, // Exclude admin users
     recentPosts: posts.filter((p) => {
       const postDate = new Date(p.createdAt);
       const weekAgo = new Date();
@@ -873,6 +874,22 @@ export default function AdminPage() {
                       variant="outline"
                       size="sm"
                       onClick={() => {
+                        const newContent = prompt(
+                          "Edit post content:",
+                          post.content
+                        );
+                        if (newContent !== null && newContent.trim()) {
+                          handleEditPost(post.id, { content: newContent.trim() });
+                        }
+                      }}
+                      title="Edit Content"
+                    >
+                      <MessageSquare className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
                         const newImgurLinks = prompt(
                           "Enter new Imgur links (one per line):",
                           post.imgurLinks?.join("\n") || ""
@@ -884,9 +901,35 @@ export default function AdminPage() {
                           handleEditPost(post.id, { imgurLinks: links });
                         }
                       }}
+                      title="Edit Media Links"
                     >
                       <Download className="h-4 w-4" />
                     </Button>
+                    {post.serviceExperience && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const currentExp = post.serviceExperience;
+                          if (currentExp) {
+                            const newOrgName = prompt(
+                              "Edit organization name:",
+                              currentExp.organizationName
+                            );
+                            if (newOrgName !== null && newOrgName.trim()) {
+                              const updatedExp = {
+                                ...currentExp,
+                                organizationName: newOrgName.trim()
+                              };
+                              handleEditPost(post.id, { serviceExperience: updatedExp });
+                            }
+                          }
+                        }}
+                        title="Edit Service Experience"
+                      >
+                        <Star className="h-4 w-4" />
+                      </Button>
+                    )}
                     <Button
                       variant="destructive"
                       size="sm"

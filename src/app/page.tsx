@@ -158,28 +158,6 @@ export default function Home() {
                 </p>
               </CardContent>
             </Card>
-
-            {/* Authorship */}
-            <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold text-gray-900">
-                  AUTHORSHIP
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="text-gray-700 leading-relaxed">
-                <p>
-                  Professor Ryan W. Buell prepared this application with the
-                  assistance of the Harvard Business School Technology Products
-                  Group: Mohsen Haidar, Victoria Keirnan, David Lieberman, Anne
-                  Macdonald, Edward Rustan, and Aizan Radzi. Funding for the
-                  development of the application was provided by Harvard
-                  Business School. This application was developed solely as the
-                  basis for class discussion. Applications are not intended to
-                  serve as endorsements, sources of primary data, or
-                  illustrations of effective or ineffective management.
-                </p>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>

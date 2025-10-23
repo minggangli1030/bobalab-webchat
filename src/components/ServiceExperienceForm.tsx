@@ -48,12 +48,14 @@ interface SortableAttributeItemProps {
   attribute: ServiceAttribute;
   index: number;
   onRankingChange: (index: number, ranking: number) => void;
+  onRemove: (index: number) => void;
 }
 
 function SortableAttributeItem({
   attribute,
   index,
   onRankingChange,
+  onRemove,
 }: SortableAttributeItemProps) {
   const {
     attributes,
@@ -100,6 +102,12 @@ function SortableAttributeItem({
           ))}
         </select>
       </div>
+      <button
+        onClick={() => onRemove(index)}
+        className="text-red-600 hover:text-red-800 text-sm px-2 py-1"
+      >
+        Remove
+      </button>
     </div>
   );
 }
@@ -423,51 +431,52 @@ export default function ServiceExperienceForm({
           <CardTitle>Service Attributes - Your Perspective</CardTitle>
           <p className="text-sm text-gray-600">
             Add up to 6 service attributes that are important to you. You must
-            add exactly 6 attributes to proceed.
+            add exactly 6 attributes to proceed. Drag to reorder by importance.
           </p>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {formData.serviceAttributes?.map((attr, index) => (
-              <div
-                key={attr.name}
-                className="flex items-center space-x-4 p-3 border rounded-lg bg-white"
-              >
-                <div className="flex-1">
-                  <span className="font-medium">{attr.name}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-500">Rank:</span>
-                  <span className="text-sm font-medium">{index + 1}</span>
-                </div>
-                <button
-                  onClick={() => removeAttribute(index)}
-                  className="text-red-600 hover:text-red-800 text-sm"
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={formData.serviceAttributes?.map((attr) => attr.name) || []}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-4">
+                {formData.serviceAttributes?.map((attr, index) => (
+                  <SortableAttributeItem
+                    key={attr.name}
+                    attribute={attr}
+                    index={index}
+                    onRankingChange={handleRankingChange}
+                    onRemove={removeAttribute}
+                  />
+                ))}
 
-            {(!formData.serviceAttributes ||
-              formData.serviceAttributes.length < 6) && (
-              <button
-                onClick={addAttribute}
-                className="w-full p-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-blue-500 hover:text-blue-600 transition-colors"
-              >
-                + Add Attribute ({formData.serviceAttributes?.length || 0}/6)
-              </button>
-            )}
+                {(!formData.serviceAttributes ||
+                  formData.serviceAttributes.length < 6) && (
+                  <button
+                    onClick={addAttribute}
+                    className="w-full p-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-blue-500 hover:text-blue-600 transition-colors"
+                  >
+                    + Add Attribute ({formData.serviceAttributes?.length || 0}
+                    /6)
+                  </button>
+                )}
 
-            {formData.serviceAttributes?.length === 6 && (
-              <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                <p className="text-green-800 text-sm font-medium">
-                  ✓ You have added 6 attributes. You can now proceed to the next
-                  step.
-                </p>
+                {formData.serviceAttributes?.length === 6 && (
+                  <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <p className="text-green-800 text-sm font-medium">
+                      ✓ You have added 6 attributes. Drag to reorder by
+                      importance, then proceed to the next step.
+                    </p>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </SortableContext>
+          </DndContext>
         </CardContent>
       </Card>
     );
