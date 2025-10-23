@@ -7,6 +7,7 @@ import {
   updateDoc,
   deleteDoc,
   query,
+  where,
   orderBy,
   limit,
   Timestamp,
@@ -366,6 +367,41 @@ export const firebasePostUtils = {
     } catch (error) {
       console.error("Error deleting user posts:", error);
       return false;
+    }
+  },
+
+  // Get all posts by a specific user
+  getPostsByUser: async (userId: string): Promise<Post[]> => {
+    try {
+      const postsRef = collection(db, "posts");
+      const q = query(postsRef, where("authorId", "==", userId));
+      const querySnapshot = await getDocs(q);
+
+      const posts: Post[] = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        posts.push({
+          id: doc.id,
+          authorId: data.authorId,
+          authorName: data.authorName,
+          businessName: data.businessName,
+          content: data.content,
+          images: data.images || [],
+          imgurLinks: data.imgurLinks || [],
+          hashtags: data.hashtags || [],
+          category: data.category,
+          highlights: data.highlights || [],
+          comments: data.comments || [],
+          createdAt: data.createdAt?.toDate() || new Date(),
+          phase: data.phase,
+          serviceExperience: data.serviceExperience,
+        });
+      });
+
+      return posts;
+    } catch (error) {
+      console.error("Error getting posts by user:", error);
+      return [];
     }
   },
 };

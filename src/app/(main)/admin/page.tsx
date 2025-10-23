@@ -19,7 +19,7 @@ import {
   Eye,
   Users,
   MessageSquare,
-  Flag,
+  Heart,
   Calendar,
   ArrowUp,
   Download,
@@ -226,6 +226,67 @@ export default function AdminPage() {
     }
   };
 
+  const handleEditPost = async (postId: string, updates: any) => {
+    try {
+      const success = await firebasePostUtils.updatePost(postId, updates);
+      if (success) {
+        // Refresh posts list
+        const allPosts = await firebasePostUtils.getAllPosts();
+        setPosts(allPosts);
+        alert("Post updated successfully!");
+      } else {
+        alert("Failed to update post.");
+      }
+    } catch (error) {
+      console.error("Error updating post:", error);
+      alert("Failed to update post.");
+    }
+  };
+
+  const handleBulkPhaseTransition = async (targetPhase: number) => {
+    const phaseName = phaseUtils.getPhaseName(targetPhase);
+    if (
+      !window.confirm(
+        `Are you sure you want to move ALL users to ${phaseName}? This will affect all non-admin users.`
+      )
+    )
+      return;
+
+    try {
+      const nonAdminUsers = users.filter((user) => !user.isAdmin);
+      let successCount = 0;
+      let failCount = 0;
+
+      for (const user of nonAdminUsers) {
+        try {
+          const success = await firebasePostUtils.updateUserPhase(
+            user.id,
+            targetPhase
+          );
+          if (success) {
+            successCount++;
+          } else {
+            failCount++;
+          }
+        } catch (error) {
+          console.error(`Error updating user ${user.id}:`, error);
+          failCount++;
+        }
+      }
+
+      // Refresh users list
+      const allUsers = await firebasePostUtils.getAllUsers();
+      setUsers(allUsers);
+
+      alert(
+        `Bulk phase transition completed!\nSuccess: ${successCount} users\nFailed: ${failCount} users`
+      );
+    } catch (error) {
+      console.error("Error in bulk phase transition:", error);
+      alert("Failed to perform bulk phase transition.");
+    }
+  };
+
   const downloadCSV = () => {
     // Create CSV data for all posts with their service experience data
     const csvData = posts.map((post) => {
@@ -254,8 +315,8 @@ export default function AdminPage() {
         "Loyalty Rating": serviceExp?.loyaltyRating || "",
         "Recommendation Likelihood": serviceExp?.recommendationLikelihood || "",
         "Needs Alignment": serviceExp?.needsAlignment || "",
-        "Google Score": serviceExp?.yelpScore || "",
-        "Google Price Range": serviceExp?.yelpPriceRange || "",
+        "Google Score": serviceExp?.googleScore || "",
+        "Google Price Range": serviceExp?.googlePriceRange || "",
         "Experience Narrative": serviceExp?.experienceNarrative || "",
         "Generalizable Lesson": serviceExp?.generalizableLesson || "",
         "Operation Disruptiveness": serviceExp?.operationDisruptiveness || "",
@@ -500,6 +561,20 @@ export default function AdminPage() {
               <span>Download CSV</span>
             </Button>
             <Button
+              onClick={() => handleBulkPhaseTransition(1)}
+              className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700"
+            >
+              <ArrowUp className="h-4 w-4" />
+              <span>Move All to Phase 1</span>
+            </Button>
+            <Button
+              onClick={() => handleBulkPhaseTransition(2)}
+              className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700"
+            >
+              <ArrowUp className="h-4 w-4" />
+              <span>Move All to Phase 2</span>
+            </Button>
+            <Button
               variant="destructive"
               onClick={deleteAllData}
               className="flex items-center space-x-2"
@@ -591,7 +666,7 @@ export default function AdminPage() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
-              <Flag className="h-8 w-8 text-orange-600" />
+              <Heart className="h-8 w-8 text-orange-600" />
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">
                   Total Highlights
@@ -759,7 +834,7 @@ export default function AdminPage() {
                     <p className="text-gray-800 mb-3">{post.content}</p>
                     <div className="flex items-center space-x-4 text-sm text-gray-600">
                       <span className="flex items-center">
-                        <Flag className="h-4 w-4 mr-1" />
+                        <Heart className="h-4 w-4 mr-1" />
                         {post.highlights?.length || 0} highlights
                       </span>
                       <span className="flex items-center">
@@ -793,6 +868,24 @@ export default function AdminPage() {
                       onClick={() => router.push(`/post/${post.id}`)}
                     >
                       <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const newImgurLinks = prompt(
+                          "Enter new Imgur links (one per line):",
+                          post.imgurLinks?.join("\n") || ""
+                        );
+                        if (newImgurLinks !== null) {
+                          const links = newImgurLinks
+                            .split("\n")
+                            .filter((link) => link.trim());
+                          handleEditPost(post.id, { imgurLinks: links });
+                        }
+                      }}
+                    >
+                      <Download className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="destructive"
@@ -859,7 +952,7 @@ export default function AdminPage() {
                               </div>
                               <div className="text-right">
                                 <div className="flex items-center space-x-2 text-sm">
-                                  <Flag className="h-4 w-4 text-orange-500" />
+                                  <Heart className="h-4 w-4 text-orange-500" />
                                   <span>
                                     {userPost.highlights?.length || 0}{" "}
                                     highlights
@@ -1031,16 +1124,12 @@ export default function AdminPage() {
                           <td className="p-3">
                             <div className="flex items-center space-x-1">
                               <span>{highlightCount}</span>
-                              <Flag className="h-4 w-4 text-orange-500" />
+                              <Heart className="h-4 w-4 text-orange-500" />
                             </div>
                           </td>
                           <td className="p-3">
-                            {serviceExp?.relationshipLength ===
-                            "long_time_customer"
-                              ? "100"
-                              : serviceExp?.relationshipLength ===
-                                "new_customer"
-                              ? "1"
+                            {serviceExp?.relationshipLength !== undefined
+                              ? serviceExp.relationshipLength.toString()
                               : "N/A"}
                           </td>
                           <td className="p-3">

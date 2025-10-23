@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { firebasePostUtils } from "@/lib/firebase-posts";
@@ -24,6 +24,26 @@ export default function CreatePostPage() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [userPostCount, setUserPostCount] = useState(0);
+  const [canCreateMore, setCanCreateMore] = useState(true);
+
+  // Check user's post count on component load
+  useEffect(() => {
+    const checkUserPostCount = async () => {
+      if (!user) return;
+
+      try {
+        const userPosts = await firebasePostUtils.getPostsByUser(user.id);
+        const postCount = userPosts.length;
+        setUserPostCount(postCount);
+        setCanCreateMore(phaseUtils.canCreateMorePosts(user, postCount));
+      } catch (error) {
+        console.error("Error checking user post count:", error);
+      }
+    };
+
+    checkUserPostCount();
+  }, [user]);
 
   const handleServiceExperienceSubmit = async (
     experience: ServiceExperience
@@ -33,6 +53,14 @@ export default function CreatePostPage() {
     if (!user) {
       console.error("No user found");
       setError("No user found. Please log in again.");
+      return;
+    }
+
+    // Check if user can create more posts
+    if (!canCreateMore) {
+      setError(
+        "You have reached the maximum number of posts (2). You cannot create more posts."
+      );
       return;
     }
 
@@ -46,7 +74,8 @@ export default function CreatePostPage() {
         authorName: user.preferredName,
         businessName: experience.organizationName,
         content: experience.experienceNarrative,
-        images: [], // Images can be added later
+        images: [], // Keep for backward compatibility
+        imgurLinks: experience.imgurLinks || [], // New field for Imgur links
         hashtags: [], // Can be derived from experience data
         category: experience.organizationType,
         highlights: [],
@@ -64,36 +93,11 @@ export default function CreatePostPage() {
         throw new Error("Failed to create post");
       }
 
-      // Advance user to Phase 2 after creating their first post
-      if (user.phase === 1) {
-        console.log("Advancing user from Phase 1 to Phase 2");
-
-        // Update phase in Firebase first
-        try {
-          const success = await firebasePostUtils.updateUserPhase(user.id, 2);
-          if (success) {
-            console.log("User phase updated successfully in Firebase");
-
-            // Update phase locally immediately for smooth transition
-            updateUserPhaseLocally(2);
-            console.log("Phase updated locally to 2");
-
-            // Also refresh user data from Firebase to ensure consistency
-            await refreshUser();
-            console.log("User data refreshed from Firebase");
-          } else {
-            console.error(
-              "Failed to update user phase in Firebase - will retry when online"
-            );
-            // Still update locally to allow offline progression
-            updateUserPhaseLocally(2);
-          }
-        } catch (error) {
-          console.error("Error updating user phase in Firebase:", error);
-          // Still update locally in case of errors
-          updateUserPhaseLocally(2);
-        }
-      }
+      // Phase advancement is now manual - controlled by admin
+      // Users stay in Phase 1 until admin manually moves them to Phase 2
+      console.log(
+        "Post created successfully. User remains in Phase 1 until admin manually advances them."
+      );
 
       console.log("Redirecting to feed...");
 
@@ -113,19 +117,24 @@ export default function CreatePostPage() {
 
   // Check if user can create posts in their current phase
   const currentPhase = phaseUtils.getCurrentPhase(user);
-  const canCreate = phaseUtils.canCreateInPhase(user, currentPhase);
+  const canCreate =
+    phaseUtils.canCreateInPhase(user, currentPhase) && canCreateMore;
 
   if (!canCreate) {
+    const isPhaseRestriction = !phaseUtils.canCreateInPhase(user, currentPhase);
+    const isPostLimit = !canCreateMore;
+
     return (
       <div className="max-w-2xl mx-auto">
         <Card>
           <CardContent className="p-6 text-center">
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              Phase 2: View Only
+              {isPostLimit ? "Maximum Posts Reached" : "Phase 2: View Only"}
             </h2>
             <p className="text-gray-600 mb-4">
-              You have completed Phase 1! You can now view the gallery and
-              interact with posts, but cannot create new posts.
+              {isPostLimit
+                ? `You have created ${userPostCount} posts (maximum: 2). You can review and edit your existing posts, but cannot create new ones.`
+                : "You have completed Phase 1! You can now view the gallery and interact with posts, but cannot create new posts."}
             </p>
             <Button onClick={() => router.push("/feed")}>
               Back to Gallery
@@ -152,6 +161,9 @@ export default function CreatePostPage() {
               <p className="text-sm text-blue-700">
                 <strong>Phase 1:</strong> Complete your service experience
                 documentation to unlock the gallery and view other experiences!
+              </p>
+              <p className="text-sm text-blue-600 mt-2">
+                Posts created: {userPostCount}/2 (maximum 2 posts allowed)
               </p>
             </div>
           )}

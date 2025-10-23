@@ -7,7 +7,7 @@ import { firebasePostUtils } from "@/lib/firebase-posts";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Flag, MessageCircle, Eye } from "lucide-react";
+import { Heart, MessageCircle, Eye } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { HighlightModal } from "@/components/HighlightModal";
@@ -145,7 +145,7 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
                   isHighlighted ? "text-orange-600" : "text-gray-600"
                 }`}
               >
-                <Flag
+                <Heart
                   className={`h-4 w-4 ${isHighlighted ? "fill-current" : ""}`}
                 />
                 <span className="text-xs">{highlightCount}</span>

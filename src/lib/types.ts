@@ -42,19 +42,21 @@ export interface VariabilityAssessment {
 export interface ServiceExperience {
   organizationName: string;
   organizationType: string;
-  relationshipLength: "new_customer" | "long_time_customer";
+  relationshipLength: number; // Number of years (0 for new customer)
+  streetAddress: string; // Street address of the organization
   serviceAttributes: ServiceAttribute[];
   variabilityAssessments: VariabilityAssessment[];
   satisfactionRating: number; // 0-100 scale
   loyaltyRating: number; // 0-100 scale
   recommendationLikelihood: number; // 0-100 scale
   needsAlignment: number; // 0-100 scale
-  yelpScore?: number; // 1-5 stars
-  yelpPriceRange?: number; // 1-4 dollar signs
+  googleScore?: number; // 1-5 stars (number input)
+  googlePriceRange?: number; // 1-4 dollar signs (number input)
   experienceNarrative: string;
   generalizableLesson: string;
   operationDisruptiveness: number; // 0-100 scale
   lifeDisruptiveness: number; // 0-100 scale
+  imgurLinks: string[]; // Array of Imgur links instead of Firebase storage
 }
 
 export interface Highlight {
@@ -70,7 +72,8 @@ export interface Post {
   authorName: string;
   businessName?: string; // Business name for compatibility exercise
   content: string;
-  images: string[];
+  images: string[]; // Keep for backward compatibility
+  imgurLinks: string[]; // New field for Imgur links
   hashtags: string[];
   category?: string; // Limited category options
   highlights: Highlight[]; // Array of highlight objects with reasons

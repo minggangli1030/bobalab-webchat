@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Flag, MessageCircle, ArrowLeft, Users } from "lucide-react";
+import { Heart, MessageCircle, ArrowLeft, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { HighlightModal } from "@/components/HighlightModal";
@@ -206,6 +206,188 @@ export default function PostDetailPage() {
             <p className="text-gray-800 whitespace-pre-wrap">{post.content}</p>
           </div>
 
+          {/* Service Experience Data - Comprehensive View */}
+          {post.serviceExperience && (
+            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Service Experience Details
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Basic Information */}
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium text-gray-600">
+                      Organization:
+                    </span>
+                    <span className="text-sm text-gray-900">
+                      {post.serviceExperience.organizationName}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium text-gray-600">
+                      Type:
+                    </span>
+                    <span className="text-sm text-gray-900">
+                      {post.serviceExperience.organizationType}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium text-gray-600">
+                      Relationship Length:
+                    </span>
+                    <span className="text-sm text-gray-900">
+                      {post.serviceExperience.relationshipLength} years
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium text-gray-600">
+                      Address:
+                    </span>
+                    <span className="text-sm text-gray-900">
+                      {post.serviceExperience.streetAddress}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Ratings */}
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium text-gray-600">
+                      Satisfaction:
+                    </span>
+                    <span className="text-sm text-gray-900">
+                      {post.serviceExperience.satisfactionRating}/100
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium text-gray-600">
+                      Loyalty:
+                    </span>
+                    <span className="text-sm text-gray-900">
+                      {post.serviceExperience.loyaltyRating}/100
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium text-gray-600">
+                      Recommendation:
+                    </span>
+                    <span className="text-sm text-gray-900">
+                      {post.serviceExperience.recommendationLikelihood}/100
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium text-gray-600">
+                      Needs Alignment:
+                    </span>
+                    <span className="text-sm text-gray-900">
+                      {post.serviceExperience.needsAlignment}/100
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Service Attributes */}
+              {post.serviceExperience.serviceAttributes &&
+                post.serviceExperience.serviceAttributes.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="text-md font-medium text-gray-900 mb-2">
+                      Service Attributes (Ranked by Importance)
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {post.serviceExperience.serviceAttributes
+                        .sort((a, b) => a.userRanking - b.userRanking)
+                        .map((attr, index) => (
+                          <div
+                            key={index}
+                            className="flex justify-between items-center p-2 bg-white rounded border"
+                          >
+                            <span className="text-sm font-medium text-gray-700">
+                              {attr.userRanking}. {attr.name}
+                            </span>
+                            <span className="text-sm text-gray-600">
+                              Performance: {attr.performanceRating || 0}/100
+                            </span>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
+              {/* Google Review Data */}
+              {(post.serviceExperience.googleScore ||
+                post.serviceExperience.googlePriceRange) && (
+                <div className="mt-4">
+                  <h4 className="text-md font-medium text-gray-900 mb-2">
+                    Google Review Data
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {post.serviceExperience.googleScore && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-gray-600">
+                          Google Score:
+                        </span>
+                        <div className="flex items-center space-x-2">
+                          <div className="flex items-center">
+                            {[1, 2, 3, 4, 5].map((star) => {
+                              const score =
+                                post.serviceExperience?.googleScore || 0;
+                              const isFull = star <= Math.floor(score);
+                              const isHalf =
+                                star === Math.ceil(score) && score % 1 >= 0.5;
+
+                              return (
+                                <span key={star} className="text-yellow-400">
+                                  {isFull ? "★" : isHalf ? "☆" : "☆"}
+                                </span>
+                              );
+                            })}
+                          </div>
+                          <span className="text-sm text-gray-900">
+                            ({post.serviceExperience?.googleScore}/5)
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                    {post.serviceExperience.googlePriceRange && (
+                      <div className="flex justify-between">
+                        <span className="text-sm font-medium text-gray-600">
+                          Price Range:
+                        </span>
+                        <span className="text-sm text-gray-900">
+                          {"$".repeat(post.serviceExperience.googlePriceRange)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Imgur Links */}
+              {post.imgurLinks && post.imgurLinks.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="text-md font-medium text-gray-900 mb-2">
+                    Media Links
+                  </h4>
+                  <div className="space-y-2">
+                    {post.imgurLinks.map((link, index) => (
+                      <div key={index} className="p-2 bg-white rounded border">
+                        <a
+                          href={link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-blue-600 hover:text-blue-800 break-all"
+                        >
+                          {link}
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Images */}
           {post.images.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -247,7 +429,7 @@ export default function PostDetailPage() {
                   isHighlighted ? "text-orange-600" : "text-gray-600"
                 }`}
               >
-                <Flag
+                <Heart
                   className={`h-4 w-4 ${isHighlighted ? "fill-current" : ""}`}
                 />
                 <span>{highlightCount}</span>

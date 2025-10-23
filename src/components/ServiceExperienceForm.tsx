@@ -105,26 +105,34 @@ function SortableAttributeItem({
 }
 
 const ORGANIZATION_TYPES = [
-  "Restaurant",
-  "Retail Store",
-  "Bank/Financial Services",
-  "Healthcare Provider",
-  "Transportation",
-  "Hotel/Hospitality",
+  "Activities",
+  "Airlines",
+  "Arts & Entertainment",
+  "Automotive",
+  "Beauty & Spas",
+  "Bicycles",
   "Education",
-  "Government Services",
-  "Technology Services",
+  "Event Planning & Services",
+  "Financial Services",
+  "Food",
+  "Health & Medical",
+  "Home Services",
+  "Hotels & Travel",
+  "Mass Media",
+  "Nightlife",
   "Other",
+  "Pets",
+  "Professional Services",
+  "Public Services & Government",
+  "Real Estate",
+  "Religious Organizations",
+  "Restaurants",
+  "Retail",
+  "Telecom",
+  "Transportation",
 ];
 
-const DEFAULT_ATTRIBUTES = [
-  "Speed",
-  "Price",
-  "Convenience",
-  "Atmosphere",
-  "Taste/Quality",
-  "Social Experience",
-];
+const DEFAULT_ATTRIBUTES: string[] = []; // Start with empty array for custom attributes
 
 const VARIABILITY_TYPES = [
   {
@@ -165,11 +173,10 @@ export default function ServiceExperienceForm({
 }: ServiceExperienceFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<Partial<ServiceExperience>>({
-    serviceAttributes: DEFAULT_ATTRIBUTES.map((name, index) => ({
-      name,
-      userRanking: index + 1, // Initialize with position-based ranking
-      performanceRating: 50, // Start at neutral (50)
-    })),
+    serviceAttributes: [], // Start with empty array for custom attributes
+    relationshipLength: 0, // Start with 0 years
+    streetAddress: "", // Initialize street address
+    imgurLinks: [], // Initialize Imgur links array
     variabilityAssessments: VARIABILITY_TYPES.map((v) => ({
       type: v.type,
       applied: false,
@@ -322,45 +329,22 @@ export default function ServiceExperienceForm({
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Length of relationship with service organization{" "}
-            <span className="text-red-500">*</span>
+            Length of relationship with service organization (enter a number in
+            years, enter 0 if new) <span className="text-red-500">*</span>
           </label>
-          <div className="space-y-2">
-            <label className="flex items-center">
-              <input
-                type="radio"
-                name="relationshipLength"
-                value="new_customer"
-                checked={formData.relationshipLength === "new_customer"}
-                onChange={(e) =>
-                  updateFormData({
-                    relationshipLength: e.target.value as
-                      | "new_customer"
-                      | "long_time_customer",
-                  })
-                }
-                className="mr-2"
-              />
-              New Customer
-            </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                name="relationshipLength"
-                value="long_time_customer"
-                checked={formData.relationshipLength === "long_time_customer"}
-                onChange={(e) =>
-                  updateFormData({
-                    relationshipLength: e.target.value as
-                      | "new_customer"
-                      | "long_time_customer",
-                  })
-                }
-                className="mr-2"
-              />
-              Long-time Customer
-            </label>
-          </div>
+          <input
+            type="number"
+            min="0"
+            value={formData.relationshipLength || 0}
+            onChange={(e) =>
+              updateFormData({
+                relationshipLength: parseInt(e.target.value) || 0,
+              })
+            }
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Enter number of years (0 for new customer)"
+            required
+          />
         </div>
 
         <div>
@@ -383,44 +367,111 @@ export default function ServiceExperienceForm({
             ))}
           </select>
         </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Street Address <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            value={formData.streetAddress || ""}
+            onChange={(e) => updateFormData({ streetAddress: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Enter street address"
+            required
+          />
+        </div>
       </CardContent>
     </Card>
   );
 
-  const renderStep2 = () => (
-    <Card>
-      <CardHeader>
-        <CardTitle>Service Attributes - Your Perspective</CardTitle>
-        <p className="text-sm text-gray-600">
-          Rank these attributes by importance from your perspective. Drag to
-          reorder or use the dropdown to set specific ranks.
-        </p>
-      </CardHeader>
-      <CardContent>
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext
-            items={formData.serviceAttributes?.map((attr) => attr.name) || []}
-            strategy={verticalListSortingStrategy}
-          >
-            <div className="space-y-4">
-              {formData.serviceAttributes?.map((attr, index) => (
-                <SortableAttributeItem
-                  key={attr.name}
-                  attribute={attr}
-                  index={index}
-                  onRankingChange={handleRankingChange}
-                />
-              ))}
-            </div>
-          </SortableContext>
-        </DndContext>
-      </CardContent>
-    </Card>
-  );
+  const renderStep2 = () => {
+    const addAttribute = () => {
+      const newAttribute = prompt("Enter attribute name:");
+      if (newAttribute && newAttribute.trim()) {
+        const currentAttributes = formData.serviceAttributes || [];
+        if (currentAttributes.length < 6) {
+          const newAttributes = [
+            ...currentAttributes,
+            {
+              name: newAttribute.trim(),
+              userRanking: currentAttributes.length + 1,
+              performanceRating: 50,
+            },
+          ];
+          updateFormData({ serviceAttributes: newAttributes });
+        } else {
+          alert("You can only add up to 6 attributes.");
+        }
+      }
+    };
+
+    const removeAttribute = (index: number) => {
+      const currentAttributes = formData.serviceAttributes || [];
+      const newAttributes = currentAttributes.filter((_, i) => i !== index);
+      // Re-rank the remaining attributes
+      const reRankedAttributes = newAttributes.map((attr, idx) => ({
+        ...attr,
+        userRanking: idx + 1,
+      }));
+      updateFormData({ serviceAttributes: reRankedAttributes });
+    };
+
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Service Attributes - Your Perspective</CardTitle>
+          <p className="text-sm text-gray-600">
+            Add up to 6 service attributes that are important to you. You must
+            add exactly 6 attributes to proceed.
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {formData.serviceAttributes?.map((attr, index) => (
+              <div
+                key={attr.name}
+                className="flex items-center space-x-4 p-3 border rounded-lg bg-white"
+              >
+                <div className="flex-1">
+                  <span className="font-medium">{attr.name}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-500">Rank:</span>
+                  <span className="text-sm font-medium">{index + 1}</span>
+                </div>
+                <button
+                  onClick={() => removeAttribute(index)}
+                  className="text-red-600 hover:text-red-800 text-sm"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+
+            {(!formData.serviceAttributes ||
+              formData.serviceAttributes.length < 6) && (
+              <button
+                onClick={addAttribute}
+                className="w-full p-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-blue-500 hover:text-blue-600 transition-colors"
+              >
+                + Add Attribute ({formData.serviceAttributes?.length || 0}/6)
+              </button>
+            )}
+
+            {formData.serviceAttributes?.length === 6 && (
+              <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-green-800 text-sm font-medium">
+                  ✓ You have added 6 attributes. You can now proceed to the next
+                  step.
+                </p>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
 
   const renderStep3 = () => (
     <Card>
@@ -729,48 +780,71 @@ export default function ServiceExperienceForm({
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Google Review Score (look up and fill yourself)
             </label>
-            <select
-              value={formData.yelpScore || ""}
-              onChange={(e) =>
-                updateFormData({
-                  yelpScore: e.target.value
-                    ? parseFloat(e.target.value)
-                    : undefined,
-                })
-              }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            >
-              <option value="">Not applicable</option>
-              {[1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5].map((score) => (
-                <option key={score} value={score}>
-                  {score} {score === 1 ? "★" : "★".repeat(Math.floor(score))}
-                </option>
-              ))}
-            </select>
+            <input
+              type="number"
+              min="1"
+              max="5"
+              step="0.01"
+              value={formData.googleScore || ""}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "") {
+                  updateFormData({ googleScore: undefined });
+                } else {
+                  const numValue = parseFloat(value);
+                  if (!isNaN(numValue) && numValue >= 1 && numValue <= 5) {
+                    // Round to 2 decimal places
+                    const roundedValue = Math.round(numValue * 100) / 100;
+                    updateFormData({ googleScore: roundedValue });
+                  }
+                }
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Enter score (1.00-5.00)"
+            />
+            {formData.googleScore && (
+              <div className="mt-2 flex items-center space-x-1">
+                <span className="text-sm text-gray-600">Rating:</span>
+                <div className="flex items-center">
+                  {[1, 2, 3, 4, 5].map((star) => {
+                    const score = formData.googleScore || 0;
+                    const isFull = star <= Math.floor(score);
+                    const isHalf =
+                      star === Math.ceil(score) && score % 1 >= 0.5;
+
+                    return (
+                      <span key={star} className="text-yellow-400">
+                        {isFull ? "★" : isHalf ? "☆" : "☆"}
+                      </span>
+                    );
+                  })}
+                </div>
+                <span className="text-sm text-gray-600 ml-2">
+                  ({formData.googleScore}/5)
+                </span>
+              </div>
+            )}
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Google Review Price Range (look up and fill yourself)
             </label>
-            <select
-              value={formData.yelpPriceRange || ""}
+            <input
+              type="number"
+              min="1"
+              max="4"
+              value={formData.googlePriceRange || ""}
               onChange={(e) =>
                 updateFormData({
-                  yelpPriceRange: e.target.value
+                  googlePriceRange: e.target.value
                     ? parseInt(e.target.value)
                     : undefined,
                 })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            >
-              <option value="">Not applicable</option>
-              {[1, 2, 3, 4].map((range) => (
-                <option key={range} value={range}>
-                  {range} {"$".repeat(range)}
-                </option>
-              ))}
-            </select>
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Enter price range (1-4)"
+            />
           </div>
         </div>
       </CardContent>
@@ -862,6 +936,30 @@ export default function ServiceExperienceForm({
             required
           />
         </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Upload Media to Imgur and Submit Links
+          </label>
+          <p className="text-sm text-gray-600 mb-3">
+            Please upload any relevant photos or media to Imgur and paste the
+            links here (one per line).
+          </p>
+          <Textarea
+            value={formData.imgurLinks?.join("\n") || ""}
+            onChange={(e) => {
+              const links = e.target.value
+                .split("\n")
+                .filter((link) => link.trim());
+              updateFormData({ imgurLinks: links });
+            }}
+            placeholder="Paste Imgur links here, one per line..."
+            className="min-h-[100px]"
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Tip: Upload images to imgur.com and copy the direct image links
+          </p>
+        </div>
       </CardContent>
     </Card>
   );
@@ -890,11 +988,12 @@ export default function ServiceExperienceForm({
       case 1:
         return (
           formData.organizationName &&
-          formData.relationshipLength &&
-          formData.organizationType
+          formData.relationshipLength !== undefined &&
+          formData.organizationType &&
+          formData.streetAddress
         );
       case 2:
-        return formData.serviceAttributes?.length === 6; // All 6 attributes are present
+        return formData.serviceAttributes?.length === 6; // Must have exactly 6 attributes
       case 3:
         return formData.serviceAttributes?.every(
           (attr) => (attr.performanceRating || 0) > 0

@@ -24,6 +24,20 @@ export const phaseUtils = {
     return userPhase === PHASES.PHASE_1;
   },
 
+  // Check if user can create more posts (max 2 posts)
+  canCreateMorePosts: (
+    user: User | null,
+    currentPostCount: number
+  ): boolean => {
+    if (!user) return false;
+    if (user.isAdmin) return true; // Admins can create unlimited posts
+
+    const userPhase = user.phase || PHASES.PHASE_1;
+
+    // Only Phase 1 users can create posts, and max 2 posts
+    return userPhase === PHASES.PHASE_1 && currentPostCount < 2;
+  },
+
   // Check if user can view posts from a specific phase
   canViewPhasePosts: (user: User | null, phase: number): boolean => {
     if (!user) return false;
