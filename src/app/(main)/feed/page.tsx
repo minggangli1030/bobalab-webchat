@@ -186,7 +186,9 @@ export default function FeedPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
-            Phase 2: Peer Feedback
+            {user && phaseUtils.getCurrentPhase(user) === 1 
+              ? "Phase 1: Initial Assessment" 
+              : "Phase 2: Peer Feedback"}
           </h1>
           <p className="text-gray-600 mt-1">Customer Compatibility Exercise</p>
           {user && user.isAdmin && (

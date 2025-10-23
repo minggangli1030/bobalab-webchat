@@ -165,7 +165,9 @@ export default function AdminPage() {
         // Refresh users list
         const allUsers = await firebasePostUtils.getAllUsers();
         setUsers(allUsers);
-        alert(`User moved to ${phaseName} successfully! The user will need to refresh their browser or log out and log back in to see the change.`);
+        alert(
+          `User moved to ${phaseName} successfully! The user will need to refresh their browser or log out and log back in to see the change.`
+        );
       } else {
         console.error(`Failed to change phase for user ${userId}`);
         alert("Failed to change user phase.");
@@ -413,7 +415,7 @@ export default function AdminPage() {
         // Additional Post Data
         "Post Images Count": post.images.length,
         "Post Imgur Links": post.imgurLinks?.join("; ") || "",
-        
+
         // Highlights and Comments
         "Highlight Count": highlights.length,
         "Highlight Reasons": highlights
@@ -929,7 +931,7 @@ export default function AdminPage() {
               </CardContent>
             </Card>
           ) : (
-            users.map((user) => {
+            users.filter(user => !user.isAdmin).map((user) => {
               const userPosts = posts.filter((p) => p.authorId === user.id);
               const userPost = userPosts[0]; // Since there's 1 post per user
               const currentPhase = phaseUtils.getCurrentPhase(user);

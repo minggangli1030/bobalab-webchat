@@ -95,13 +95,13 @@ export default function MainLayout({
 
               <nav className="hidden md:flex space-x-6">
                 {user &&
-                  (user.isAdmin || phaseUtils.getCurrentPhase(user) >= 2) && (
+                  (user.isAdmin || phaseUtils.getCurrentPhase(user) >= 1) && (
                     <Link
                       href="/feed"
                       className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
                     >
                       <Home className="h-4 w-4" />
-                      <span>Phase 2</span>
+                      <span>{user.isAdmin ? "Gallery" : phaseUtils.getPhaseName(phaseUtils.getCurrentPhase(user))}</span>
                     </Link>
                   )}
                 {user?.isAdmin && (
