@@ -191,7 +191,7 @@ export const firebasePostUtils = {
     }
   },
 
-  // Add highlight to a post
+  // Add highlight to a post (and create corresponding comment)
   addHighlight: async (
     postId: string,
     userId: string,
@@ -207,12 +207,16 @@ export const firebasePostUtils = {
         (h) => h.userId === userId
       );
       if (existingHighlight) {
-        // Remove existing highlight
+        // Remove existing highlight and corresponding comment
         const updatedHighlights = post.highlights.filter(
           (h) => h.userId !== userId
         );
+        const updatedComments = post.comments.filter(
+          (c) => !(c.authorId === userId && c.content.includes("Highlighted: "))
+        );
         await firebasePostUtils.updatePost(postId, {
           highlights: updatedHighlights,
+          comments: updatedComments,
         });
         return true;
       }
@@ -225,9 +229,22 @@ export const firebasePostUtils = {
         createdAt: new Date(),
       };
 
+      // Create corresponding comment
+      const highlightComment = {
+        id: `highlight-${userId}-${Date.now()}`,
+        postId: postId,
+        authorId: userId,
+        authorName: userName,
+        content: `Highlighted: ${reason}`,
+        createdAt: new Date(),
+      };
+
       const updatedHighlights = [...(post.highlights || []), newHighlight];
+      const updatedComments = [...(post.comments || []), highlightComment];
+      
       await firebasePostUtils.updatePost(postId, {
         highlights: updatedHighlights,
+        comments: updatedComments,
       });
       return true;
     } catch (error) {

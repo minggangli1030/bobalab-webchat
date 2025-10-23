@@ -343,14 +343,17 @@ export default function ServiceExperienceForm({
           <input
             type="number"
             min="0"
+            max="50"
             value={formData.relationshipLength || 0}
-            onChange={(e) =>
+            onChange={(e) => {
+              const value = parseInt(e.target.value) || 0;
+              const cappedValue = Math.min(value, 50);
               updateFormData({
-                relationshipLength: parseInt(e.target.value) || 0,
-              })
-            }
+                relationshipLength: cappedValue,
+              });
+            }}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Enter number of years (0 for new customer)"
+            placeholder="Enter number of years (0-50, 0 for new customer)"
             required
           />
         </div>
@@ -788,7 +791,7 @@ export default function ServiceExperienceForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Google Review Score (optional - please research and enter) <span className="text-red-500">*</span>
+              Google Review Score (please research and enter) <span className="text-red-500">*</span>
             </label>
             <input
               type="number"
@@ -838,7 +841,7 @@ export default function ServiceExperienceForm({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Google Review Price Range (optional - please research and enter) <span className="text-red-500">*</span>
+              Google Review Price Range (please research and enter) <span className="text-red-500">*</span>
             </label>
             <input
               type="number"
@@ -869,7 +872,7 @@ export default function ServiceExperienceForm({
       <CardContent className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            How disruptive to the operation was the variability you imposed?
+            How disruptive to the operation was the variability you imposed? <span className="text-red-500">*</span>
           </label>
           <div className="flex items-center space-x-4">
             <span className="text-sm text-gray-500">Not at all disruptive</span>
@@ -895,7 +898,7 @@ export default function ServiceExperienceForm({
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             How disruptive to your life was the company's response to the
-            variability you imposed?
+            variability you imposed? <span className="text-red-500">*</span>
           </label>
           <div className="flex items-center space-x-4">
             <span className="text-sm text-gray-500">Not at all disruptive</span>
@@ -918,7 +921,7 @@ export default function ServiceExperienceForm({
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Please provide a brief narrative describing your service experience
+            Please provide a brief narrative describing your service experience <span className="text-red-500">*</span>
           </label>
           <Textarea
             value={formData.experienceNarrative || ""}
@@ -934,7 +937,7 @@ export default function ServiceExperienceForm({
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             What is the key generalizable lesson you draw from this service
-            experience?
+            experience? <span className="text-red-500">*</span>
           </label>
           <Textarea
             value={formData.generalizableLesson || ""}
