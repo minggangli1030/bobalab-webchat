@@ -430,8 +430,9 @@ export default function ServiceExperienceForm({
         <CardHeader>
           <CardTitle>Service Attributes - Your Perspective</CardTitle>
           <p className="text-sm text-gray-600">
-            Add up to 6 service attributes that are important to you. You must
-            add exactly 6 attributes to proceed. Drag to reorder by importance.
+            <strong>Step 1:</strong> Add exactly 6 service attributes that are important to you.<br/>
+            <strong>Step 2:</strong> Drag to reorder by importance (most important at top).<br/>
+            <strong>Step 3:</strong> In the next step, you'll evaluate each attribute's performance.
           </p>
         </CardHeader>
         <CardContent>
@@ -470,7 +471,7 @@ export default function ServiceExperienceForm({
                   <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
                     <p className="text-green-800 text-sm font-medium">
                       ✓ You have added 6 attributes. Drag to reorder by
-                      importance, then proceed to the next step.
+                      importance, then proceed to evaluate their performance.
                     </p>
                   </div>
                 )}
@@ -487,8 +488,8 @@ export default function ServiceExperienceForm({
       <CardHeader>
         <CardTitle>Performance Evaluation</CardTitle>
         <p className="text-sm text-gray-600">
-          Rate the organization's performance on each attribute relative to
-          competitors
+          <strong>Step 3:</strong> Rate the organization's performance on each of your 6 attributes relative to competitors. 
+          Use the sliders to evaluate how well this organization performed on each attribute.
         </p>
       </CardHeader>
       <CardContent className="space-y-6">

@@ -158,13 +158,16 @@ export default function AdminPage() {
       return;
 
     try {
+      console.log(`Attempting to change user ${userId} to phase ${newPhase}`);
       const success = await firebasePostUtils.updateUserPhase(userId, newPhase);
       if (success) {
+        console.log(`Phase change successful for user ${userId}`);
         // Refresh users list
         const allUsers = await firebasePostUtils.getAllUsers();
         setUsers(allUsers);
-        alert(`User moved to ${phaseName} successfully!`);
+        alert(`User moved to ${phaseName} successfully! The user will need to refresh their browser or log out and log back in to see the change.`);
       } else {
+        console.error(`Failed to change phase for user ${userId}`);
         alert("Failed to change user phase.");
       }
     } catch (error) {
@@ -528,7 +531,7 @@ export default function AdminPage() {
 
   const stats = {
     totalPosts: posts.length,
-    totalUsers: users.filter(user => !user.isAdmin).length, // Exclude admin users
+    totalUsers: users.filter((user) => !user.isAdmin).length, // Exclude admin users
     recentPosts: posts.filter((p) => {
       const postDate = new Date(p.createdAt);
       const weekAgo = new Date();
@@ -879,7 +882,9 @@ export default function AdminPage() {
                           post.content
                         );
                         if (newContent !== null && newContent.trim()) {
-                          handleEditPost(post.id, { content: newContent.trim() });
+                          handleEditPost(post.id, {
+                            content: newContent.trim(),
+                          });
                         }
                       }}
                       title="Edit Content"
@@ -919,9 +924,11 @@ export default function AdminPage() {
                             if (newOrgName !== null && newOrgName.trim()) {
                               const updatedExp = {
                                 ...currentExp,
-                                organizationName: newOrgName.trim()
+                                organizationName: newOrgName.trim(),
                               };
-                              handleEditPost(post.id, { serviceExperience: updatedExp });
+                              handleEditPost(post.id, {
+                                serviceExperience: updatedExp,
+                              });
                             }
                           }
                         }}
