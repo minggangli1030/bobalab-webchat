@@ -315,6 +315,7 @@ export default function AdminPage() {
         "Organization Name": serviceExp?.organizationName || "",
         "Organization Type": serviceExp?.organizationType || "",
         "Relationship Length": serviceExp?.relationshipLength || "",
+        "Street Address": serviceExp?.streetAddress || "",
         "Satisfaction Rating": serviceExp?.satisfactionRating || "",
         "Loyalty Rating": serviceExp?.loyaltyRating || "",
         "Recommendation Likelihood": serviceExp?.recommendationLikelihood || "",
@@ -325,54 +326,15 @@ export default function AdminPage() {
         "Generalizable Lesson": serviceExp?.generalizableLesson || "",
         "Operation Disruptiveness": serviceExp?.operationDisruptiveness || "",
         "Life Disruptiveness": serviceExp?.lifeDisruptiveness || "",
+        "Imgur Links": serviceExp?.imgurLinks?.join("; ") || "",
 
-        // Service Attributes (ranked 1-6)
-        "Price Ranking":
-          serviceExp?.serviceAttributes?.find((attr) => attr.name === "Price")
-            ?.userRanking || "",
-        "Convenience Ranking":
-          serviceExp?.serviceAttributes?.find(
-            (attr) => attr.name === "Convenience"
-          )?.userRanking || "",
-        "Speed Ranking":
-          serviceExp?.serviceAttributes?.find((attr) => attr.name === "Speed")
-            ?.userRanking || "",
-        "Atmosphere Ranking":
-          serviceExp?.serviceAttributes?.find(
-            (attr) => attr.name === "Atmosphere"
-          )?.userRanking || "",
-        "Taste/Quality Ranking":
-          serviceExp?.serviceAttributes?.find(
-            (attr) => attr.name === "Taste/Quality"
-          )?.userRanking || "",
-        "Social Experience Ranking":
-          serviceExp?.serviceAttributes?.find(
-            (attr) => attr.name === "Social Experience"
-          )?.userRanking || "",
-
-        // Performance Ratings (0-100)
-        "Price Performance":
-          serviceExp?.serviceAttributes?.find((attr) => attr.name === "Price")
-            ?.performanceRating || "",
-        "Convenience Performance":
-          serviceExp?.serviceAttributes?.find(
-            (attr) => attr.name === "Convenience"
-          )?.performanceRating || "",
-        "Speed Performance":
-          serviceExp?.serviceAttributes?.find((attr) => attr.name === "Speed")
-            ?.performanceRating || "",
-        "Atmosphere Performance":
-          serviceExp?.serviceAttributes?.find(
-            (attr) => attr.name === "Atmosphere"
-          )?.performanceRating || "",
-        "Taste/Quality Performance":
-          serviceExp?.serviceAttributes?.find(
-            (attr) => attr.name === "Taste/Quality"
-          )?.performanceRating || "",
-        "Social Experience Performance":
-          serviceExp?.serviceAttributes?.find(
-            (attr) => attr.name === "Social Experience"
-          )?.performanceRating || "",
+        // Service Attributes (dynamic - all 6 custom attributes)
+        ...(serviceExp?.serviceAttributes?.reduce((acc, attr, index) => {
+          const attrName = attr.name;
+          acc[`${attrName} Ranking`] = attr.userRanking || "";
+          acc[`${attrName} Performance`] = attr.performanceRating || "";
+          return acc;
+        }, {} as Record<string, any>) || {}),
 
         // Variability Assessments
         "Arrival Variability Applied":
@@ -448,6 +410,10 @@ export default function AdminPage() {
             (v) => v.type === "subjective_preference"
           )?.impactRating || "",
 
+        // Additional Post Data
+        "Post Images Count": post.images.length,
+        "Post Imgur Links": post.imgurLinks?.join("; ") || "",
+        
         // Highlights and Comments
         "Highlight Count": highlights.length,
         "Highlight Reasons": highlights
