@@ -22,9 +22,6 @@ export default function LoginPage() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [resetEmail, setResetEmail] = useState("");
-  const [showReset, setShowReset] = useState(false);
-  const [resetSent, setResetSent] = useState(false);
 
   const { login } = useAuth();
   const router = useRouter();
@@ -56,31 +53,6 @@ export default function LoginPage() {
     }));
   };
 
-  const handleResetPassword = async () => {
-    if (!resetEmail) {
-      setError("Please enter your email address");
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      setError("");
-
-      const success = await firebaseAuthUtils.resetPassword(resetEmail);
-      if (success) {
-        setResetSent(true);
-        setError("");
-      } else {
-        setError(
-          "Failed to send reset email. Please check your email address."
-        );
-      }
-    } catch (error) {
-      setError("Failed to send reset email. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -142,60 +114,6 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          {/* Password Reset Section */}
-          <div className="mt-4">
-            {!showReset ? (
-              <Button
-                type="button"
-                variant="link"
-                className="w-full text-sm"
-                onClick={() => setShowReset(true)}
-              >
-                Forgot your password?
-              </Button>
-            ) : (
-              <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
-                <h4 className="text-sm font-medium text-gray-700">
-                  Reset Password
-                </h4>
-                <Input
-                  type="email"
-                  placeholder="Enter your email address"
-                  value={resetEmail}
-                  onChange={(e) => setResetEmail(e.target.value)}
-                  className="text-sm"
-                />
-                <div className="flex space-x-2">
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={handleResetPassword}
-                    disabled={isLoading || !resetEmail}
-                    className="flex-1"
-                  >
-                    {isLoading ? "Sending..." : "Send Reset Email"}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setShowReset(false);
-                      setResetEmail("");
-                      setResetSent(false);
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-                {resetSent && (
-                  <p className="text-green-600 text-xs">
-                    Reset email sent! Check your inbox.
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
 
           {/* Admin Login */}
           <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">

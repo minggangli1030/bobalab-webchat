@@ -4,7 +4,6 @@ import {
   signOut,
   User as FirebaseUser,
   onAuthStateChanged,
-  sendPasswordResetEmail,
   deleteUser,
 } from "firebase/auth";
 import { doc, setDoc, getDoc, Timestamp } from "firebase/firestore";
@@ -169,16 +168,6 @@ export const firebaseAuthUtils = {
     }
   },
 
-  // Send password reset email
-  resetPassword: async (email: string): Promise<boolean> => {
-    try {
-      await sendPasswordResetEmail(auth, email);
-      return true;
-    } catch (error) {
-      console.error("Error sending password reset email:", error);
-      return false;
-    }
-  },
 
   // Listen to auth state changes
   onAuthStateChanged: (callback: (user: User | null) => void) => {
