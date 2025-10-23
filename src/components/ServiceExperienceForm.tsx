@@ -690,10 +690,10 @@ export default function ServiceExperienceForm({
       <CardContent className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            How well do your needs align with this organization's capabilities?
+            How well do your needs align with this organization's capabilities? <span className="text-red-500">*</span>
           </label>
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-500 w-32 text-right">
               Not at all well aligned
             </span>
             <input
@@ -706,7 +706,7 @@ export default function ServiceExperienceForm({
               }
               className="flex-1"
             />
-            <span className="text-sm text-gray-500">Very well aligned</span>
+            <span className="text-sm text-gray-500 w-32">Very well aligned</span>
             <span className="text-sm font-medium w-12 text-center">
               {formData.needsAlignment || 50}
             </span>
@@ -715,10 +715,10 @@ export default function ServiceExperienceForm({
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Please rate your satisfaction with your service interaction
+            Please rate your satisfaction with your service interaction <span className="text-red-500">*</span>
           </label>
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-500">Very dissatisfied</span>
+            <span className="text-sm text-gray-500 w-32 text-right">Very dissatisfied</span>
             <input
               type="range"
               min="0"
@@ -729,7 +729,7 @@ export default function ServiceExperienceForm({
               }
               className="flex-1"
             />
-            <span className="text-sm text-gray-500">Very satisfied</span>
+            <span className="text-sm text-gray-500 w-32">Very satisfied</span>
             <span className="text-sm font-medium w-12 text-center">
               {formData.satisfactionRating || 50}
             </span>
@@ -738,10 +738,10 @@ export default function ServiceExperienceForm({
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Please rate your intended loyalty to this organization
+            Please rate your intended loyalty to this organization <span className="text-red-500">*</span>
           </label>
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-500">Very low</span>
+            <span className="text-sm text-gray-500 w-32 text-right">Very low</span>
             <input
               type="range"
               min="0"
@@ -752,7 +752,7 @@ export default function ServiceExperienceForm({
               }
               className="flex-1"
             />
-            <span className="text-sm text-gray-500">Very high</span>
+            <span className="text-sm text-gray-500 w-32">Very high</span>
             <span className="text-sm font-medium w-12 text-center">
               {formData.loyaltyRating || 50}
             </span>
@@ -762,10 +762,10 @@ export default function ServiceExperienceForm({
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             How likely are you to recommend this organization to a friend or
-            colleague?
+            colleague? <span className="text-red-500">*</span>
           </label>
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-500">Not at all likely</span>
+            <span className="text-sm text-gray-500 w-32 text-right">Not at all likely</span>
             <input
               type="range"
               min="0"
@@ -778,7 +778,7 @@ export default function ServiceExperienceForm({
               }
               className="flex-1"
             />
-            <span className="text-sm text-gray-500">Extremely likely</span>
+            <span className="text-sm text-gray-500 w-32">Extremely likely</span>
             <span className="text-sm font-medium w-12 text-center">
               {formData.recommendationLikelihood || 50}
             </span>
@@ -788,7 +788,7 @@ export default function ServiceExperienceForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Google Review Score (look up and fill yourself)
+              Google Review Score (optional - please research and enter) <span className="text-red-500">*</span>
             </label>
             <input
               type="number"
@@ -838,7 +838,7 @@ export default function ServiceExperienceForm({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Google Review Price Range (look up and fill yourself)
+              Google Review Price Range (optional - please research and enter) <span className="text-red-500">*</span>
             </label>
             <input
               type="number"
