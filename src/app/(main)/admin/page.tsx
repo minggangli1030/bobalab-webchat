@@ -514,46 +514,13 @@ export default function AdminPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="mb-8">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Phase 3: Admin Access and Data Analysis
-            </h1>
-            <p className="text-gray-600">
-              Manage users, view posts, and export comprehensive reports
-            </p>
-          </div>
-          <div className="flex space-x-3">
-            <Button
-              onClick={downloadCSV}
-              className="flex items-center space-x-2 bg-green-600 hover:bg-green-700"
-            >
-              <Download className="h-4 w-4" />
-              <span>Download CSV</span>
-            </Button>
-            <Button
-              onClick={() => handleBulkPhaseTransition(1)}
-              className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700"
-            >
-              <ArrowUp className="h-4 w-4" />
-              <span>Move All Users to Phase 1: Initial Assessment</span>
-            </Button>
-            <Button
-              onClick={() => handleBulkPhaseTransition(2)}
-              className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700"
-            >
-              <ArrowUp className="h-4 w-4" />
-              <span>Move All Users to Phase 2: Peer Feedback</span>
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={deleteAllData}
-              className="flex items-center space-x-2"
-            >
-              <Trash2 className="h-4 w-4" />
-              <span>Delete All Data</span>
-            </Button>
-          </div>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Phase 3: Admin Access and Data Analysis
+          </h1>
+          <p className="text-gray-600">
+            Manage users, view posts, and export comprehensive reports
+          </p>
         </div>
       </div>
 
@@ -681,6 +648,41 @@ export default function AdminPage() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Control Buttons */}
+      <div className="mb-8">
+        <div className="flex flex-wrap gap-4">
+          <Button
+            onClick={downloadCSV}
+            className="flex items-center space-x-2 bg-green-600 hover:bg-green-700"
+          >
+            <Download className="h-4 w-4" />
+            <span>Download CSV</span>
+          </Button>
+          <Button
+            onClick={() => handleBulkPhaseTransition(1)}
+            className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700"
+          >
+            <ArrowUp className="h-4 w-4" />
+            <span>Move All Users to Phase 1: Initial Assessment</span>
+          </Button>
+          <Button
+            onClick={() => handleBulkPhaseTransition(2)}
+            className="flex items-center space-x-2 bg-orange-600 hover:bg-orange-700"
+          >
+            <ArrowUp className="h-4 w-4" />
+            <span>Move All Users to Phase 2: Peer Feedback</span>
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={deleteAllData}
+            className="flex items-center space-x-2"
+          >
+            <Trash2 className="h-4 w-4" />
+            <span>Delete All Data</span>
+          </Button>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -864,44 +866,67 @@ export default function AdminPage() {
                             </div>
                             {/* Phase Badge with Color Coding */}
                             <Badge
-                              variant={currentPhase === 1 ? "default" : "secondary"}
+                              variant={
+                                currentPhase === 1 ? "default" : "secondary"
+                              }
                               className={`px-4 py-2 text-sm font-medium ${
-                                currentPhase === 1 
-                                  ? "bg-blue-100 text-blue-800 border-blue-200" 
-                                  : "bg-green-100 text-green-800 border-green-200"
+                                currentPhase === 1
+                                  ? "bg-blue-100 text-blue-800 border-blue-200"
+                                  : "bg-orange-100 text-orange-800 border-orange-200"
                               }`}
                             >
                               {phaseUtils.getPhaseName(currentPhase)}
                             </Badge>
                           </div>
 
-                          {/* Business Name and Post Info */}
-                          {userPost && (
-                            <div className="p-4 bg-gray-50 rounded-lg border">
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <h4 className="font-semibold text-gray-900">
-                                    {userPost.businessName || "No Business Name"}
-                                  </h4>
-                                  <p className="text-sm text-gray-600">
-                                    {userPost.serviceExperience?.organizationType || "Unknown Type"}
-                                  </p>
-                                </div>
-                                <div className="text-right">
-                                  <div className="flex items-center space-x-2 text-sm">
-                                    <Heart className="h-4 w-4 text-orange-500" />
-                                    <span>
-                                      {userPost.highlights?.length || 0} highlights
-                                    </span>
+                          {/* Posts Info */}
+                          {userPosts.length > 0 && (
+                            <div className="space-y-3">
+                              <h4 className="font-semibold text-gray-900">
+                                Posts ({userPosts.length})
+                              </h4>
+                              {userPosts.map((post, index) => (
+                                <div key={post.id} className="p-4 bg-gray-50 rounded-lg border">
+                                  <div className="flex items-center justify-between">
+                                    <div>
+                                      <h5 className="font-medium text-gray-900">
+                                        {post.businessName || `Post ${index + 1}`}
+                                      </h5>
+                                      <p className="text-sm text-gray-600">
+                                        {post.serviceExperience?.organizationType || "Unknown Type"}
+                                      </p>
+                                      <p className="text-xs text-gray-500">
+                                        {formatDate(post.createdAt)}
+                                      </p>
+                                    </div>
+                                    <div className="flex items-center space-x-3">
+                                      <div className="text-right">
+                                        <div className="flex items-center space-x-2 text-sm">
+                                          <Heart className="h-4 w-4 text-orange-500" />
+                                          <span>
+                                            {post.highlights?.length || 0} highlights
+                                          </span>
+                                        </div>
+                                        <div className="flex items-center space-x-2 text-sm text-gray-500">
+                                          <MessageSquare className="h-4 w-4" />
+                                          <span>
+                                            {post.comments.length} comments
+                                          </span>
+                                        </div>
+                                      </div>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => router.push(`/post/${post.id}`)}
+                                        className="text-sm"
+                                      >
+                                        <Eye className="h-4 w-4 mr-2" />
+                                        View
+                                      </Button>
+                                    </div>
                                   </div>
-                                  <div className="flex items-center space-x-2 text-sm text-gray-500">
-                                    <MessageSquare className="h-4 w-4" />
-                                    <span>
-                                      {userPost.comments.length} comments
-                                    </span>
-                                  </div>
                                 </div>
-                              </div>
+                              ))}
                             </div>
                           )}
 
@@ -916,23 +941,6 @@ export default function AdminPage() {
                         </div>
 
                         <div className="flex flex-col space-y-4 ml-6">
-                          {/* Post Count and View Button */}
-                          <div className="flex space-x-3">
-                            <Badge variant="secondary" className="px-3 py-1">
-                              {userPosts.length} posts
-                            </Badge>
-                            {userPost && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => router.push(`/post/${userPost.id}`)}
-                                className="text-sm"
-                              >
-                                <Eye className="h-4 w-4 mr-2" />
-                                View Post
-                              </Button>
-                            )}
-                          </div>
 
                           {/* User Management Buttons */}
                           {!user.isAdmin && (
@@ -944,9 +952,12 @@ export default function AdminPage() {
                                     variant="outline"
                                     size="sm"
                                     onClick={() =>
-                                      handlePhaseChange(user.id, currentPhase - 1)
+                                      handlePhaseChange(
+                                        user.id,
+                                        currentPhase - 1
+                                      )
                                     }
-                                    className="text-sm"
+                                    className="text-sm border-blue-200 text-blue-700 hover:bg-blue-50"
                                   >
                                     ← Move to Phase {currentPhase - 1}
                                   </Button>
@@ -956,9 +967,12 @@ export default function AdminPage() {
                                     variant="outline"
                                     size="sm"
                                     onClick={() =>
-                                      handlePhaseChange(user.id, currentPhase + 1)
+                                      handlePhaseChange(
+                                        user.id,
+                                        currentPhase + 1
+                                      )
                                     }
-                                    className="text-sm"
+                                    className="text-sm border-orange-200 text-orange-700 hover:bg-orange-50"
                                   >
                                     Move to Phase {currentPhase + 1} →
                                   </Button>
@@ -971,7 +985,9 @@ export default function AdminPage() {
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    onClick={() => handleDeleteUserPosts(user.id)}
+                                    onClick={() =>
+                                      handleDeleteUserPosts(user.id)
+                                    }
                                     className="text-sm text-orange-600 hover:text-orange-700"
                                   >
                                     <Trash2 className="h-4 w-4 mr-2" />
