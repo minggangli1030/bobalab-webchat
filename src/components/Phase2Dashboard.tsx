@@ -61,72 +61,31 @@ export default function Phase2Dashboard({ posts }: Phase2DashboardProps) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {/* THIS CUSTOMER */}
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-3">
-                    THIS CUSTOMER
-                  </h4>
-                  <div className="space-y-2">
-                    {sortedAttributes.map((attr, index) => (
+              <div className="space-y-2">
+                {sortedAttributes.map((attr, index) => (
+                  <div
+                    key={attr.name}
+                    className="flex items-center space-x-3"
+                  >
+                    <div className="w-24 text-sm text-gray-600 truncate">
+                      {attr.name}
+                    </div>
+                    <div className="flex-1 bg-gray-200 rounded-full h-4 relative">
                       <div
-                        key={attr.name}
-                        className="flex items-center space-x-3"
-                      >
-                        <div className="w-24 text-sm text-gray-600 truncate">
-                          {attr.name}
-                        </div>
-                        <div className="flex-1 bg-gray-200 rounded-full h-4 relative">
-                          <div
-                            className="bg-blue-500 h-4 rounded-full"
-                            style={{
-                              width: `${attr.performanceRating || 0}%`,
-                            }}
-                          ></div>
-                          <div className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white">
-                            {attr.performanceRating || 0}
-                          </div>
-                        </div>
-                        <div className="w-8 text-sm text-gray-600 text-center">
-                          #{attr.userRanking}
-                        </div>
+                        className="bg-blue-500 h-4 rounded-full"
+                        style={{
+                          width: `${attr.performanceRating || 0}%`,
+                        }}
+                      ></div>
+                      <div className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white">
+                        {attr.performanceRating || 0}
                       </div>
-                    ))}
+                    </div>
+                    <div className="w-8 text-sm text-gray-600 text-center">
+                      #{attr.userRanking}
+                    </div>
                   </div>
-                </div>
-
-                {/* TARGET CUSTOMER - Using same data for now */}
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-3">
-                    TARGET CUSTOMER
-                  </h4>
-                  <div className="space-y-2">
-                    {sortedAttributes.map((attr, index) => (
-                      <div
-                        key={attr.name}
-                        className="flex items-center space-x-3"
-                      >
-                        <div className="w-24 text-sm text-gray-600 truncate">
-                          {attr.name}
-                        </div>
-                        <div className="flex-1 bg-gray-200 rounded-full h-4 relative">
-                          <div
-                            className="bg-green-500 h-4 rounded-full"
-                            style={{
-                              width: `${attr.performanceRating || 0}%`,
-                            }}
-                          ></div>
-                          <div className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white">
-                            {attr.performanceRating || 0}
-                          </div>
-                        </div>
-                        <div className="w-8 text-sm text-gray-600 text-center">
-                          #{attr.userRanking}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -167,8 +126,8 @@ export default function Phase2Dashboard({ posts }: Phase2DashboardProps) {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 gap-4">
-                  {userPost.imgurLinks.slice(0, 4).map((link, index) => {
+                <div className="space-y-3">
+                  {userPost.imgurLinks.map((link, index) => {
                     const isImgurImage =
                       link.includes("imgur.com") &&
                       (link.includes(".jpg") ||
@@ -181,20 +140,42 @@ export default function Phase2Dashboard({ posts }: Phase2DashboardProps) {
                       return (
                         <div
                           key={index}
-                          className="aspect-square bg-gray-100 rounded-lg overflow-hidden"
+                          className="bg-white rounded border p-2"
                         >
                           <img
                             src={link}
                             alt={`Experience photo ${index + 1}`}
-                            className="w-full h-full object-cover"
+                            className="max-w-full h-auto rounded"
                             onError={(e) => {
                               e.currentTarget.style.display = "none";
+                              const linkElement = e.currentTarget.nextElementSibling as HTMLElement;
+                              if (linkElement) linkElement.style.display = "block";
                             }}
                           />
+                          <a
+                            href={link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-blue-600 hover:text-blue-800 break-all hidden"
+                          >
+                            {link}
+                          </a>
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <div key={index} className="p-2 bg-white rounded border">
+                          <a
+                            href={link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-blue-600 hover:text-blue-800 break-all"
+                          >
+                            {link}
+                          </a>
                         </div>
                       );
                     }
-                    return null;
                   })}
                 </div>
               </CardContent>

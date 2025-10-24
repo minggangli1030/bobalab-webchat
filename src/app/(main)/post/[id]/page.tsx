@@ -14,6 +14,8 @@ import { Heart, MessageCircle, ArrowLeft, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { HighlightModal } from "@/components/HighlightModal";
+import Phase2Dashboard from "@/components/Phase2Dashboard";
+import { phaseUtils } from "@/lib/phase-utils";
 
 export default function PostDetailPage() {
   const params = useParams();
@@ -169,7 +171,10 @@ export default function PostDetailPage() {
     );
   }
 
-  // Remove this line since we're using state now
+  // Show Phase 2 Dashboard for Phase 2 users
+  if (user && phaseUtils.getCurrentPhase(user) === 2 && !user.isAdmin && post) {
+    return <Phase2Dashboard posts={[post]} />;
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">

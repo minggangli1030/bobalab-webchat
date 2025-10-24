@@ -6,7 +6,6 @@ import { firebasePostUtils } from "@/lib/firebase-posts";
 import { phaseUtils } from "@/lib/phase-utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { PostCard } from "@/components/posts/PostCard";
-import Phase2Dashboard from "@/components/Phase2Dashboard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Search, Filter, SortAsc } from "lucide-react";
@@ -159,10 +158,7 @@ export default function FeedPage() {
     );
   }
 
-  // Show Phase 2 Dashboard for Phase 2 users
-  if (user && phaseUtils.getCurrentPhase(user) === 2 && !user.isAdmin) {
-    return <Phase2Dashboard posts={posts} />;
-  }
+  // Phase 2 users see the gallery with search/filter capabilities
 
   return (
     <div className="space-y-6">
