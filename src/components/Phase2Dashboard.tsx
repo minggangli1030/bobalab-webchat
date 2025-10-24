@@ -8,17 +8,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Star, DollarSign, TrendingUp, BarChart3 } from "lucide-react";
+import { phaseUtils } from "@/lib/phase-utils";
 
 interface Phase2DashboardProps {
   posts: Post[];
+  currentUser?: any;
 }
 
-export default function Phase2Dashboard({ posts }: Phase2DashboardProps) {
+export default function Phase2Dashboard({ posts, currentUser }: Phase2DashboardProps) {
   const { user } = useAuth();
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  
+  // Use currentUser if provided, otherwise fall back to user from context
+  const activeUser = currentUser || user;
 
   // Get user's own post for the dashboard
-  const userPost = posts.find((post) => post.authorId === user?.id);
+  const userPost = posts.find((post) => post.authorId === activeUser?.id);
 
   if (!userPost || !userPost.serviceExperience) {
     return (
@@ -43,12 +48,25 @@ export default function Phase2Dashboard({ posts }: Phase2DashboardProps) {
       {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Phase 2: Peer Feedback Dashboard
+          {activeUser && phaseUtils.getCurrentPhase(activeUser) === 1 
+            ? "Your Post Details" 
+            : "Phase 2: Peer Feedback Dashboard"}
         </h1>
         <p className="text-gray-600">
-          Comprehensive analysis of your service experience
+          {activeUser && phaseUtils.getCurrentPhase(activeUser) === 1
+            ? "Review your service experience details"
+            : "Comprehensive analysis of your service experience"}
         </p>
       </div>
+
+      {/* Phase 1 Note */}
+      {activeUser && phaseUtils.getCurrentPhase(activeUser) === 1 && (
+        <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-6">
+          <p className="font-medium">
+            Good job on posting! You can review your post here, and wait for your instructor to start Phase 2.
+          </p>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Column */}

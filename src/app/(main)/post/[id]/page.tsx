@@ -171,9 +171,14 @@ export default function PostDetailPage() {
     );
   }
 
-  // Show Phase 2 Dashboard for Phase 2 users
-  if (user && phaseUtils.getCurrentPhase(user) === 2 && !user.isAdmin && post) {
-    return <Phase2Dashboard posts={[post]} />;
+  // Show Dashboard for Phase 2 users and Phase 1 users viewing their own posts
+  if (user && post && !user.isAdmin) {
+    const userPhase = phaseUtils.getCurrentPhase(user);
+    const isViewingOwnPost = post.authorId === user.id;
+    
+    if (userPhase === 2 || (userPhase === 1 && isViewingOwnPost)) {
+      return <Phase2Dashboard posts={[post]} currentUser={user} />;
+    }
   }
 
   return (
