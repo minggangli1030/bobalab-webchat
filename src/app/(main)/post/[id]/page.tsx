@@ -171,11 +171,17 @@ export default function PostDetailPage() {
     );
   }
 
-  // Show Dashboard for Phase 2 users and Phase 1 users viewing their own posts
-  if (user && post && !user.isAdmin) {
+  // Show Dashboard for Phase 2 users, Phase 1 users viewing their own posts, and admins
+  if (user && post) {
+    // Admin viewing any post
+    if (user.isAdmin) {
+      return <Phase2Dashboard posts={[post]} currentUser={user} isAdminView={true} />;
+    }
+
+    // Regular users
     const userPhase = phaseUtils.getCurrentPhase(user);
     const isViewingOwnPost = post.authorId === user.id;
-    
+
     if (userPhase === 2 || (userPhase === 1 && isViewingOwnPost)) {
       return <Phase2Dashboard posts={[post]} currentUser={user} />;
     }
