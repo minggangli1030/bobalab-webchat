@@ -716,6 +716,7 @@ export default function AdminPage() {
 
       {activeTab === "posts" && (
         <div className="space-y-8">
+          {console.log("Rendering posts with Phase2Dashboard:", posts.length)}
           {posts.map((post) => (
             <div key={post.id} className="border-2 border-gray-200 rounded-lg bg-white">
               {/* Admin Action Buttons - Fixed at top */}
@@ -765,10 +766,12 @@ export default function AdminPage() {
               </div>
 
               {/* Use Phase2Dashboard for detailed format with charts */}
-              <Phase2Dashboard 
-                posts={[post]} 
-                currentUser={post.authorId ? users.find(u => u.id === post.authorId) : null}
-              />
+              <div className="p-6">
+                <Phase2Dashboard 
+                  posts={[post]} 
+                  currentUser={post.authorId ? users.find(u => u.id === post.authorId) : null}
+                />
+              </div>
             </div>
           ))}
         </div>
