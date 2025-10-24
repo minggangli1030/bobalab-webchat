@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import Phase2Dashboard from "@/components/Phase2Dashboard";
 import {
   Trash2,
   Eye,
@@ -716,31 +717,9 @@ export default function AdminPage() {
       {activeTab === "posts" && (
         <div className="space-y-8">
           {posts.map((post) => (
-            <div key={post.id} className="border-2 border-gray-200 rounded-lg p-6 bg-white">
-              {/* Post Header */}
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                    {post.serviceExperience?.organizationName || "No Organization"}
-                  </h2>
-                  <div className="flex items-center space-x-4 text-sm text-gray-600">
-                    <span>By {post.authorName}</span>
-                    <span>•</span>
-                    <span>{formatDate(post.createdAt)}</span>
-                    <span>•</span>
-                    <span className="flex items-center">
-                      <Heart className="h-4 w-4 mr-1 text-orange-500" />
-                      {post.highlights?.length || 0} highlights
-                    </span>
-                    <span>•</span>
-                    <span className="flex items-center">
-                      <MessageSquare className="h-4 w-4 mr-1" />
-                      {post.comments.length} comments
-                    </span>
-                  </div>
-                </div>
-                
-                {/* Admin Action Buttons */}
+            <div key={post.id} className="border-2 border-gray-200 rounded-lg bg-white">
+              {/* Admin Action Buttons - Fixed at top */}
+              <div className="flex justify-end p-4 border-b border-gray-200 bg-gray-50">
                 <div className="flex space-x-2">
                   <Button
                     variant="outline"
@@ -749,7 +728,7 @@ export default function AdminPage() {
                     className="text-sm"
                   >
                     <Eye className="h-4 w-4 mr-2" />
-                    View Dashboard
+                    View Full Dashboard
                   </Button>
                   
                   <Button
@@ -785,114 +764,11 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* Service Experience Summary */}
-              {post.serviceExperience && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Business Details */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-lg font-semibold">Business Details</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2 text-sm">
-                        <div>
-                          <span className="font-medium text-gray-700">Organization:</span>
-                          <span className="ml-2 text-gray-900">
-                            {post.serviceExperience.organizationName || "N/A"}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="font-medium text-gray-700">Type:</span>
-                          <span className="ml-2 text-gray-900">
-                            {post.serviceExperience.organizationType || "N/A"}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="font-medium text-gray-700">Location:</span>
-                          <span className="ml-2 text-gray-900">
-                            {post.serviceExperience.streetAddress || "N/A"}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="font-medium text-gray-700">Relationship Length:</span>
-                          <span className="ml-2 text-gray-900">
-                            {post.serviceExperience.relationshipLength || "N/A"}
-                          </span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Service Evaluation */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-lg font-semibold">Service Evaluation</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        <div>
-                          <div className="flex justify-between text-sm mb-1">
-                            <span className="font-medium text-gray-700">Satisfaction</span>
-                            <span className="text-gray-900">{post.serviceExperience.satisfactionRating || 0}/100</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div 
-                              className="bg-blue-500 h-2 rounded-full" 
-                              style={{ width: `${post.serviceExperience.satisfactionRating || 0}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                        <div>
-                          <div className="flex justify-between text-sm mb-1">
-                            <span className="font-medium text-gray-700">Loyalty</span>
-                            <span className="text-gray-900">{post.serviceExperience.loyaltyRating || 0}/100</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div 
-                              className="bg-blue-500 h-2 rounded-full" 
-                              style={{ width: `${post.serviceExperience.loyaltyRating || 0}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                        <div>
-                          <div className="flex justify-between text-sm mb-1">
-                            <span className="font-medium text-gray-700">Recommendation</span>
-                            <span className="text-gray-900">{post.serviceExperience.recommendationLikelihood || 0}/100</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div 
-                              className="bg-blue-500 h-2 rounded-full" 
-                              style={{ width: `${post.serviceExperience.recommendationLikelihood || 0}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                        <div>
-                          <div className="flex justify-between text-sm mb-1">
-                            <span className="font-medium text-gray-700">Needs Alignment</span>
-                            <span className="text-gray-900">{post.serviceExperience.needsAlignment || 0}/100</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div 
-                              className="bg-blue-500 h-2 rounded-full" 
-                              style={{ width: `${post.serviceExperience.needsAlignment || 0}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              )}
-
-              {/* Post Content */}
-              <Card className="mt-6">
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold">Post Content</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-800">{post.content}</p>
-                </CardContent>
-              </Card>
+              {/* Use Phase2Dashboard for consistent format */}
+              <Phase2Dashboard 
+                posts={[post]} 
+                currentUser={post.authorId ? users.find(u => u.id === post.authorId) : null}
+              />
             </div>
           ))}
         </div>
