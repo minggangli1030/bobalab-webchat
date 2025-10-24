@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Flag } from "lucide-react";
+import { Heart } from "lucide-react";
 
 interface HighlightModalProps {
   isOpen: boolean;
@@ -51,7 +51,7 @@ export function HighlightModal({
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Flag className="h-5 w-5 text-orange-500" />
+            <Heart className="h-5 w-5 text-orange-500" />
             {isHighlighted ? "Remove Highlight" : "Highlight Experience"}
           </CardTitle>
           <p className="text-sm text-gray-600">
