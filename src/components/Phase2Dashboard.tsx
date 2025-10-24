@@ -208,76 +208,6 @@ export default function Phase2Dashboard({
               </div>
             </CardContent>
           </Card>
-
-          {/* Experience Photos */}
-          {userPost.imgurLinks && userPost.imgurLinks.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold">
-                  Experience Photos
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {userPost.imgurLinks.map((link, index) => {
-                    const isImgurImage =
-                      link.includes("imgur.com") &&
-                      (link.includes(".jpg") ||
-                        link.includes(".jpeg") ||
-                        link.includes(".png") ||
-                        link.includes(".gif") ||
-                        link.includes(".webp"));
-
-                    if (isImgurImage) {
-                      return (
-                        <div
-                          key={index}
-                          className="bg-white rounded border p-2"
-                        >
-                          <img
-                            src={link}
-                            alt={`Experience photo ${index + 1}`}
-                            className="max-w-full h-auto rounded"
-                            onError={(e) => {
-                              e.currentTarget.style.display = "none";
-                              const linkElement = e.currentTarget
-                                .nextElementSibling as HTMLElement;
-                              if (linkElement)
-                                linkElement.style.display = "block";
-                            }}
-                          />
-                          <a
-                            href={link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-sm text-blue-600 hover:text-blue-800 break-all hidden"
-                          >
-                            {link}
-                          </a>
-                        </div>
-                      );
-                    } else {
-                      return (
-                        <div
-                          key={index}
-                          className="p-2 bg-white rounded border"
-                        >
-                          <a
-                            href={link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-sm text-blue-600 hover:text-blue-800 break-all"
-                          >
-                            {link}
-                          </a>
-                        </div>
-                      );
-                    }
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          )}
         </div>
 
         {/* Right Column */}
@@ -392,6 +322,74 @@ export default function Phase2Dashboard({
               </div>
             </CardContent>
           </Card>
+
+          {/* Media */}
+          {userPost.imgurLinks && userPost.imgurLinks.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold">Media</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {userPost.imgurLinks.map((link, index) => {
+                    const isImgurImage =
+                      link.includes("imgur.com") &&
+                      (link.includes(".jpg") ||
+                        link.includes(".jpeg") ||
+                        link.includes(".png") ||
+                        link.includes(".gif") ||
+                        link.includes(".webp"));
+
+                    if (isImgurImage) {
+                      return (
+                        <div
+                          key={index}
+                          className="bg-white rounded border p-2"
+                        >
+                          <img
+                            src={link}
+                            alt={`Experience photo ${index + 1}`}
+                            className="max-w-full h-auto rounded"
+                            onError={(e) => {
+                              e.currentTarget.style.display = "none";
+                              const linkElement = e.currentTarget
+                                .nextElementSibling as HTMLElement;
+                              if (linkElement)
+                                linkElement.style.display = "block";
+                            }}
+                          />
+                          <a
+                            href={link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-blue-600 hover:text-blue-800 break-all hidden"
+                          >
+                            {link}
+                          </a>
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <div
+                          key={index}
+                          className="p-2 bg-white rounded border"
+                        >
+                          <a
+                            href={link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-blue-600 hover:text-blue-800 break-all"
+                          >
+                            {link}
+                          </a>
+                        </div>
+                      );
+                    }
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
 
