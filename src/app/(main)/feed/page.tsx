@@ -56,6 +56,9 @@ export default function FeedPage() {
   // Check if user has created any posts (for handling phase transition)
   const userHasCreatedPost =
     user && posts.some((post) => post.authorId === user.id);
+  
+  // Count user's posts
+  const userPostCount = user ? posts.filter((post) => post.authorId === user.id).length : 0;
 
   // Filter and sort posts
   const filteredAndSortedPosts = useMemo(() => {
@@ -140,7 +143,8 @@ export default function FeedPage() {
             Welcome to Phase 1!
           </h2>
           <p className="text-gray-700 mb-6">
-            You haven't created any posts yet. Create your first business compatibility assessment to get started!
+            You haven't created any posts yet. Create your first business
+            compatibility assessment to get started!
           </p>
           <Link href="/create-post">
             <Button size="lg" className="flex items-center space-x-2">
@@ -178,13 +182,16 @@ export default function FeedPage() {
         <div className="flex items-center space-x-3">
           {user &&
             (user.isAdmin ||
-              (!userHasCreatedPost &&
-                phaseUtils.getCurrentPhase(user) === 1)) && (
+              (phaseUtils.getCurrentPhase(user) === 1 && userPostCount < 2)) && (
               <Link href="/create-post">
                 <Button className="flex items-center space-x-2">
                   <Plus className="h-4 w-4" />
                   <span>
-                    {user.isAdmin ? "Create Test Post" : "Create Post"}
+                    {user.isAdmin 
+                      ? "Create Test Post" 
+                      : userPostCount === 0 
+                        ? "Create Post" 
+                        : "Create Another Post"}
                   </span>
                 </Button>
               </Link>

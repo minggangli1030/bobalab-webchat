@@ -27,13 +27,14 @@ export default function MainLayout({
     if (user && !user.isAdmin) {
       const userPhase = phaseUtils.getCurrentPhase(user);
 
-      // Allow Phase 1 users to access /feed (they'll see appropriate message there)
+      // Allow Phase 1 users to access /feed and their own post details
       // This prevents redirect loops when transitioning from Phase 1 to Phase 2
       if (
         userPhase === 1 &&
         pathname !== "/create-post" &&
         pathname !== "/" &&
-        pathname !== "/feed"
+        pathname !== "/feed" &&
+        !pathname.startsWith("/post/")
       ) {
         console.log("Phase 1 user redirecting to create-post");
         router.push("/create-post");

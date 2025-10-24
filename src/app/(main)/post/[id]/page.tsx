@@ -33,6 +33,17 @@ export default function PostDetailPage() {
       try {
         const postId = params.id as string;
         const foundPost = await firebasePostUtils.getPostById(postId);
+        
+        // Check if Phase 1 user is trying to view someone else's post
+        if (foundPost && user && !user.isAdmin) {
+          const userPhase = user.phase || 1;
+          if (userPhase === 1 && foundPost.authorId !== user.id) {
+            // Phase 1 users can only view their own posts
+            router.push("/feed");
+            return;
+          }
+        }
+        
         setPost(foundPost);
         if (foundPost && user) {
           setIsHighlighted(
@@ -47,7 +58,7 @@ export default function PostDetailPage() {
       }
     };
     loadPost();
-  }, [params.id, user]);
+  }, [params.id, user, router]);
 
   const handleHighlightClick = () => {
     if (!user) return;
