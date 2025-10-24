@@ -7,8 +7,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Star, DollarSign, TrendingUp, BarChart3 } from "lucide-react";
+import { Star, DollarSign, TrendingUp, BarChart3, Edit } from "lucide-react";
 import { phaseUtils } from "@/lib/phase-utils";
+import Link from "next/link";
 
 interface Phase2DashboardProps {
   posts: Post[];
@@ -62,7 +63,17 @@ export default function Phase2Dashboard({ posts, currentUser }: Phase2DashboardP
       {/* Business Details */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold">Business Details</CardTitle>
+          <div className="flex justify-between items-center">
+            <CardTitle className="text-lg font-semibold">Business Details</CardTitle>
+            {activeUser && phaseUtils.getCurrentPhase(activeUser) === 1 && (
+              <Link href={`/create-post?edit=${userPost.id}`}>
+                <Button variant="outline" size="sm" className="flex items-center space-x-2">
+                  <Edit className="h-4 w-4" />
+                  <span>Edit Post</span>
+                </Button>
+              </Link>
+            )}
+          </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">

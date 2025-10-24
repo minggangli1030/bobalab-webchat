@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { firebasePostUtils } from "@/lib/firebase-posts";
 import { Post, ServiceExperience } from "@/lib/types";
@@ -21,11 +21,33 @@ import ServiceExperienceForm from "@/components/ServiceExperienceForm";
 export default function CreatePostPage() {
   const { user, refreshUser, updateUserPhaseLocally } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [userPostCount, setUserPostCount] = useState(0);
   const [canCreateMore, setCanCreateMore] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [existingPost, setExistingPost] = useState<Post | null>(null);
+
+  // Check for edit mode and load existing post
+  useEffect(() => {
+    const checkEditMode = async () => {
+      const editPostId = searchParams.get('edit');
+      if (editPostId && user) {
+        try {
+          const post = await firebasePostUtils.getPostById(editPostId);
+          if (post && post.authorId === user.id) {
+            setExistingPost(post);
+            setIsEditing(true);
+          }
+        } catch (error) {
+          console.error('Error loading post for editing:', error);
+        }
+      }
+    };
+    checkEditMode();
+  }, [searchParams, user]);
 
   // Check user's post count on component load
   useEffect(() => {
@@ -56,8 +78,8 @@ export default function CreatePostPage() {
       return;
     }
 
-    // Check if user can create more posts
-    if (!canCreateMore) {
+    // Check if user can create more posts (only for new posts, not editing)
+    if (!isEditing && !canCreateMore) {
       setError(
         "You have reached the maximum number of posts (2). You cannot create more posts."
       );
@@ -84,25 +106,40 @@ export default function CreatePostPage() {
         serviceExperience: experience,
       };
 
-      // Create the post in Firestore first
-      console.log("Creating post with service experience data:", postData);
-      const postId = await firebasePostUtils.createPost(postData);
-      console.log("Post created with ID:", postId);
+      if (isEditing && existingPost) {
+        // Update existing post
+        console.log("Updating post with service experience data:", postData);
+        const success = await firebasePostUtils.updatePost(existingPost.id, {
+          ...postData,
+          id: existingPost.id, // Keep the original ID
+          createdAt: existingPost.createdAt, // Keep original creation date
+        });
+        
+        if (!success) {
+          throw new Error("Failed to update post");
+        }
+        
+        console.log("Post updated successfully");
+        router.push("/feed");
+      } else {
+        // Create new post
+        console.log("Creating post with service experience data:", postData);
+        const postId = await firebasePostUtils.createPost(postData);
+        console.log("Post created with ID:", postId);
 
-      if (!postId) {
-        throw new Error("Failed to create post");
+        if (!postId) {
+          throw new Error("Failed to create post");
+        }
+
+        // Phase advancement is now manual - controlled by admin
+        // Users stay in Phase 1 until admin manually moves them to Phase 2
+        console.log(
+          "Post created successfully. User remains in Phase 1 until admin manually advances them."
+        );
+
+        console.log("Redirecting to feed...");
+        router.push("/feed");
       }
-
-      // Phase advancement is now manual - controlled by admin
-      // Users stay in Phase 1 until admin manually moves them to Phase 2
-      console.log(
-        "Post created successfully. User remains in Phase 1 until admin manually advances them."
-      );
-
-      console.log("Redirecting to feed...");
-
-      // Use Next.js router to maintain React state
-      router.push("/feed");
     } catch (err) {
       setError("Failed to create post. Please try again.");
       console.error("Error creating post:", err);
@@ -180,6 +217,7 @@ export default function CreatePostPage() {
         onSubmit={handleServiceExperienceSubmit}
         onCancel={() => router.push("/feed")}
         isLoading={isLoading}
+        initialData={existingPost?.serviceExperience}
       />
     </div>
   );

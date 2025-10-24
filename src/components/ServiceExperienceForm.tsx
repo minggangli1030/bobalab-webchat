@@ -42,6 +42,7 @@ interface ServiceExperienceFormProps {
   onSubmit: (experience: ServiceExperience) => void;
   onCancel: () => void;
   isLoading?: boolean;
+  initialData?: ServiceExperience;
 }
 
 interface SortableAttributeItemProps {
@@ -178,12 +179,14 @@ export default function ServiceExperienceForm({
   onSubmit,
   onCancel,
   isLoading,
+  initialData,
 }: ServiceExperienceFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<Partial<ServiceExperience>>({
-    serviceAttributes: [], // Start with empty array for custom attributes
-    relationshipLength: 0, // Start with 0 years
-    streetAddress: "", // Initialize street address
+  const [formData, setFormData] = useState<Partial<ServiceExperience>>(
+    initialData || {
+      serviceAttributes: [], // Start with empty array for custom attributes
+      relationshipLength: 0, // Start with 0 years
+      streetAddress: "", // Initialize street address
     imgurLinks: [], // Initialize Imgur links array
     variabilityAssessments: VARIABILITY_TYPES.map((v) => ({
       type: v.type,
@@ -192,7 +195,8 @@ export default function ServiceExperienceForm({
       description: "",
       impactRating: 0,
     })),
-  });
+    }
+  );
 
   const totalSteps = 6;
 
