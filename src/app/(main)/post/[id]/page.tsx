@@ -394,7 +394,7 @@ export default function PostDetailPage() {
                                 // Fallback to link if image fails to load
                                 e.currentTarget.style.display = "none";
                                 const linkElement =
-                                  e.currentTarget.nextElementSibling;
+                                  e.currentTarget.nextElementSibling as HTMLElement;
                                 if (linkElement)
                                   linkElement.style.display = "block";
                               }}

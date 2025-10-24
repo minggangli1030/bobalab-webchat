@@ -248,7 +248,7 @@ export default function FeedPage() {
         </div>
 
         {/* Active Filters */}
-        {(searchTerm || selectedCategory || selectedHashtag) && (
+        {(searchTerm || selectedCategory) && (
           <div className="flex flex-wrap gap-2">
             {searchTerm && (
               <Button
