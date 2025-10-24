@@ -716,8 +716,9 @@ export default function AdminPage() {
 
       {activeTab === "posts" && (
         <div className="space-y-8">
-          {console.log("Rendering posts with Phase2Dashboard:", posts.length)}
-          {posts.map((post) => (
+          {posts.map((post) => {
+            console.log("Rendering post with Phase2Dashboard:", post.id);
+            return (
             <div key={post.id} className="border-2 border-gray-200 rounded-lg bg-white">
               {/* Admin Action Buttons - Fixed at top */}
               <div className="flex justify-end p-4 border-b border-gray-200 bg-gray-50">
@@ -773,7 +774,8 @@ export default function AdminPage() {
                 />
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
