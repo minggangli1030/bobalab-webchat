@@ -714,22 +714,33 @@ export default function AdminPage() {
       {/* Content */}
 
       {activeTab === "posts" && (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {posts.map((post) => (
-            <Card key={post.id}>
+            <Card key={post.id} className="border-2">
               <CardContent className="p-6">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-3">
-                      <Badge variant="outline">{post.authorName}</Badge>
+                    <div className="flex items-center space-x-3 mb-4">
+                      <Badge variant="outline" className="px-3 py-1">
+                        {post.authorName}
+                      </Badge>
                       <span className="text-sm text-gray-500">
                         {formatDate(post.createdAt)}
                       </span>
                     </div>
-                    <p className="text-gray-800 mb-3">{post.content}</p>
+                    
+                    {/* Post Content */}
+                    <div className="mb-4">
+                      <h3 className="font-semibold text-gray-900 mb-2">
+                        {post.serviceExperience?.organizationName || "No Organization"}
+                      </h3>
+                      <p className="text-gray-800 mb-3">{post.content}</p>
+                    </div>
+
+                    {/* Engagement Metrics */}
                     <div className="flex items-center space-x-4 text-sm text-gray-600">
                       <span className="flex items-center">
-                        <Heart className="h-4 w-4 mr-1" />
+                        <Heart className="h-4 w-4 mr-1 text-orange-500" />
                         {post.highlights?.length || 0} highlights
                       </span>
                       <span className="flex items-center">
@@ -738,32 +749,19 @@ export default function AdminPage() {
                       </span>
                     </div>
                   </div>
-                  <div className="flex space-x-2 ml-4">
+
+                  {/* Simplified Action Buttons */}
+                  <div className="flex flex-col space-y-2 ml-6">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => router.push(`/post/${post.id}`)}
+                      className="text-sm"
                     >
-                      <Eye className="h-4 w-4" />
+                      <Eye className="h-4 w-4 mr-2" />
+                      View Post
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        const newContent = prompt(
-                          "Edit post content:",
-                          post.content
-                        );
-                        if (newContent !== null && newContent.trim()) {
-                          handleEditPost(post.id, {
-                            content: newContent.trim(),
-                          });
-                        }
-                      }}
-                      title="Edit Content"
-                    >
-                      <MessageSquare className="h-4 w-4" />
-                    </Button>
+                    
                     <Button
                       variant="outline"
                       size="sm"
@@ -779,43 +777,20 @@ export default function AdminPage() {
                           handleEditPost(post.id, { imgurLinks: links });
                         }
                       }}
-                      title="Edit Media Links"
+                      className="text-sm"
                     >
-                      <Download className="h-4 w-4" />
+                      <Download className="h-4 w-4 mr-2" />
+                      Add Media Link
                     </Button>
-                    {post.serviceExperience && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          const currentExp = post.serviceExperience;
-                          if (currentExp) {
-                            const newOrgName = prompt(
-                              "Edit organization name:",
-                              currentExp.organizationName
-                            );
-                            if (newOrgName !== null && newOrgName.trim()) {
-                              const updatedExp = {
-                                ...currentExp,
-                                organizationName: newOrgName.trim(),
-                              };
-                              handleEditPost(post.id, {
-                                serviceExperience: updatedExp,
-                              });
-                            }
-                          }
-                        }}
-                        title="Edit Service Experience"
-                      >
-                        <Star className="h-4 w-4" />
-                      </Button>
-                    )}
+                    
                     <Button
                       variant="destructive"
                       size="sm"
                       onClick={() => deletePost(post.id)}
+                      className="text-sm"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Remove Post
                     </Button>
                   </div>
                 </div>
@@ -886,14 +861,19 @@ export default function AdminPage() {
                                 Posts ({userPosts.length})
                               </h4>
                               {userPosts.map((post, index) => (
-                                <div key={post.id} className="p-4 bg-gray-50 rounded-lg border">
+                                <div
+                                  key={post.id}
+                                  className="p-4 bg-gray-50 rounded-lg border"
+                                >
                                   <div className="flex items-center justify-between">
                                     <div>
                                       <h5 className="font-medium text-gray-900">
-                                        {post.businessName || `Post ${index + 1}`}
+                                        {post.businessName ||
+                                          `Post ${index + 1}`}
                                       </h5>
                                       <p className="text-sm text-gray-600">
-                                        {post.serviceExperience?.organizationType || "Unknown Type"}
+                                        {post.serviceExperience
+                                          ?.organizationType || "Unknown Type"}
                                       </p>
                                       <p className="text-xs text-gray-500">
                                         {formatDate(post.createdAt)}
@@ -904,7 +884,8 @@ export default function AdminPage() {
                                         <div className="flex items-center space-x-2 text-sm">
                                           <Heart className="h-4 w-4 text-orange-500" />
                                           <span>
-                                            {post.highlights?.length || 0} highlights
+                                            {post.highlights?.length || 0}{" "}
+                                            highlights
                                           </span>
                                         </div>
                                         <div className="flex items-center space-x-2 text-sm text-gray-500">
@@ -917,7 +898,9 @@ export default function AdminPage() {
                                       <Button
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => router.push(`/post/${post.id}`)}
+                                        onClick={() =>
+                                          router.push(`/post/${post.id}`)
+                                        }
                                         className="text-sm"
                                       >
                                         <Eye className="h-4 w-4 mr-2" />
@@ -941,7 +924,6 @@ export default function AdminPage() {
                         </div>
 
                         <div className="flex flex-col space-y-4 ml-6">
-
                           {/* User Management Buttons */}
                           {!user.isAdmin && (
                             <div className="flex flex-col space-y-3">
