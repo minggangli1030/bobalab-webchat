@@ -34,8 +34,8 @@ export default function AdminPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<
-    "posts" | "users" | "stats" | "analysis"
-  >("stats");
+    "posts" | "users" | "overview"
+  >("overview");
 
   useEffect(() => {
     // Redirect if not admin
@@ -519,10 +519,10 @@ export default function AdminPage() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Phase 3: Discovering Results
+              Phase 1&2: Admin View
             </h1>
             <p className="text-gray-600">
-              Analyze data, manage users, and export comprehensive reports
+              Manage users, view posts, and export comprehensive reports
             </p>
           </div>
           <div className="flex space-x-3">
@@ -538,14 +538,14 @@ export default function AdminPage() {
               className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700"
             >
               <ArrowUp className="h-4 w-4" />
-              <span>Move All to Phase 1</span>
+              <span>Move All Users to Phase 1: Initial Assessment</span>
             </Button>
             <Button
               onClick={() => handleBulkPhaseTransition(2)}
               className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700"
             >
               <ArrowUp className="h-4 w-4" />
-              <span>Move All to Phase 2</span>
+              <span>Move All Users to Phase 2: Peer Feedback</span>
             </Button>
             <Button
               variant="destructive"
@@ -559,32 +559,61 @@ export default function AdminPage() {
         </div>
       </div>
 
-      {/* Important Note */}
-      <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-        <div className="flex items-start space-x-3">
-          <div className="flex-shrink-0">
-            <svg
-              className="h-5 w-5 text-yellow-600"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                clipRule="evenodd"
-              />
-            </svg>
+      {/* Important Notes */}
+      <div className="mb-6 space-y-4">
+        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-start space-x-3">
+            <div className="flex-shrink-0">
+              <svg
+                className="h-5 w-5 text-blue-600"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-sm font-medium text-blue-800">
+                Phase Management
+              </h3>
+              <p className="mt-1 text-sm text-blue-700">
+                <strong>Phase 1:</strong> Users create their initial service experience posts (max 2 posts).<br/>
+                <strong>Phase 2:</strong> Users can view all posts, provide feedback, and engage with the gallery.
+              </p>
+            </div>
           </div>
-          <div className="flex-1">
-            <h3 className="text-sm font-medium text-yellow-800">
-              Note: Authentication Accounts Not Deleted
-            </h3>
-            <p className="mt-1 text-sm text-yellow-700">
-              "Delete All Data" removes posts and user profiles, but does NOT
-              delete Firebase Authentication accounts. To fully reset, manually
-              delete auth users from the Firebase Console (Authentication →
-              Users tab).
-            </p>
+        </div>
+        
+        <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <div className="flex items-start space-x-3">
+            <div className="flex-shrink-0">
+              <svg
+                className="h-5 w-5 text-yellow-600"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-sm font-medium text-yellow-800">
+                Note: Authentication Accounts Not Deleted
+              </h3>
+              <p className="mt-1 text-sm text-yellow-700">
+                "Delete All Data" removes posts and user profiles, but does NOT
+                delete Firebase Authentication accounts. To fully reset, manually
+                delete auth users from the Firebase Console (Authentication →
+                Users tab).
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -657,14 +686,14 @@ export default function AdminPage() {
       <div className="border-b border-gray-200 mb-6">
         <nav className="-mb-px flex space-x-8">
           <button
-            onClick={() => setActiveTab("stats")}
+            onClick={() => setActiveTab("overview")}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
-              activeTab === "stats"
+              activeTab === "overview"
                 ? "border-blue-500 text-blue-600"
                 : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
             }`}
           >
-            Statistics
+            Overview
           </button>
           <button
             onClick={() => setActiveTab("posts")}
@@ -674,7 +703,7 @@ export default function AdminPage() {
                 : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
             }`}
           >
-            Post ({posts.length})
+            Posts ({posts.length})
           </button>
           <button
             onClick={() => setActiveTab("users")}
@@ -684,23 +713,13 @@ export default function AdminPage() {
                 : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
             }`}
           >
-            Gallery ({users.length})
-          </button>
-          <button
-            onClick={() => setActiveTab("analysis")}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
-              activeTab === "analysis"
-                ? "border-blue-500 text-blue-600"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-            }`}
-          >
-            Analysis
+            Users ({users.filter(u => !u.isAdmin).length})
           </button>
         </nav>
       </div>
 
       {/* Content */}
-      {activeTab === "stats" && (
+      {activeTab === "overview" && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
@@ -1007,7 +1026,17 @@ export default function AdminPage() {
 
                           {/* User Management Buttons */}
                           {!user.isAdmin && (
-                            <div className="flex space-x-2">
+                            <div className="flex flex-col space-y-2">
+                              {/* Current Phase Status */}
+                              <div className="flex items-center space-x-2">
+                                <Badge 
+                                  variant={currentPhase === 1 ? "default" : "secondary"}
+                                  className="text-xs"
+                                >
+                                  Currently: {phaseUtils.getPhaseName(currentPhase)}
+                                </Badge>
+                              </div>
+                              
                               {/* Phase Management */}
                               <div className="flex space-x-1">
                                 {currentPhase > 1 && (
@@ -1022,7 +1051,7 @@ export default function AdminPage() {
                                     }
                                     className="text-xs"
                                   >
-                                    ← Phase {currentPhase - 1}
+                                    ← Move to Phase {currentPhase - 1}
                                   </Button>
                                 )}
                                 {currentPhase < 2 && (
@@ -1037,7 +1066,7 @@ export default function AdminPage() {
                                     }
                                     className="text-xs"
                                   >
-                                    Phase {currentPhase + 1} →
+                                    Move to Phase {currentPhase + 1} →
                                   </Button>
                                 )}
                               </div>
@@ -1077,132 +1106,6 @@ export default function AdminPage() {
         </div>
       )}
 
-      {activeTab === "analysis" && (
-        <div className="space-y-6">
-          {/* Data Table Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Respondent Experiences</CardTitle>
-              <CardDescription>
-                Comprehensive view of all service experiences with metrics
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left p-3 font-semibold">
-                        Organization
-                      </th>
-                      <th className="text-left p-3 font-semibold">
-                        Respondent
-                      </th>
-                      <th className="text-left p-3 font-semibold">
-                        Highlighted
-                      </th>
-                      <th className="text-left p-3 font-semibold">Tenure</th>
-                      <th className="text-left p-3 font-semibold">Alignment</th>
-                      <th className="text-left p-3 font-semibold">
-                        Satisfaction
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {posts.map((post) => {
-                      const serviceExp = post.serviceExperience;
-                      const highlightCount = post.highlights?.length || 0;
-
-                      return (
-                        <tr key={post.id} className="border-b hover:bg-gray-50">
-                          <td className="p-3">
-                            <div className="flex items-center space-x-2">
-                              <span className="font-medium">
-                                {post.businessName || "N/A"}
-                              </span>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => router.push(`/post/${post.id}`)}
-                                className="p-1 h-auto"
-                              >
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </td>
-                          <td className="p-3">{post.authorName}</td>
-                          <td className="p-3">
-                            <div className="flex items-center space-x-1">
-                              <span>{highlightCount}</span>
-                              <Heart className="h-4 w-4 text-orange-500" />
-                            </div>
-                          </td>
-                          <td className="p-3">
-                            {serviceExp?.relationshipLength !== undefined
-                              ? serviceExp.relationshipLength.toString()
-                              : "N/A"}
-                          </td>
-                          <td className="p-3">
-                            {serviceExp?.needsAlignment || "N/A"}
-                          </td>
-                          <td className="p-3">
-                            {serviceExp?.satisfactionRating || "N/A"}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Analysis Placeholder */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Data Analysis</CardTitle>
-              <CardDescription>
-                Advanced analytics and visualizations (coming soon)
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-12">
-                <div className="w-16 h-16 bg-blue-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <svg
-                    className="w-8 h-8 text-blue-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Analysis Dashboard
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  Interactive charts and correlation analysis will be available
-                  here.
-                </p>
-                <div className="flex justify-center space-x-4">
-                  <Button
-                    onClick={downloadCSV}
-                    className="bg-green-600 hover:bg-green-700"
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Download Full Dataset
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
     </div>
   );
 }
