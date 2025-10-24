@@ -33,9 +33,9 @@ export default function AdminPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<
-    "posts" | "users" | "overview"
-  >("overview");
+  const [activeTab, setActiveTab] = useState<"posts" | "users" | "overview">(
+    "overview"
+  );
 
   useEffect(() => {
     // Redirect if not admin
@@ -519,7 +519,7 @@ export default function AdminPage() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Phase 1&2: Admin View
+              Phase 3: Admin Access and Data Analysis
             </h1>
             <p className="text-gray-600">
               Manage users, view posts, and export comprehensive reports
@@ -581,13 +581,16 @@ export default function AdminPage() {
                 Phase Management
               </h3>
               <p className="mt-1 text-sm text-blue-700">
-                <strong>Phase 1:</strong> Users create their initial service experience posts (max 2 posts).<br/>
-                <strong>Phase 2:</strong> Users can view all posts, provide feedback, and engage with the gallery.
+                <strong>Phase 1:</strong> Users create their initial service
+                experience posts (max 2 posts).
+                <br />
+                <strong>Phase 2:</strong> Users can view all posts, provide
+                feedback, and engage with the gallery.
               </p>
             </div>
           </div>
         </div>
-        
+
         <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
           <div className="flex items-start space-x-3">
             <div className="flex-shrink-0">
@@ -609,9 +612,9 @@ export default function AdminPage() {
               </h3>
               <p className="mt-1 text-sm text-yellow-700">
                 "Delete All Data" removes posts and user profiles, but does NOT
-                delete Firebase Authentication accounts. To fully reset, manually
-                delete auth users from the Firebase Console (Authentication →
-                Users tab).
+                delete Firebase Authentication accounts. To fully reset,
+                manually delete auth users from the Firebase Console
+                (Authentication → Users tab).
               </p>
             </div>
           </div>
@@ -713,7 +716,7 @@ export default function AdminPage() {
                 : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
             }`}
           >
-            Users ({users.filter(u => !u.isAdmin).length})
+            Users ({users.filter((u) => !u.isAdmin).length})
           </button>
         </nav>
       </div>
@@ -1029,14 +1032,17 @@ export default function AdminPage() {
                             <div className="flex flex-col space-y-2">
                               {/* Current Phase Status */}
                               <div className="flex items-center space-x-2">
-                                <Badge 
-                                  variant={currentPhase === 1 ? "default" : "secondary"}
+                                <Badge
+                                  variant={
+                                    currentPhase === 1 ? "default" : "secondary"
+                                  }
                                   className="text-xs"
                                 >
-                                  Currently: {phaseUtils.getPhaseName(currentPhase)}
+                                  Currently:{" "}
+                                  {phaseUtils.getPhaseName(currentPhase)}
                                 </Badge>
                               </div>
-                              
+
                               {/* Phase Management */}
                               <div className="flex space-x-1">
                                 {currentPhase > 1 && (
@@ -1105,7 +1111,6 @@ export default function AdminPage() {
           )}
         </div>
       )}
-
     </div>
   );
 }
