@@ -58,14 +58,21 @@ export default function CreatePostPage() {
         const userPosts = await firebasePostUtils.getPostsByUser(user.id);
         const postCount = userPosts.length;
         setUserPostCount(postCount);
-        setCanCreateMore(phaseUtils.canCreateMorePosts(user, postCount));
+        
+        // If editing, always allow (bypass post limit)
+        const editPostId = searchParams.get("edit");
+        if (editPostId) {
+          setCanCreateMore(true);
+        } else {
+          setCanCreateMore(phaseUtils.canCreateMorePosts(user, postCount));
+        }
       } catch (error) {
-        console.error("Error checking user post count:", error);
-      }
+          console.error("Error checking user post count:", error);
+        }
     };
 
     checkUserPostCount();
-  }, [user]);
+  }, [user, searchParams]);
 
   const handleServiceExperienceSubmit = async (
     experience: ServiceExperience
@@ -78,7 +85,7 @@ export default function CreatePostPage() {
       return;
     }
 
-    const editPostId = searchParams.get('edit');
+    const editPostId = searchParams.get("edit");
     const isCurrentlyEditing = !!editPostId;
 
     // Check if user can create more posts (only for new posts, not editing)
@@ -157,8 +164,12 @@ export default function CreatePostPage() {
 
   // Check if user can create posts in their current phase
   const currentPhase = phaseUtils.getCurrentPhase(user);
+  const editPostId = searchParams.get("edit");
+  const isCurrentlyEditing = !!editPostId;
+  
+  // Allow editing even if post limit is reached
   const canCreate =
-    phaseUtils.canCreateInPhase(user, currentPhase) && canCreateMore;
+    phaseUtils.canCreateInPhase(user, currentPhase) && (canCreateMore || isCurrentlyEditing);
 
   if (!canCreate) {
     const isPhaseRestriction = !phaseUtils.canCreateInPhase(user, currentPhase);
