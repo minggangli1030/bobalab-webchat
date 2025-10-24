@@ -363,25 +363,71 @@ export default function PostDetailPage() {
                 </div>
               )}
 
-              {/* Imgur Links */}
+              {/* Imgur Media */}
               {post.imgurLinks && post.imgurLinks.length > 0 && (
                 <div className="mt-4">
                   <h4 className="text-md font-medium text-gray-900 mb-2">
-                    Media Links
+                    Media
                   </h4>
-                  <div className="space-y-2">
-                    {post.imgurLinks.map((link, index) => (
-                      <div key={index} className="p-2 bg-white rounded border">
-                        <a
-                          href={link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-blue-600 hover:text-blue-800 break-all"
-                        >
-                          {link}
-                        </a>
-                      </div>
-                    ))}
+                  <div className="space-y-4">
+                    {post.imgurLinks.map((link, index) => {
+                      // Check if it's an Imgur image link
+                      const isImgurImage =
+                        link.includes("imgur.com") &&
+                        (link.includes(".jpg") ||
+                          link.includes(".jpeg") ||
+                          link.includes(".png") ||
+                          link.includes(".gif") ||
+                          link.includes(".webp"));
+
+                      if (isImgurImage) {
+                        return (
+                          <div
+                            key={index}
+                            className="bg-white rounded border p-2"
+                          >
+                            <img
+                              src={link}
+                              alt={`Media ${index + 1}`}
+                              className="max-w-full h-auto rounded"
+                              onError={(e) => {
+                                // Fallback to link if image fails to load
+                                e.currentTarget.style.display = "none";
+                                const linkElement =
+                                  e.currentTarget.nextElementSibling;
+                                if (linkElement)
+                                  linkElement.style.display = "block";
+                              }}
+                            />
+                            <a
+                              href={link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-sm text-blue-600 hover:text-blue-800 break-all hidden"
+                            >
+                              {link}
+                            </a>
+                          </div>
+                        );
+                      } else {
+                        // For non-image links, show as regular link
+                        return (
+                          <div
+                            key={index}
+                            className="p-2 bg-white rounded border"
+                          >
+                            <a
+                              href={link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-sm text-blue-600 hover:text-blue-800 break-all"
+                            >
+                              {link}
+                            </a>
+                          </div>
+                        );
+                      }
+                    })}
                   </div>
                 </div>
               )}
@@ -403,17 +449,6 @@ export default function PostDetailPage() {
                     className="object-cover"
                   />
                 </div>
-              ))}
-            </div>
-          )}
-
-          {/* Hashtags */}
-          {post.hashtags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {post.hashtags.map((hashtag, index) => (
-                <Badge key={index} variant="secondary" className="text-xs">
-                  #{hashtag}
-                </Badge>
               ))}
             </div>
           )}

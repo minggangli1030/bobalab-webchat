@@ -21,7 +21,6 @@ export default function SignupPage() {
     confirmPassword: "",
     formalName: "",
     preferredName: "",
-    businessName: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -53,7 +52,7 @@ export default function SignupPage() {
         formData.formalName,
         formData.preferredName,
         "", // No student ID needed anymore
-        formData.businessName
+        "" // No business name needed anymore
       );
 
       if (result.success) {
@@ -93,8 +92,11 @@ export default function SignupPage() {
                 htmlFor="email"
                 className="block text-sm font-medium text-gray-700"
               >
-                Email Address
+                Email Address (Login ID)
               </label>
+              <p className="text-xs text-gray-500 mt-1">
+                Your email address will be used as your login ID
+              </p>
               <Input
                 id="email"
                 name="email"
@@ -180,24 +182,6 @@ export default function SignupPage() {
                 onChange={handleChange}
                 className="mt-1"
                 placeholder="Johnny"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="businessName"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Business Name (Optional)
-              </label>
-              <Input
-                id="businessName"
-                name="businessName"
-                type="text"
-                value={formData.businessName}
-                onChange={handleChange}
-                className="mt-1"
-                placeholder="Your business or company name"
               />
             </div>
 

@@ -118,22 +118,6 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
             </div>
           )}
 
-          {/* Hashtags */}
-          {post.hashtags.length > 0 && (
-            <div className="flex flex-wrap gap-1 mb-3">
-              {post.hashtags.slice(0, 2).map((hashtag, index) => (
-                <Badge key={index} variant="secondary" className="text-xs">
-                  #{hashtag}
-                </Badge>
-              ))}
-              {post.hashtags.length > 2 && (
-                <Badge variant="outline" className="text-xs">
-                  +{post.hashtags.length - 2}
-                </Badge>
-              )}
-            </div>
-          )}
-
           {/* Actions */}
           <div className="flex items-center justify-between pt-2 border-t">
             <div className="flex items-center space-x-3">

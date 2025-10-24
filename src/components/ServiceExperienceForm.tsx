@@ -381,14 +381,14 @@ export default function ServiceExperienceForm({
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Street Address <span className="text-red-500">*</span>
+            Store Location <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             value={formData.streetAddress || ""}
             onChange={(e) => updateFormData({ streetAddress: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Enter street address"
+            placeholder="Enter store location"
             required
           />
         </div>
@@ -401,11 +401,25 @@ export default function ServiceExperienceForm({
       const newAttribute = prompt("Enter attribute name:");
       if (newAttribute && newAttribute.trim()) {
         const currentAttributes = formData.serviceAttributes || [];
+        const trimmedName = newAttribute.trim();
+
+        // Check for duplicates
+        const isDuplicate = currentAttributes.some(
+          (attr) => attr.name.toLowerCase() === trimmedName.toLowerCase()
+        );
+
+        if (isDuplicate) {
+          alert(
+            "This attribute already exists. Please enter a different name."
+          );
+          return;
+        }
+
         if (currentAttributes.length < 6) {
           const newAttributes = [
             ...currentAttributes,
             {
-              name: newAttribute.trim(),
+              name: trimmedName,
               userRanking: currentAttributes.length + 1,
               performanceRating: 50,
             },
@@ -433,9 +447,14 @@ export default function ServiceExperienceForm({
         <CardHeader>
           <CardTitle>Service Attributes - Your Perspective</CardTitle>
           <p className="text-sm text-gray-600">
-            <strong>Step 1:</strong> Add exactly 6 service attributes that are important to you.<br/>
-            <strong>Step 2:</strong> Drag to reorder by importance (most important at top).<br/>
-            <strong>Step 3:</strong> In the next step, you'll evaluate each attribute's performance.
+            <strong>Step 1:</strong> Add exactly 6 service attributes that are
+            important to you.
+            <br />
+            <strong>Step 2:</strong> Drag to reorder by importance (most
+            important at top).
+            <br />
+            <strong>Step 3:</strong> In the next step, you'll evaluate each
+            attribute's performance.
           </p>
         </CardHeader>
         <CardContent>
@@ -491,8 +510,9 @@ export default function ServiceExperienceForm({
       <CardHeader>
         <CardTitle>Performance Evaluation</CardTitle>
         <p className="text-sm text-gray-600">
-          <strong>Step 3:</strong> Rate the organization's performance on each of your 6 attributes relative to competitors. 
-          Use the sliders to evaluate how well this organization performed on each attribute.
+          <strong>Step 3:</strong> Rate the organization's performance on each
+          of your 6 attributes relative to competitors. Use the sliders to
+          evaluate how well this organization performed on each attribute.
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -549,81 +569,38 @@ export default function ServiceExperienceForm({
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Did this type of variability apply to your experience?
+                  How did the company respond to this variability?
                 </label>
-                <div className="space-y-2">
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name={`${assessment.type}-applied`}
-                      checked={assessment.applied}
-                      onChange={(e) => {
-                        const newAssessments = [
-                          ...(formData.variabilityAssessments || []),
-                        ];
-                        newAssessments[index].applied = true;
-                        updateFormData({
-                          variabilityAssessments: newAssessments,
-                        });
-                      }}
-                      className="mr-2"
-                    />
-                    Yes, this applied
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name={`${assessment.type}-applied`}
-                      checked={!assessment.applied}
-                      onChange={(e) => {
-                        const newAssessments = [
-                          ...(formData.variabilityAssessments || []),
-                        ];
-                        newAssessments[index].applied = false;
-                        newAssessments[index].companyResponse =
-                          "not_applicable";
-                        updateFormData({
-                          variabilityAssessments: newAssessments,
-                        });
-                      }}
-                      className="mr-2"
-                    />
-                    No, this did not apply
-                  </label>
-                </div>
+                <select
+                  value={assessment.companyResponse}
+                  onChange={(e) => {
+                    const newAssessments = [
+                      ...(formData.variabilityAssessments || []),
+                    ];
+                    newAssessments[index].companyResponse = e.target.value as
+                      | "accommodate"
+                      | "reduce"
+                      | "not_applicable";
+                    newAssessments[index].applied =
+                      e.target.value !== "not_applicable";
+                    updateFormData({
+                      variabilityAssessments: newAssessments,
+                    });
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                >
+                  <option value="not_applicable">Did not apply</option>
+                  <option value="accommodate">Accommodate variability</option>
+                  <option value="reduce">Reduce variability</option>
+                </select>
               </div>
 
-              {assessment.applied && (
+              {assessment.companyResponse !== "not_applicable" && (
                 <>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      How did the company respond to this variability?
-                    </label>
-                    <select
-                      value={assessment.companyResponse}
-                      onChange={(e) => {
-                        const newAssessments = [
-                          ...(formData.variabilityAssessments || []),
-                        ];
-                        newAssessments[index].companyResponse = e.target
-                          .value as "accommodate" | "reduce" | "not_applicable";
-                        updateFormData({
-                          variabilityAssessments: newAssessments,
-                        });
-                      }}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                    >
-                      <option value="not_applicable">Did not apply</option>
-                      <option value="accommodate">
-                        Accommodate variability
-                      </option>
-                      <option value="reduce">Reduce variability</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Describe how you imposed this variability
+                      Describe your experience{" "}
+                      <span className="text-red-500">*</span>
                     </label>
                     <Textarea
                       value={assessment.description || ""}
@@ -638,6 +615,7 @@ export default function ServiceExperienceForm({
                       }}
                       placeholder="Describe your experience..."
                       className="min-h-[80px]"
+                      required
                     />
                   </div>
 
@@ -675,6 +653,9 @@ export default function ServiceExperienceForm({
                         {assessment.impactRating || 0}
                       </span>
                     </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Note: Minimum value must be at least 1
+                    </p>
                   </div>
                 </>
               )}
@@ -693,7 +674,8 @@ export default function ServiceExperienceForm({
       <CardContent className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            How well do your needs align with this organization's capabilities? <span className="text-red-500">*</span>
+            How well do your needs align with this organization's capabilities?{" "}
+            <span className="text-red-500">*</span>
           </label>
           <div className="flex items-center space-x-4">
             <span className="text-sm text-gray-500 w-32 text-right">
@@ -709,7 +691,9 @@ export default function ServiceExperienceForm({
               }
               className="flex-1"
             />
-            <span className="text-sm text-gray-500 w-32">Very well aligned</span>
+            <span className="text-sm text-gray-500 w-32">
+              Very well aligned
+            </span>
             <span className="text-sm font-medium w-12 text-center">
               {formData.needsAlignment || 50}
             </span>
@@ -718,10 +702,13 @@ export default function ServiceExperienceForm({
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Please rate your satisfaction with your service interaction <span className="text-red-500">*</span>
+            Please rate your satisfaction with your service interaction{" "}
+            <span className="text-red-500">*</span>
           </label>
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-500 w-32 text-right">Very dissatisfied</span>
+            <span className="text-sm text-gray-500 w-32 text-right">
+              Very dissatisfied
+            </span>
             <input
               type="range"
               min="0"
@@ -741,10 +728,13 @@ export default function ServiceExperienceForm({
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Please rate your intended loyalty to this organization <span className="text-red-500">*</span>
+            Please rate your intended loyalty to this organization{" "}
+            <span className="text-red-500">*</span>
           </label>
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-500 w-32 text-right">Very low</span>
+            <span className="text-sm text-gray-500 w-32 text-right">
+              Very low
+            </span>
             <input
               type="range"
               min="0"
@@ -768,7 +758,9 @@ export default function ServiceExperienceForm({
             colleague? <span className="text-red-500">*</span>
           </label>
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-500 w-32 text-right">Not at all likely</span>
+            <span className="text-sm text-gray-500 w-32 text-right">
+              Not at all likely
+            </span>
             <input
               type="range"
               min="0"
@@ -791,7 +783,8 @@ export default function ServiceExperienceForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Google Review Score (please research and enter) <span className="text-red-500">*</span>
+              Google Review Score (please research and enter){" "}
+              <span className="text-red-500">*</span>
             </label>
             <input
               type="number"
@@ -841,7 +834,8 @@ export default function ServiceExperienceForm({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Google Review Price Range (please research and enter) <span className="text-red-500">*</span>
+              Google Review Price Range (please research and enter){" "}
+              <span className="text-red-500">*</span>
             </label>
             <input
               type="number"
@@ -872,7 +866,8 @@ export default function ServiceExperienceForm({
       <CardContent className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            How disruptive to the operation was the variability you imposed? <span className="text-red-500">*</span>
+            How disruptive to the operation was the variability you imposed?{" "}
+            <span className="text-red-500">*</span>
           </label>
           <div className="flex items-center space-x-4">
             <span className="text-sm text-gray-500">Not at all disruptive</span>
@@ -921,7 +916,8 @@ export default function ServiceExperienceForm({
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Please provide a brief narrative describing your service experience <span className="text-red-500">*</span>
+            Please provide a brief narrative describing your service experience{" "}
+            <span className="text-red-500">*</span>
           </label>
           <Textarea
             value={formData.experienceNarrative || ""}
@@ -955,8 +951,16 @@ export default function ServiceExperienceForm({
             Upload Media to Imgur and Submit Links
           </label>
           <p className="text-sm text-gray-600 mb-3">
-            Please upload any relevant photos or media to Imgur and paste the
-            links here (one per line).
+            Please upload any relevant photos or media to{" "}
+            <a
+              href="https://imgur.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 underline"
+            >
+              imgur.com
+            </a>{" "}
+            and paste the links here (one per line).
           </p>
           <Textarea
             value={formData.imgurLinks?.join("\n") || ""}

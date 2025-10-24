@@ -6,6 +6,7 @@ import { firebasePostUtils } from "@/lib/firebase-posts";
 import { phaseUtils } from "@/lib/phase-utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { PostCard } from "@/components/posts/PostCard";
+import Phase2Dashboard from "@/components/Phase2Dashboard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Search, Filter, SortAsc } from "lucide-react";
@@ -17,7 +18,6 @@ export default function FeedPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedHashtag, setSelectedHashtag] = useState("");
   const [sortBy, setSortBy] = useState<"time" | "highlights" | "category">(
     "highlights"
   );
@@ -51,11 +51,6 @@ export default function FeedPage() {
       ...new Set(posts.map((post) => post.category).filter(Boolean)),
     ];
     return cats.sort();
-  }, [posts]);
-
-  const hashtags = useMemo(() => {
-    const tags = [...new Set(posts.flatMap((post) => post.hashtags))];
-    return tags.sort();
   }, [posts]);
 
   // Check if user has created any posts (for handling phase transition)
@@ -95,13 +90,6 @@ export default function FeedPage() {
       filtered = filtered.filter((post) => post.category === selectedCategory);
     }
 
-    // Hashtag filter
-    if (selectedHashtag) {
-      filtered = filtered.filter((post) =>
-        post.hashtags.includes(selectedHashtag)
-      );
-    }
-
     // Sort posts
     switch (sortBy) {
       case "time":
@@ -120,15 +108,7 @@ export default function FeedPage() {
       default:
         return filtered;
     }
-  }, [
-    posts,
-    searchTerm,
-    selectedCategory,
-    selectedHashtag,
-    sortBy,
-    user,
-    userHasCreatedPost,
-  ]);
+  }, [posts, searchTerm, selectedCategory, sortBy, user, userHasCreatedPost]);
 
   if (isLoading) {
     return (
@@ -180,14 +160,19 @@ export default function FeedPage() {
     );
   }
 
+  // Show Phase 2 Dashboard for Phase 2 users
+  if (user && phaseUtils.getCurrentPhase(user) === 2 && !user.isAdmin) {
+    return <Phase2Dashboard posts={posts} />;
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
-            {user && phaseUtils.getCurrentPhase(user) === 1 
-              ? "Phase 1: Initial Assessment" 
+            {user && phaseUtils.getCurrentPhase(user) === 1
+              ? "Phase 1: Initial Assessment"
               : "Phase 2: Peer Feedback"}
           </h1>
           <p className="text-gray-600 mt-1">Customer Compatibility Exercise</p>
@@ -246,22 +231,6 @@ export default function FeedPage() {
             </select>
           </div>
 
-          {/* Hashtag Filter */}
-          <div className="sm:w-48">
-            <select
-              value={selectedHashtag}
-              onChange={(e) => setSelectedHashtag(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="">All Hashtags</option>
-              {hashtags.map((hashtag) => (
-                <option key={hashtag} value={hashtag}>
-                  #{hashtag}
-                </option>
-              ))}
-            </select>
-          </div>
-
           {/* Sort */}
           <div className="sm:w-48">
             <select
@@ -299,16 +268,6 @@ export default function FeedPage() {
                 className="text-xs"
               >
                 Category: {selectedCategory} ×
-              </Button>
-            )}
-            {selectedHashtag && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSelectedHashtag("")}
-                className="text-xs"
-              >
-                Hashtag: #{selectedHashtag} ×
               </Button>
             )}
           </div>
