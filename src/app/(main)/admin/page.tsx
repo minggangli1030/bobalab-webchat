@@ -9,9 +9,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Phase2Dashboard from "@/components/Phase2Dashboard";
@@ -24,7 +21,6 @@ import {
   Calendar,
   ArrowUp,
   Download,
-  Star,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -76,34 +72,6 @@ export default function AdminPage() {
     }
   };
 
-  const advanceUserPhase = async (userId: string, currentPhase: number) => {
-    if (
-      !window.confirm(
-        `Are you sure you want to advance this user to Phase ${
-          currentPhase + 1
-        }?`
-      )
-    )
-      return;
-
-    try {
-      const success = await firebasePostUtils.updateUserPhase(
-        userId,
-        currentPhase + 1
-      );
-      if (success) {
-        // Refresh users list
-        const allUsers = await firebasePostUtils.getAllUsers();
-        setUsers(allUsers);
-        alert("User phase advanced successfully!");
-      } else {
-        alert("Failed to advance user phase.");
-      }
-    } catch (error) {
-      console.error("Error advancing user phase:", error);
-      alert("Failed to advance user phase.");
-    }
-  };
 
   const deleteAllData = async () => {
     if (
@@ -719,61 +687,64 @@ export default function AdminPage() {
           {posts.map((post) => {
             console.log("Rendering post with Phase2Dashboard:", post.id);
             return (
-            <div key={post.id} className="border-2 border-gray-200 rounded-lg bg-white">
-              {/* Admin Action Buttons - Fixed at top */}
-              <div className="flex justify-end p-4 border-b border-gray-200 bg-gray-50">
-                <div className="flex space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => router.push(`/post/${post.id}`)}
-                    className="text-sm"
-                  >
-                    <Eye className="h-4 w-4 mr-2" />
-                    View Full Dashboard
-                  </Button>
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      const newImgurLinks = prompt(
-                        "Enter new Imgur links (one per line):",
-                        post.imgurLinks?.join("\n") || ""
-                      );
-                      if (newImgurLinks !== null) {
-                        const links = newImgurLinks
-                          .split("\n")
-                          .filter((link) => link.trim());
-                        handleEditPost(post.id, { imgurLinks: links });
-                      }
-                    }}
-                    className="text-sm"
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Add Media
-                  </Button>
-                  
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => deletePost(post.id)}
-                    className="text-sm"
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Remove
-                  </Button>
+              <div
+                key={post.id}
+                className="border-2 border-gray-200 rounded-lg bg-white"
+              >
+                {/* Admin Action Buttons - Fixed at top */}
+                <div className="flex justify-end p-4 border-b border-gray-200 bg-gray-50">
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => router.push(`/post/${post.id}`)}
+                      className="text-sm"
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      View Full Dashboard
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const newImgurLinks = prompt(
+                          "Enter new Imgur links (one per line):",
+                          post.imgurLinks?.join("\n") || ""
+                        );
+                        if (newImgurLinks !== null) {
+                          const links = newImgurLinks
+                            .split("\n")
+                            .filter((link) => link.trim());
+                          handleEditPost(post.id, { imgurLinks: links });
+                        }
+                      }}
+                      className="text-sm"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Add Media
+                    </Button>
+
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => deletePost(post.id)}
+                      className="text-sm"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Remove
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Use Phase2Dashboard for detailed format with charts */}
+                <div className="p-6">
+                  <Phase2Dashboard
+                    posts={[post]}
+                    currentUser={users.find((u) => u.id === post.authorId) || null}
+                  />
                 </div>
               </div>
-
-              {/* Use Phase2Dashboard for detailed format with charts */}
-              <div className="p-6">
-                <Phase2Dashboard 
-                  posts={[post]} 
-                  currentUser={post.authorId ? users.find(u => u.id === post.authorId) : null}
-                />
-              </div>
-            </div>
             );
           })}
         </div>
@@ -794,7 +765,6 @@ export default function AdminPage() {
               .filter((user) => !user.isAdmin)
               .map((user) => {
                 const userPosts = posts.filter((p) => p.authorId === user.id);
-                const userPost = userPosts[0]; // Since there's 1 post per user
                 const currentPhase = phaseUtils.getCurrentPhase(user);
 
                 return (
