@@ -185,44 +185,43 @@ export default function Home() {
                 </CardContent>
               </Card>
 
-              {/* Contact Information Card */}
-              <Card className="shadow-lg border-0 bg-white mt-6">
-                <CardHeader>
-                  <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-3">
-                    <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-                      <svg
-                        className="w-5 h-5 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                        />
-                      </svg>
-                    </div>
-                    Need Help?
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-700 leading-relaxed">
-                    If you're having trouble with the exercise or need assistance, 
-                    please contact your instructor:
-                  </p>
-                  <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                    <p className="font-semibold text-gray-900">Park Sinchaisri</p>
-                    <p className="text-blue-600 hover:text-blue-800">
-                      <a href="mailto:parksinchaisri@berkeley.edu">
-                        parksinchaisri@berkeley.edu
-                      </a>
-                    </p>
+            {/* Need Help Card */}
+            <Card className="shadow-lg border-0 bg-white">
+              <CardHeader>
+                <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-3">
+                  <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                    <svg
+                      className="w-5 h-5 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      />
+                    </svg>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
+                  Need Help?
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-700 leading-relaxed">
+                  If you're having trouble with the exercise or need assistance, 
+                  please contact your instructor:
+                </p>
+                <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                  <p className="font-semibold text-gray-900">Park Sinchaisri</p>
+                  <p className="text-blue-600 hover:text-blue-800">
+                    <a href="mailto:parksinchaisri@berkeley.edu">
+                      parksinchaisri@berkeley.edu
+                    </a>
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
