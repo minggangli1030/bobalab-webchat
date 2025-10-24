@@ -742,6 +742,7 @@ export default function AdminPage() {
                   <Phase2Dashboard
                     posts={[post]}
                     currentUser={users.find((u) => u.id === post.authorId) || null}
+                    isAdminView={true}
                   />
                 </div>
               </div>

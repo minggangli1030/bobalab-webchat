@@ -14,11 +14,13 @@ import Link from "next/link";
 interface Phase2DashboardProps {
   posts: Post[];
   currentUser?: any;
+  isAdminView?: boolean; // Flag to indicate admin is viewing someone else's post
 }
 
 export default function Phase2Dashboard({
   posts,
   currentUser,
+  isAdminView = false,
 }: Phase2DashboardProps) {
   const { user } = useAuth();
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
@@ -27,7 +29,10 @@ export default function Phase2Dashboard({
   const activeUser = currentUser || user;
 
   // Get user's own post for the dashboard
-  const userPost = posts.find((post) => post.authorId === activeUser?.id);
+  // For admin view, just use the first post (since we're viewing someone else's post)
+  const userPost = isAdminView
+    ? posts[0]
+    : posts.find((post) => post.authorId === activeUser?.id);
 
   if (!userPost || !userPost.serviceExperience) {
     return (
@@ -52,12 +57,16 @@ export default function Phase2Dashboard({
       {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          {activeUser && phaseUtils.getCurrentPhase(activeUser) === 1
+          {isAdminView
+            ? "Service Experience Dashboard"
+            : activeUser && phaseUtils.getCurrentPhase(activeUser) === 1
             ? "Your Post Details"
             : "Phase 2: Peer Feedback Dashboard"}
         </h1>
         <p className="text-gray-600">
-          {activeUser && phaseUtils.getCurrentPhase(activeUser) === 1
+          {isAdminView
+            ? "Comprehensive analysis of service experience"
+            : activeUser && phaseUtils.getCurrentPhase(activeUser) === 1
             ? "Review your service experience details"
             : "Comprehensive analysis of your service experience"}
         </p>
@@ -70,18 +79,20 @@ export default function Phase2Dashboard({
             <CardTitle className="text-lg font-semibold">
               Business Details
             </CardTitle>
-            {activeUser && phaseUtils.getCurrentPhase(activeUser) === 1 && (
-              <Link href={`/create-post?edit=${userPost.id}`}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center space-x-2"
-                >
-                  <Edit className="h-4 w-4" />
-                  <span>Edit Post</span>
-                </Button>
-              </Link>
-            )}
+            {!isAdminView &&
+              activeUser &&
+              phaseUtils.getCurrentPhase(activeUser) === 1 && (
+                <Link href={`/create-post?edit=${userPost.id}`}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center space-x-2"
+                  >
+                    <Edit className="h-4 w-4" />
+                    <span>Edit Post</span>
+                  </Button>
+                </Link>
+              )}
           </div>
         </CardHeader>
         <CardContent>
