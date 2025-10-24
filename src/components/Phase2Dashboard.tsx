@@ -59,14 +59,46 @@ export default function Phase2Dashboard({ posts, currentUser }: Phase2DashboardP
         </p>
       </div>
 
-      {/* Phase 1 Note */}
-      {activeUser && phaseUtils.getCurrentPhase(activeUser) === 1 && (
-        <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-6">
-          <p className="font-medium">
-            Good job on posting! You can review your post here, and wait for your instructor to start Phase 2.
-          </p>
-        </div>
-      )}
+      {/* Business Details */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold">Business Details</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div className="space-y-2">
+              <div>
+                <span className="font-medium text-gray-700">Organization:</span>
+                <span className="ml-2 text-gray-900">{serviceExp.organizationName || "N/A"}</span>
+              </div>
+              <div>
+                <span className="font-medium text-gray-700">Type:</span>
+                <span className="ml-2 text-gray-900">{serviceExp.organizationType || "N/A"}</span>
+              </div>
+              <div>
+                <span className="font-medium text-gray-700">Location:</span>
+                <span className="ml-2 text-gray-900">{serviceExp.streetAddress || "N/A"}</span>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div>
+                <span className="font-medium text-gray-700">Relationship Length:</span>
+                <span className="ml-2 text-gray-900">{serviceExp.relationshipLength || "N/A"}</span>
+              </div>
+              <div>
+                <span className="font-medium text-gray-700">Author:</span>
+                <span className="ml-2 text-gray-900">{userPost.authorName || "N/A"}</span>
+              </div>
+              <div>
+                <span className="font-medium text-gray-700">Date:</span>
+                <span className="ml-2 text-gray-900">
+                  {userPost.createdAt ? new Date(userPost.createdAt).toLocaleDateString() : "N/A"}
+                </span>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Column */}

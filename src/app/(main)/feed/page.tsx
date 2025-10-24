@@ -198,6 +198,15 @@ export default function FeedPage() {
         </div>
       </div>
 
+      {/* Phase 1 Note */}
+      {user && phaseUtils.getCurrentPhase(user) === 1 && !user.isAdmin && (
+        <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+          <p className="font-medium">
+            Good job on posting! You can review your post here, and wait for your instructor to start Phase 2.
+          </p>
+        </div>
+      )}
+
       {/* Search and Filter Controls - Only show for Phase 2 users and admins */}
       {user && (user.isAdmin || phaseUtils.getCurrentPhase(user) === 2) && (
         <div className="bg-white p-4 rounded-lg border space-y-4">
