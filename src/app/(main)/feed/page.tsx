@@ -62,18 +62,22 @@ export default function FeedPage() {
     let filtered = posts;
 
     // Phase filter - only show posts user can view
-    // Special case: if user is Phase 1 but has created posts, they can view all posts
-    // (handles race condition during phase transition)
+    // Phase 1 users can only view their own posts
+    // Phase 2 users can view all posts
     // Admins can always view all posts
-    const canViewAllPosts =
-      user?.isAdmin ||
-      phaseUtils.canViewPhasePosts(user, 1) ||
-      userHasCreatedPost;
-
-    filtered = filtered.filter((post) => {
-      const postPhase = post.phase || 1;
-      return canViewAllPosts || phaseUtils.canViewPhasePosts(user, postPhase);
-    });
+    if (user && !user.isAdmin) {
+      const userPhase = phaseUtils.getCurrentPhase(user);
+      if (userPhase === 1) {
+        // Phase 1 users can only see their own posts
+        filtered = filtered.filter((post) => post.authorId === user.id);
+      } else {
+        // Phase 2 users can see all posts
+        filtered = filtered.filter((post) => {
+          const postPhase = post.phase || 1;
+          return phaseUtils.canViewPhasePosts(user, postPhase);
+        });
+      }
+    }
 
     // Search filter
     if (searchTerm) {
@@ -108,7 +112,7 @@ export default function FeedPage() {
       default:
         return filtered;
     }
-  }, [posts, searchTerm, selectedCategory, sortBy, user, userHasCreatedPost]);
+  }, [posts, searchTerm, selectedCategory, sortBy, user]);
 
   if (isLoading) {
     return (
@@ -121,9 +125,7 @@ export default function FeedPage() {
     );
   }
 
-  // Check if user is in Phase 1 (shouldn't be able to view posts yet)
-  // BUT if they've already created a post, let them through (handles race condition during phase transition)
-  // Admins can always view the gallery for debugging
+  // Phase 1 users can view their own posts, but show a message if they haven't created any
   if (
     user &&
     !user.isAdmin &&
@@ -138,9 +140,7 @@ export default function FeedPage() {
             Welcome to Phase 1!
           </h2>
           <p className="text-gray-700 mb-6">
-            You need to create your first post before you can view the gallery.
-            Share your business compatibility experience to unlock access to
-            other posts!
+            You haven't created any posts yet. Create your first business compatibility assessment to get started!
           </p>
           <Link href="/create-post">
             <Button size="lg" className="flex items-center space-x-2">
@@ -150,13 +150,6 @@ export default function FeedPage() {
           </Link>
         </div>
       </div>
-    );
-  }
-
-  // Log phase transition if user has created a post but phase hasn't updated yet
-  if (user && phaseUtils.getCurrentPhase(user) === 1 && userHasCreatedPost) {
-    console.log(
-      "Feed page: User in Phase 1 but has created a post - allowing access (phase transition in progress)"
     );
   }
 
