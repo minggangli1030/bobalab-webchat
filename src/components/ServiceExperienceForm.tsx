@@ -1013,7 +1013,7 @@ export default function ServiceExperienceForm({
         return formData.serviceAttributes?.length === 6; // Must have exactly 6 attributes
       case 3:
         return formData.serviceAttributes?.every(
-          (attr) => (attr.performanceRating || 0) > 0
+          (attr) => (attr.performanceRating || 0) >= 0
         );
       case 4:
         return true; // Variability assessment is optional

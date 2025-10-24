@@ -205,77 +205,79 @@ export default function FeedPage() {
       {/* Search and Filter Controls - Only show for Phase 2 users and admins */}
       {user && (user.isAdmin || phaseUtils.getCurrentPhase(user) === 2) && (
         <div className="bg-white p-4 rounded-lg border space-y-4">
-        <div className="flex flex-col sm:flex-row gap-4">
-          {/* Search */}
-          <div className="flex-1">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                placeholder="Search businesses, authors, or content..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
+          <div className="flex flex-col sm:flex-row gap-4">
+            {/* Search */}
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  placeholder="Search businesses, authors, or content..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+
+            {/* Category Filter */}
+            <div className="sm:w-48">
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">All Categories</option>
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Sort */}
+            <div className="sm:w-48">
+              <select
+                value={sortBy}
+                onChange={(e) =>
+                  setSortBy(
+                    e.target.value as "time" | "highlights" | "category"
+                  )
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="highlights">Most Highlighted</option>
+                <option value="time">Most Recent</option>
+                <option value="category">By Category</option>
+              </select>
             </div>
           </div>
 
-          {/* Category Filter */}
-          <div className="sm:w-48">
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="">All Categories</option>
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Sort */}
-          <div className="sm:w-48">
-            <select
-              value={sortBy}
-              onChange={(e) =>
-                setSortBy(e.target.value as "time" | "highlights" | "category")
-              }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="highlights">Most Highlighted</option>
-              <option value="time">Most Recent</option>
-              <option value="category">By Category</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Active Filters */}
-        {(searchTerm || selectedCategory) && (
-          <div className="flex flex-wrap gap-2">
-            {searchTerm && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSearchTerm("")}
-                className="text-xs"
-              >
-                Search: "{searchTerm}" ×
-              </Button>
-            )}
-            {selectedCategory && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSelectedCategory("")}
-                className="text-xs"
-              >
-                Category: {selectedCategory} ×
-              </Button>
-            )}
-          </div>
-        )}
+          {/* Active Filters */}
+          {(searchTerm || selectedCategory) && (
+            <div className="flex flex-wrap gap-2">
+              {searchTerm && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSearchTerm("")}
+                  className="text-xs"
+                >
+                  Search: "{searchTerm}" ×
+                </Button>
+              )}
+              {selectedCategory && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSelectedCategory("")}
+                  className="text-xs"
+                >
+                  Category: {selectedCategory} ×
+                </Button>
+              )}
+            </div>
+          )}
         </div>
       )}
 
