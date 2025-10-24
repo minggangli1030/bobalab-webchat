@@ -33,7 +33,7 @@ export default function PostDetailPage() {
       try {
         const postId = params.id as string;
         const foundPost = await firebasePostUtils.getPostById(postId);
-        
+
         // Check if Phase 1 user is trying to view someone else's post
         if (foundPost && user && !user.isAdmin) {
           const userPhase = user.phase || 1;
@@ -43,7 +43,7 @@ export default function PostDetailPage() {
             return;
           }
         }
-        
+
         setPost(foundPost);
         if (foundPost && user) {
           setIsHighlighted(
@@ -404,8 +404,8 @@ export default function PostDetailPage() {
                               onError={(e) => {
                                 // Fallback to link if image fails to load
                                 e.currentTarget.style.display = "none";
-                                const linkElement =
-                                  e.currentTarget.nextElementSibling as HTMLElement;
+                                const linkElement = e.currentTarget
+                                  .nextElementSibling as HTMLElement;
                                 if (linkElement)
                                   linkElement.style.display = "block";
                               }}

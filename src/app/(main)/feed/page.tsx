@@ -56,9 +56,11 @@ export default function FeedPage() {
   // Check if user has created any posts (for handling phase transition)
   const userHasCreatedPost =
     user && posts.some((post) => post.authorId === user.id);
-  
+
   // Count user's posts
-  const userPostCount = user ? posts.filter((post) => post.authorId === user.id).length : 0;
+  const userPostCount = user
+    ? posts.filter((post) => post.authorId === user.id).length
+    : 0;
 
   // Filter and sort posts
   const filteredAndSortedPosts = useMemo(() => {
@@ -182,16 +184,17 @@ export default function FeedPage() {
         <div className="flex items-center space-x-3">
           {user &&
             (user.isAdmin ||
-              (phaseUtils.getCurrentPhase(user) === 1 && userPostCount < 2)) && (
+              (phaseUtils.getCurrentPhase(user) === 1 &&
+                userPostCount < 2)) && (
               <Link href="/create-post">
                 <Button className="flex items-center space-x-2">
                   <Plus className="h-4 w-4" />
                   <span>
-                    {user.isAdmin 
-                      ? "Create Test Post" 
-                      : userPostCount === 0 
-                        ? "Create Post" 
-                        : "Create Another Post"}
+                    {user.isAdmin
+                      ? "Create Test Post"
+                      : userPostCount === 0
+                      ? "Create Post"
+                      : "Create Another Post"}
                   </span>
                 </Button>
               </Link>
@@ -199,8 +202,9 @@ export default function FeedPage() {
         </div>
       </div>
 
-      {/* Search and Filter Controls */}
-      <div className="bg-white p-4 rounded-lg border space-y-4">
+      {/* Search and Filter Controls - Only show for Phase 2 users and admins */}
+      {user && (user.isAdmin || phaseUtils.getCurrentPhase(user) === 2) && (
+        <div className="bg-white p-4 rounded-lg border space-y-4">
         <div className="flex flex-col sm:flex-row gap-4">
           {/* Search */}
           <div className="flex-1">
@@ -272,7 +276,8 @@ export default function FeedPage() {
             )}
           </div>
         )}
-      </div>
+        </div>
+      )}
 
       {/* Posts */}
       {filteredAndSortedPosts.length === 0 ? (

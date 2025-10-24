@@ -102,7 +102,13 @@ export default function MainLayout({
                       className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
                     >
                       <Home className="h-4 w-4" />
-                      <span>{user.isAdmin ? "Gallery" : phaseUtils.getPhaseName(phaseUtils.getCurrentPhase(user))}</span>
+                      <span>
+                        {user.isAdmin
+                          ? "Gallery"
+                          : phaseUtils.getPhaseName(
+                              phaseUtils.getCurrentPhase(user)
+                            )}
+                      </span>
                     </Link>
                   )}
                 {user?.isAdmin && (
