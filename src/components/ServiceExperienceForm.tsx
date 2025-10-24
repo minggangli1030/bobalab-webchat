@@ -187,14 +187,14 @@ export default function ServiceExperienceForm({
       serviceAttributes: [], // Start with empty array for custom attributes
       relationshipLength: 0, // Start with 0 years
       streetAddress: "", // Initialize street address
-    imgurLinks: [], // Initialize Imgur links array
-    variabilityAssessments: VARIABILITY_TYPES.map((v) => ({
-      type: v.type,
-      applied: false,
-      companyResponse: "not_applicable" as const,
-      description: "",
-      impactRating: 0,
-    })),
+      imgurLinks: [], // Initialize Imgur links array
+      variabilityAssessments: VARIABILITY_TYPES.map((v) => ({
+        type: v.type,
+        applied: false,
+        companyResponse: "not_applicable" as const,
+        description: "",
+        impactRating: 0,
+      })),
     }
   );
 

@@ -16,10 +16,13 @@ interface Phase2DashboardProps {
   currentUser?: any;
 }
 
-export default function Phase2Dashboard({ posts, currentUser }: Phase2DashboardProps) {
+export default function Phase2Dashboard({
+  posts,
+  currentUser,
+}: Phase2DashboardProps) {
   const { user } = useAuth();
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-  
+
   // Use currentUser if provided, otherwise fall back to user from context
   const activeUser = currentUser || user;
 
@@ -49,8 +52,8 @@ export default function Phase2Dashboard({ posts, currentUser }: Phase2DashboardP
       {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          {activeUser && phaseUtils.getCurrentPhase(activeUser) === 1 
-            ? "Your Post Details" 
+          {activeUser && phaseUtils.getCurrentPhase(activeUser) === 1
+            ? "Your Post Details"
             : "Phase 2: Peer Feedback Dashboard"}
         </h1>
         <p className="text-gray-600">
@@ -64,10 +67,16 @@ export default function Phase2Dashboard({ posts, currentUser }: Phase2DashboardP
       <Card className="mb-6">
         <CardHeader>
           <div className="flex justify-between items-center">
-            <CardTitle className="text-lg font-semibold">Business Details</CardTitle>
+            <CardTitle className="text-lg font-semibold">
+              Business Details
+            </CardTitle>
             {activeUser && phaseUtils.getCurrentPhase(activeUser) === 1 && (
               <Link href={`/create-post?edit=${userPost.id}`}>
-                <Button variant="outline" size="sm" className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center space-x-2"
+                >
                   <Edit className="h-4 w-4" />
                   <span>Edit Post</span>
                 </Button>
@@ -80,30 +89,44 @@ export default function Phase2Dashboard({ posts, currentUser }: Phase2DashboardP
             <div className="space-y-2">
               <div>
                 <span className="font-medium text-gray-700">Organization:</span>
-                <span className="ml-2 text-gray-900">{serviceExp.organizationName || "N/A"}</span>
+                <span className="ml-2 text-gray-900">
+                  {serviceExp.organizationName || "N/A"}
+                </span>
               </div>
               <div>
                 <span className="font-medium text-gray-700">Type:</span>
-                <span className="ml-2 text-gray-900">{serviceExp.organizationType || "N/A"}</span>
+                <span className="ml-2 text-gray-900">
+                  {serviceExp.organizationType || "N/A"}
+                </span>
               </div>
               <div>
                 <span className="font-medium text-gray-700">Location:</span>
-                <span className="ml-2 text-gray-900">{serviceExp.streetAddress || "N/A"}</span>
+                <span className="ml-2 text-gray-900">
+                  {serviceExp.streetAddress || "N/A"}
+                </span>
               </div>
             </div>
             <div className="space-y-2">
               <div>
-                <span className="font-medium text-gray-700">Relationship Length:</span>
-                <span className="ml-2 text-gray-900">{serviceExp.relationshipLength || "N/A"}</span>
+                <span className="font-medium text-gray-700">
+                  Relationship Length:
+                </span>
+                <span className="ml-2 text-gray-900">
+                  {serviceExp.relationshipLength || "N/A"}
+                </span>
               </div>
               <div>
                 <span className="font-medium text-gray-700">Author:</span>
-                <span className="ml-2 text-gray-900">{userPost.authorName || "N/A"}</span>
+                <span className="ml-2 text-gray-900">
+                  {userPost.authorName || "N/A"}
+                </span>
               </div>
               <div>
                 <span className="font-medium text-gray-700">Date:</span>
                 <span className="ml-2 text-gray-900">
-                  {userPost.createdAt ? new Date(userPost.createdAt).toLocaleDateString() : "N/A"}
+                  {userPost.createdAt
+                    ? new Date(userPost.createdAt).toLocaleDateString()
+                    : "N/A"}
                 </span>
               </div>
             </div>
@@ -124,10 +147,7 @@ export default function Phase2Dashboard({ posts, currentUser }: Phase2DashboardP
             <CardContent>
               <div className="space-y-2">
                 {sortedAttributes.map((attr, index) => (
-                  <div
-                    key={attr.name}
-                    className="flex items-center space-x-3"
-                  >
+                  <div key={attr.name} className="flex items-center space-x-3">
                     <div className="w-24 text-sm text-gray-600 truncate">
                       {attr.name}
                     </div>
@@ -209,8 +229,10 @@ export default function Phase2Dashboard({ posts, currentUser }: Phase2DashboardP
                             className="max-w-full h-auto rounded"
                             onError={(e) => {
                               e.currentTarget.style.display = "none";
-                              const linkElement = e.currentTarget.nextElementSibling as HTMLElement;
-                              if (linkElement) linkElement.style.display = "block";
+                              const linkElement = e.currentTarget
+                                .nextElementSibling as HTMLElement;
+                              if (linkElement)
+                                linkElement.style.display = "block";
                             }}
                           />
                           <a
@@ -225,7 +247,10 @@ export default function Phase2Dashboard({ posts, currentUser }: Phase2DashboardP
                       );
                     } else {
                       return (
-                        <div key={index} className="p-2 bg-white rounded border">
+                        <div
+                          key={index}
+                          className="p-2 bg-white rounded border"
+                        >
                           <a
                             href={link}
                             target="_blank"

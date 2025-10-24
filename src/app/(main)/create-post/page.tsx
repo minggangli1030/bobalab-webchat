@@ -33,7 +33,7 @@ export default function CreatePostPage() {
   // Check for edit mode and load existing post
   useEffect(() => {
     const checkEditMode = async () => {
-      const editPostId = searchParams.get('edit');
+      const editPostId = searchParams.get("edit");
       if (editPostId && user) {
         try {
           const post = await firebasePostUtils.getPostById(editPostId);
@@ -42,7 +42,7 @@ export default function CreatePostPage() {
             setIsEditing(true);
           }
         } catch (error) {
-          console.error('Error loading post for editing:', error);
+          console.error("Error loading post for editing:", error);
         }
       }
     };
@@ -78,8 +78,11 @@ export default function CreatePostPage() {
       return;
     }
 
+    const editPostId = searchParams.get('edit');
+    const isCurrentlyEditing = !!editPostId;
+
     // Check if user can create more posts (only for new posts, not editing)
-    if (!isEditing && !canCreateMore) {
+    if (!isCurrentlyEditing && !canCreateMore) {
       setError(
         "You have reached the maximum number of posts (2). You cannot create more posts."
       );
@@ -106,7 +109,7 @@ export default function CreatePostPage() {
         serviceExperience: experience,
       };
 
-      if (isEditing && existingPost) {
+      if (isCurrentlyEditing && existingPost) {
         // Update existing post
         console.log("Updating post with service experience data:", postData);
         const success = await firebasePostUtils.updatePost(existingPost.id, {
@@ -114,11 +117,11 @@ export default function CreatePostPage() {
           id: existingPost.id, // Keep the original ID
           createdAt: existingPost.createdAt, // Keep original creation date
         });
-        
+
         if (!success) {
           throw new Error("Failed to update post");
         }
-        
+
         console.log("Post updated successfully");
         router.push("/feed");
       } else {
