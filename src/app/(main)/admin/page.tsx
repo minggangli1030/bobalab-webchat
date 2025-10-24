@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import Phase2Dashboard from "@/components/Phase2Dashboard";
 import {
   Trash2,
   Eye,
@@ -714,89 +715,61 @@ export default function AdminPage() {
       {/* Content */}
 
       {activeTab === "posts" && (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {posts.map((post) => (
-            <Card key={post.id} className="border-2">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <Badge variant="outline" className="px-3 py-1">
-                        {post.authorName}
-                      </Badge>
-                      <span className="text-sm text-gray-500">
-                        {formatDate(post.createdAt)}
-                      </span>
-                    </div>
-                    
-                    {/* Post Content */}
-                    <div className="mb-4">
-                      <h3 className="font-semibold text-gray-900 mb-2">
-                        {post.serviceExperience?.organizationName ||
-                          "No Organization"}
-                      </h3>
-                      <p className="text-gray-800 mb-3">{post.content}</p>
-                    </div>
-
-                    {/* Engagement Metrics */}
-                    <div className="flex items-center space-x-4 text-sm text-gray-600">
-                      <span className="flex items-center">
-                        <Heart className="h-4 w-4 mr-1 text-orange-500" />
-                        {post.highlights?.length || 0} highlights
-                      </span>
-                      <span className="flex items-center">
-                        <MessageSquare className="h-4 w-4 mr-1" />
-                        {post.comments.length} comments
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Simplified Action Buttons */}
-                  <div className="flex flex-col space-y-2 ml-6">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => router.push(`/post/${post.id}`)}
-                      className="text-sm"
-                    >
-                      <Eye className="h-4 w-4 mr-2" />
-                      View Post
-                    </Button>
-                    
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        const newImgurLinks = prompt(
-                          "Enter new Imgur links (one per line):",
-                          post.imgurLinks?.join("\n") || ""
-                        );
-                        if (newImgurLinks !== null) {
-                          const links = newImgurLinks
-                            .split("\n")
-                            .filter((link) => link.trim());
-                          handleEditPost(post.id, { imgurLinks: links });
-                        }
-                      }}
-                      className="text-sm"
-                    >
-                      <Download className="h-4 w-4 mr-2" />
-                      Add Media Link
-                    </Button>
-                    
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => deletePost(post.id)}
-                      className="text-sm"
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Remove Post
-                    </Button>
-                  </div>
+            <div key={post.id} className="border-2 border-gray-200 rounded-lg bg-white">
+              {/* Admin Action Buttons - Fixed at top */}
+              <div className="flex justify-end p-4 border-b border-gray-200 bg-gray-50">
+                <div className="flex space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => router.push(`/post/${post.id}`)}
+                    className="text-sm"
+                  >
+                    <Eye className="h-4 w-4 mr-2" />
+                    View Full Dashboard
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const newImgurLinks = prompt(
+                        "Enter new Imgur links (one per line):",
+                        post.imgurLinks?.join("\n") || ""
+                      );
+                      if (newImgurLinks !== null) {
+                        const links = newImgurLinks
+                          .split("\n")
+                          .filter((link) => link.trim());
+                        handleEditPost(post.id, { imgurLinks: links });
+                      }
+                    }}
+                    className="text-sm"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Add Media
+                  </Button>
+                  
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => deletePost(post.id)}
+                    className="text-sm"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Remove
+                  </Button>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+
+              {/* Use Phase2Dashboard for detailed format with charts */}
+              <Phase2Dashboard 
+                posts={[post]} 
+                currentUser={post.authorId ? users.find(u => u.id === post.authorId) : null}
+              />
+            </div>
           ))}
         </div>
       )}
