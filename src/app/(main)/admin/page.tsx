@@ -728,11 +728,12 @@ export default function AdminPage() {
                         {formatDate(post.createdAt)}
                       </span>
                     </div>
-                    
+
                     {/* Post Content */}
                     <div className="mb-4">
                       <h3 className="font-semibold text-gray-900 mb-2">
-                        {post.serviceExperience?.organizationName || "No Organization"}
+                        {post.serviceExperience?.organizationName ||
+                          "No Organization"}
                       </h3>
                       <p className="text-gray-800 mb-3">{post.content}</p>
                     </div>
@@ -761,7 +762,7 @@ export default function AdminPage() {
                       <Eye className="h-4 w-4 mr-2" />
                       View Post
                     </Button>
-                    
+
                     <Button
                       variant="outline"
                       size="sm"
@@ -782,7 +783,7 @@ export default function AdminPage() {
                       <Download className="h-4 w-4 mr-2" />
                       Add Media Link
                     </Button>
-                    
+
                     <Button
                       variant="destructive"
                       size="sm"

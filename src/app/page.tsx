@@ -47,7 +47,8 @@ export default function Home() {
             Customer Compatibility Exercise
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Understanding customer variability in service organizations through real-world experiences
+            Understanding customer variability in service organizations through
+            real-world experiences
           </p>
         </div>
 
@@ -127,14 +128,14 @@ export default function Home() {
                 <CardContent className="space-y-4 text-gray-700 leading-relaxed">
                   <p>
                     Customers impose considerable variability on the operating
-                    systems of service organizations. They show up when they wish
-                    (arrival variability), they ask for different things (request
-                    variability), they vary in their willingness and ability to
-                    help themselves (effort and capability variability), and they
-                    have different preferences (subjective preference
-                    variability). All this variability leaves the front lines of
-                    many service organizations struggling to deliver consistent,
-                    high-quality service.
+                    systems of service organizations. They show up when they
+                    wish (arrival variability), they ask for different things
+                    (request variability), they vary in their willingness and
+                    ability to help themselves (effort and capability
+                    variability), and they have different preferences
+                    (subjective preference variability). All this variability
+                    leaves the front lines of many service organizations
+                    struggling to deliver consistent, high-quality service.
                   </p>
                   <p>
                     The Customer Compatibility Exercise provides students with a
@@ -146,11 +147,11 @@ export default function Home() {
                 </CardContent>
               </Card>
 
-              {/* Three Phases Card */}
+              {/* Two Phases Card */}
               <Card className="shadow-lg border-0 bg-white mt-6">
                 <CardHeader>
                   <CardTitle className="text-xl font-bold text-gray-900">
-                    Three Phases
+                    Two Phases
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -160,8 +161,13 @@ export default function Home() {
                         1
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">Phase I: Documentation</h4>
-                        <p className="text-sm text-gray-600">Document two face-to-face interactions with service providers</p>
+                        <h4 className="font-semibold text-gray-900">
+                          Phase I: Documentation
+                        </h4>
+                        <p className="text-sm text-gray-600">
+                          Document two face-to-face interactions with service
+                          providers
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
@@ -169,19 +175,53 @@ export default function Home() {
                         2
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">Phase II: Gallery</h4>
-                        <p className="text-sm text-gray-600">Browse and learn from others' experiences in a searchable gallery</p>
+                        <h4 className="font-semibold text-gray-900">
+                          Phase II: Gallery
+                        </h4>
+                        <p className="text-sm text-gray-600">
+                          Browse and learn from others' experiences in a
+                          searchable gallery
+                        </p>
                       </div>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-6 h-6 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-sm font-semibold">
-                        3
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900">Phase III: Analysis</h4>
-                        <p className="text-sm text-gray-600">Graphical analysis reveals trends and strategies for compatible relationships</p>
-                      </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Contact Information Card */}
+              <Card className="shadow-lg border-0 bg-white mt-6">
+                <CardHeader>
+                  <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-3">
+                    <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                      <svg
+                        className="w-5 h-5 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        />
+                      </svg>
                     </div>
+                    Need Help?
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-700 leading-relaxed">
+                    If you're having trouble with the exercise or need assistance, 
+                    please contact your instructor:
+                  </p>
+                  <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                    <p className="font-semibold text-gray-900">Park Sinchaisri</p>
+                    <p className="text-blue-600 hover:text-blue-800">
+                      <a href="mailto:parksinchaisri@berkeley.edu">
+                        parksinchaisri@berkeley.edu
+                      </a>
+                    </p>
                   </div>
                 </CardContent>
               </Card>
