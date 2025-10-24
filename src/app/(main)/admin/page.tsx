@@ -276,121 +276,112 @@ export default function AdminPage() {
         "Created At": formatDate(post.createdAt),
         Phase: post.phase || 1,
         Category: post.category || "",
-        "Images Count": post.images.length,
 
-        // Service Experience Data
+        // Service Experience - Basic Info
         "Organization Name": serviceExp?.organizationName || "",
         "Organization Type": serviceExp?.organizationType || "",
-        "Relationship Length": serviceExp?.relationshipLength || "",
+        "Relationship Length (years)": serviceExp?.relationshipLength || "",
         "Street Address": serviceExp?.streetAddress || "",
+
+        // Service Experience - Ratings
         "Satisfaction Rating": serviceExp?.satisfactionRating || "",
         "Loyalty Rating": serviceExp?.loyaltyRating || "",
         "Recommendation Likelihood": serviceExp?.recommendationLikelihood || "",
         "Needs Alignment": serviceExp?.needsAlignment || "",
-        "Google Score": serviceExp?.googleScore || "",
-        "Google Price Range": serviceExp?.googlePriceRange || "",
+
+        // Service Experience - Google Data
+        "Google Score (1-5)": serviceExp?.googleScore || "",
+        "Google Price Range (1-4)": serviceExp?.googlePriceRange || "",
+
+        // Service Experience - Narratives
         "Experience Narrative": serviceExp?.experienceNarrative || "",
         "Generalizable Lesson": serviceExp?.generalizableLesson || "",
+
+        // Service Experience - Disruptiveness
         "Operation Disruptiveness": serviceExp?.operationDisruptiveness || "",
         "Life Disruptiveness": serviceExp?.lifeDisruptiveness || "",
-        "Imgur Links": serviceExp?.imgurLinks?.join("; ") || "",
 
         // Service Attributes (dynamic - all 6 custom attributes)
         ...(serviceExp?.serviceAttributes?.reduce((acc, attr, index) => {
-          const attrName = attr.name;
-          acc[`Attribute ${index + 1} Name`] = attrName;
+          acc[`Attribute ${index + 1} Name`] = attr.name;
           acc[`Attribute ${index + 1} Ranking`] = attr.userRanking || "";
           acc[`Attribute ${index + 1} Performance`] =
             attr.performanceRating || "";
           return acc;
         }, {} as Record<string, any>) || {}),
 
-        // Variability Assessments
-        "Arrival Variability Applied":
-          serviceExp?.variabilityAssessments?.find((v) => v.type === "arrival")
-            ?.applied || false,
-        "Arrival Company Response":
+        // Variability Assessments - Arrival
+        "Arrival - Company Response":
           serviceExp?.variabilityAssessments?.find((v) => v.type === "arrival")
             ?.companyResponse || "",
-        "Arrival Description":
+        "Arrival - Description":
           serviceExp?.variabilityAssessments?.find((v) => v.type === "arrival")
             ?.description || "",
-        "Arrival Impact Rating":
+        "Arrival - Impact Rating":
           serviceExp?.variabilityAssessments?.find((v) => v.type === "arrival")
             ?.impactRating || "",
 
-        "Request Variability Applied":
-          serviceExp?.variabilityAssessments?.find((v) => v.type === "request")
-            ?.applied || false,
-        "Request Company Response":
+        // Variability Assessments - Request
+        "Request - Company Response":
           serviceExp?.variabilityAssessments?.find((v) => v.type === "request")
             ?.companyResponse || "",
-        "Request Description":
+        "Request - Description":
           serviceExp?.variabilityAssessments?.find((v) => v.type === "request")
             ?.description || "",
-        "Request Impact Rating":
+        "Request - Impact Rating":
           serviceExp?.variabilityAssessments?.find((v) => v.type === "request")
             ?.impactRating || "",
 
-        "Capability Variability Applied":
-          serviceExp?.variabilityAssessments?.find(
-            (v) => v.type === "capability"
-          )?.applied || false,
-        "Capability Company Response":
+        // Variability Assessments - Capability
+        "Capability - Company Response":
           serviceExp?.variabilityAssessments?.find(
             (v) => v.type === "capability"
           )?.companyResponse || "",
-        "Capability Description":
+        "Capability - Description":
           serviceExp?.variabilityAssessments?.find(
             (v) => v.type === "capability"
           )?.description || "",
-        "Capability Impact Rating":
+        "Capability - Impact Rating":
           serviceExp?.variabilityAssessments?.find(
             (v) => v.type === "capability"
           )?.impactRating || "",
 
-        "Effort Variability Applied":
-          serviceExp?.variabilityAssessments?.find((v) => v.type === "effort")
-            ?.applied || false,
-        "Effort Company Response":
+        // Variability Assessments - Effort
+        "Effort - Company Response":
           serviceExp?.variabilityAssessments?.find((v) => v.type === "effort")
             ?.companyResponse || "",
-        "Effort Description":
+        "Effort - Description":
           serviceExp?.variabilityAssessments?.find((v) => v.type === "effort")
             ?.description || "",
-        "Effort Impact Rating":
+        "Effort - Impact Rating":
           serviceExp?.variabilityAssessments?.find((v) => v.type === "effort")
             ?.impactRating || "",
 
-        "Subjective Preference Variability Applied":
-          serviceExp?.variabilityAssessments?.find(
-            (v) => v.type === "subjective_preference"
-          )?.applied || false,
-        "Subjective Preference Company Response":
+        // Variability Assessments - Subjective Preference
+        "Subjective Preference - Company Response":
           serviceExp?.variabilityAssessments?.find(
             (v) => v.type === "subjective_preference"
           )?.companyResponse || "",
-        "Subjective Preference Description":
+        "Subjective Preference - Description":
           serviceExp?.variabilityAssessments?.find(
             (v) => v.type === "subjective_preference"
           )?.description || "",
-        "Subjective Preference Impact Rating":
+        "Subjective Preference - Impact Rating":
           serviceExp?.variabilityAssessments?.find(
             (v) => v.type === "subjective_preference"
           )?.impactRating || "",
 
-        // Additional Post Data
-        "Post Images Count": post.images.length,
-        "Post Imgur Links": post.imgurLinks?.join("; ") || "",
+        // Media
+        "Imgur Links": post.imgurLinks?.join("; ") || "",
 
-        // Highlights and Comments
+        // Engagement
         "Highlight Count": highlights.length,
         "Highlight Reasons": highlights
-          .map((h) => `"${h.userName}: ${h.reason}"`)
+          .map((h) => `${h.userName}: ${h.reason}`)
           .join("; "),
         "Comment Count": comments.length,
         Comments: comments
-          .map((c) => `"${c.authorName}: ${c.content}"`)
+          .map((c) => `${c.authorName}: ${c.content}`)
           .join("; "),
       };
     });
