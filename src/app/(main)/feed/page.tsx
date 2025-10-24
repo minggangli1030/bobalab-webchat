@@ -6,6 +6,7 @@ import { firebasePostUtils } from "@/lib/firebase-posts";
 import { phaseUtils } from "@/lib/phase-utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { PostCard } from "@/components/posts/PostCard";
+import Phase2Dashboard from "@/components/Phase2Dashboard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Search, Filter, SortAsc } from "lucide-react";
@@ -321,9 +322,14 @@ export default function FeedPage() {
           </Link>
         </div>
       ) : (
-        <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
+        <div className="space-y-8">
           {filteredAndSortedPosts.map((post) => (
-            <PostCard key={post.id} post={post} onUpdate={refreshPosts} />
+            <div key={post.id} className="border-2 border-gray-200 rounded-lg bg-white">
+              <Phase2Dashboard 
+                posts={[post]} 
+                currentUser={post.authorId ? posts.find(p => p.authorId === post.authorId)?.authorName ? { id: post.authorId, preferredName: post.authorName } : null : null}
+              />
+            </div>
           ))}
         </div>
       )}
