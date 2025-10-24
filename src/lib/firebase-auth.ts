@@ -5,6 +5,7 @@ import {
   User as FirebaseUser,
   onAuthStateChanged,
   deleteUser,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { doc, setDoc, getDoc, Timestamp } from "firebase/firestore";
 import { auth, db } from "./firebase";
@@ -149,6 +150,19 @@ export const firebaseAuthUtils = {
       await signOut(auth);
     } catch (error) {
       console.error("Error signing out:", error);
+    }
+  },
+
+  // Send password reset email
+  sendPasswordResetEmail: async (email: string): Promise<void> => {
+    try {
+      if (!auth) {
+        throw new Error("Firebase not initialized");
+      }
+      await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+      console.error("Error sending password reset email:", error);
+      throw error;
     }
   },
 

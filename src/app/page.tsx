@@ -53,9 +53,8 @@ export default function Home() {
         </div>
 
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-            {/* Login/Signup Section */}
-            <div className="order-2 lg:order-1">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Get Started Card */}
               <Card className="shadow-lg border-0 bg-white">
                 <CardContent className="p-8">
                   <div className="space-y-6">
@@ -102,10 +101,8 @@ export default function Home() {
                   </div>
                 </CardContent>
               </Card>
-            </div>
 
-            {/* About Content */}
-            <div className="order-1 lg:order-2">
+            {/* About This Exercise Card */}
               <Card className="shadow-lg border-0 bg-white">
                 <CardHeader>
                   <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-3">
@@ -147,8 +144,8 @@ export default function Home() {
                 </CardContent>
               </Card>
 
-              {/* Two Phases Card */}
-              <Card className="shadow-lg border-0 bg-white mt-6">
+            {/* Two Phases Card */}
+            <Card className="shadow-lg border-0 bg-white">
                 <CardHeader>
                   <CardTitle className="text-xl font-bold text-gray-900">
                     Two Phases

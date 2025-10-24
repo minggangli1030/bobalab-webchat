@@ -22,6 +22,9 @@ export default function LoginPage() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showResetPassword, setShowResetPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetMessage, setResetMessage] = useState("");
 
   const { login } = useAuth();
   const router = useRouter();
@@ -51,6 +54,22 @@ export default function LoginPage() {
       ...prev,
       [e.target.name]: e.target.value,
     }));
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setResetMessage("");
+
+    try {
+      await firebaseAuthUtils.sendPasswordResetEmail(resetEmail);
+      setResetMessage("Password reset email sent! Check your inbox.");
+      setResetEmail("");
+    } catch (err) {
+      setResetMessage("Error sending reset email. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
 
@@ -113,6 +132,64 @@ export default function LoginPage() {
               {isLoading ? "Signing In..." : "Sign In"}
             </Button>
           </form>
+
+          {/* Reset Password Section */}
+          {!showResetPassword ? (
+            <div className="mt-4 text-center">
+              <button
+                type="button"
+                onClick={() => setShowResetPassword(true)}
+                className="text-sm text-blue-600 hover:text-blue-500"
+              >
+                Forgot your password?
+              </button>
+            </div>
+          ) : (
+            <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+              <h3 className="text-sm font-medium text-gray-900 mb-3">
+                Reset Password
+              </h3>
+              <form onSubmit={handleResetPassword} className="space-y-3">
+                <Input
+                  type="email"
+                  placeholder="Enter your email address"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  required
+                />
+                <div className="flex space-x-2">
+                  <Button
+                    type="submit"
+                    size="sm"
+                    disabled={isLoading}
+                    className="flex-1"
+                  >
+                    {isLoading ? "Sending..." : "Send Reset Email"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setShowResetPassword(false);
+                      setResetEmail("");
+                      setResetMessage("");
+                    }}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+                {resetMessage && (
+                  <p className={`text-sm ${
+                    resetMessage.includes("Error") ? "text-red-600" : "text-green-600"
+                  }`}>
+                    {resetMessage}
+                  </p>
+                )}
+              </form>
+            </div>
+          )}
 
 
           {/* Admin Login */}
