@@ -33,9 +33,7 @@ export default function AdminPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"posts" | "users" | "overview">(
-    "overview"
-  );
+  const [activeTab, setActiveTab] = useState<"posts" | "users">("users");
 
   useEffect(() => {
     // Redirect if not admin
@@ -686,21 +684,11 @@ export default function AdminPage() {
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200 mb-6">
+      <div className="border-b border-gray-200 mb-8">
         <nav className="-mb-px flex space-x-8">
           <button
-            onClick={() => setActiveTab("overview")}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
-              activeTab === "overview"
-                ? "border-blue-500 text-blue-600"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-            }`}
-          >
-            Overview
-          </button>
-          <button
             onClick={() => setActiveTab("posts")}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+            className={`py-3 px-1 border-b-2 font-medium text-sm ${
               activeTab === "posts"
                 ? "border-blue-500 text-blue-600"
                 : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
@@ -710,7 +698,7 @@ export default function AdminPage() {
           </button>
           <button
             onClick={() => setActiveTab("users")}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+            className={`py-3 px-1 border-b-2 font-medium text-sm ${
               activeTab === "users"
                 ? "border-blue-500 text-blue-600"
                 : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
@@ -722,96 +710,6 @@ export default function AdminPage() {
       </div>
 
       {/* Content */}
-      {activeTab === "overview" && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Activity</CardTitle>
-              <CardDescription>
-                Latest posts from the last 7 days
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {posts
-                  .filter((p) => {
-                    const postDate = new Date(p.createdAt);
-                    const weekAgo = new Date();
-                    weekAgo.setDate(weekAgo.getDate() - 7);
-                    return postDate > weekAgo;
-                  })
-                  .slice(0, 5)
-                  .map((post) => (
-                    <div
-                      key={post.id}
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                    >
-                      <div>
-                        <p className="font-medium text-gray-900">
-                          {post.authorName}
-                        </p>
-                        <p className="text-sm text-gray-600 truncate max-w-xs">
-                          {post.content}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {formatDate(post.createdAt)}
-                        </p>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Badge variant="secondary">
-                          {post.highlights?.length || 0} highlights
-                        </Badge>
-                        <Badge variant="outline">
-                          {post.comments.length} comments
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Platform Overview</CardTitle>
-              <CardDescription>Key metrics and insights</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">
-                    Average highlights per post
-                  </span>
-                  <span className="font-semibold">
-                    {stats.totalPosts > 0
-                      ? (stats.totalHighlights / stats.totalPosts).toFixed(1)
-                      : 0}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Posts this week</span>
-                  <span className="font-semibold">{stats.recentPosts}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Engagement rate</span>
-                  <span className="font-semibold">
-                    {stats.totalPosts > 0
-                      ? (
-                          (stats.totalHighlights +
-                            posts.reduce(
-                              (sum, p) => sum + p.comments.length,
-                              0
-                            )) /
-                          stats.totalPosts
-                        ).toFixed(1)
-                      : 0}
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
 
       {activeTab === "posts" && (
         <div className="space-y-4">
@@ -926,10 +824,10 @@ export default function AdminPage() {
       )}
 
       {activeTab === "users" && (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {users.length === 0 ? (
             <Card>
-              <CardContent className="p-6">
+              <CardContent className="p-8">
                 <p className="text-gray-600 text-center py-8">
                   No users found.
                 </p>
@@ -944,44 +842,56 @@ export default function AdminPage() {
                 const currentPhase = phaseUtils.getCurrentPhase(user);
 
                 return (
-                  <Card key={user.id}>
-                    <CardContent className="p-6">
+                  <Card key={user.id} className="border-2">
+                    <CardContent className="p-8">
                       <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-3 mb-3">
+                        <div className="flex-1 space-y-4">
+                          {/* User Info Header */}
+                          <div className="flex items-center space-x-4">
                             <Badge
                               variant={user.isAdmin ? "destructive" : "outline"}
+                              className="px-3 py-1"
                             >
                               {user.isAdmin ? "Admin" : "User"}
                             </Badge>
-                            <span className="font-medium text-gray-900">
-                              {user.formalName} ({user.preferredName})
-                            </span>
-                            <span className="text-sm text-gray-500">
-                              {user.email}
-                            </span>
+                            <div>
+                              <h3 className="text-lg font-semibold text-gray-900">
+                                {user.formalName} ({user.preferredName})
+                              </h3>
+                              <p className="text-sm text-gray-500">
+                                {user.email}
+                              </p>
+                            </div>
+                            {/* Phase Badge with Color Coding */}
+                            <Badge
+                              variant={currentPhase === 1 ? "default" : "secondary"}
+                              className={`px-4 py-2 text-sm font-medium ${
+                                currentPhase === 1 
+                                  ? "bg-blue-100 text-blue-800 border-blue-200" 
+                                  : "bg-green-100 text-green-800 border-green-200"
+                              }`}
+                            >
+                              {phaseUtils.getPhaseName(currentPhase)}
+                            </Badge>
                           </div>
 
                           {/* Business Name and Post Info */}
                           {userPost && (
-                            <div className="mb-3 p-3 bg-gray-50 rounded-lg">
+                            <div className="p-4 bg-gray-50 rounded-lg border">
                               <div className="flex items-center justify-between">
                                 <div>
                                   <h4 className="font-semibold text-gray-900">
-                                    {userPost.businessName ||
-                                      "No Business Name"}
+                                    {userPost.businessName || "No Business Name"}
                                   </h4>
                                   <p className="text-sm text-gray-600">
-                                    {userPost.serviceExperience
-                                      ?.organizationType || "Unknown Type"}
+                                    {userPost.serviceExperience?.organizationType || "Unknown Type"}
                                   </p>
                                 </div>
                                 <div className="text-right">
                                   <div className="flex items-center space-x-2 text-sm">
                                     <Heart className="h-4 w-4 text-orange-500" />
                                     <span>
-                                      {userPost.highlights?.length || 0}{" "}
-                                      highlights
+                                      {userPost.highlights?.length || 0} highlights
                                     </span>
                                   </div>
                                   <div className="flex items-center space-x-2 text-sm text-gray-500">
@@ -995,33 +905,30 @@ export default function AdminPage() {
                             </div>
                           )}
 
-                          <div className="flex items-center space-x-4 text-sm text-gray-600">
+                          {/* User Details */}
+                          <div className="flex items-center space-x-6 text-sm text-gray-600">
                             <span>ID: {user.id}</span>
                             <span>Joined: {formatDate(user.createdAt)}</span>
                             {user.studentId && (
                               <span>Student ID: {user.studentId}</span>
                             )}
-                            <Badge variant="outline" className="text-xs">
-                              {phaseUtils.getPhaseName(currentPhase)}
-                            </Badge>
                           </div>
                         </div>
 
-                        <div className="flex flex-col space-y-2 ml-4">
-                          <div className="flex space-x-2">
-                            <Badge variant="secondary">
+                        <div className="flex flex-col space-y-4 ml-6">
+                          {/* Post Count and View Button */}
+                          <div className="flex space-x-3">
+                            <Badge variant="secondary" className="px-3 py-1">
                               {userPosts.length} posts
                             </Badge>
                             {userPost && (
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() =>
-                                  router.push(`/post/${userPost.id}`)
-                                }
-                                className="text-xs"
+                                onClick={() => router.push(`/post/${userPost.id}`)}
+                                className="text-sm"
                               >
-                                <Eye className="h-3 w-3 mr-1" />
+                                <Eye className="h-4 w-4 mr-2" />
                                 View Post
                               </Button>
                             )}
@@ -1029,33 +936,17 @@ export default function AdminPage() {
 
                           {/* User Management Buttons */}
                           {!user.isAdmin && (
-                            <div className="flex flex-col space-y-2">
-                              {/* Current Phase Status */}
-                              <div className="flex items-center space-x-2">
-                                <Badge
-                                  variant={
-                                    currentPhase === 1 ? "default" : "secondary"
-                                  }
-                                  className="text-xs"
-                                >
-                                  Currently:{" "}
-                                  {phaseUtils.getPhaseName(currentPhase)}
-                                </Badge>
-                              </div>
-
+                            <div className="flex flex-col space-y-3">
                               {/* Phase Management */}
-                              <div className="flex space-x-1">
+                              <div className="flex space-x-2">
                                 {currentPhase > 1 && (
                                   <Button
                                     variant="outline"
                                     size="sm"
                                     onClick={() =>
-                                      handlePhaseChange(
-                                        user.id,
-                                        currentPhase - 1
-                                      )
+                                      handlePhaseChange(user.id, currentPhase - 1)
                                     }
-                                    className="text-xs"
+                                    className="text-sm"
                                   >
                                     ← Move to Phase {currentPhase - 1}
                                   </Button>
@@ -1065,41 +956,39 @@ export default function AdminPage() {
                                     variant="outline"
                                     size="sm"
                                     onClick={() =>
-                                      handlePhaseChange(
-                                        user.id,
-                                        currentPhase + 1
-                                      )
+                                      handlePhaseChange(user.id, currentPhase + 1)
                                     }
-                                    className="text-xs"
+                                    className="text-sm"
                                   >
                                     Move to Phase {currentPhase + 1} →
                                   </Button>
                                 )}
                               </div>
 
-                              {/* Delete User Posts */}
-                              {userPosts.length > 0 && (
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleDeleteUserPosts(user.id)}
-                                  className="text-xs text-orange-600 hover:text-orange-700"
-                                >
-                                  <Trash2 className="h-3 w-3 mr-1" />
-                                  Delete Posts
-                                </Button>
-                              )}
+                              {/* Delete Actions */}
+                              <div className="flex space-x-2">
+                                {userPosts.length > 0 && (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleDeleteUserPosts(user.id)}
+                                    className="text-sm text-orange-600 hover:text-orange-700"
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Delete Posts
+                                  </Button>
+                                )}
 
-                              {/* Delete User Completely */}
-                              <Button
-                                variant="destructive"
-                                size="sm"
-                                onClick={() => handleDeleteUser(user.id)}
-                                className="text-xs"
-                              >
-                                <Trash2 className="h-3 w-3 mr-1" />
-                                Delete User
-                              </Button>
+                                <Button
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={() => handleDeleteUser(user.id)}
+                                  className="text-sm"
+                                >
+                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  Delete User
+                                </Button>
+                              </div>
                             </div>
                           )}
                         </div>
