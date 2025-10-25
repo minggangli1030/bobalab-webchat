@@ -74,16 +74,44 @@ export default function LoginPage() {
 
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">
-            Customer Compatibility Exercise
-          </CardTitle>
-          <CardDescription className="text-center">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-6">
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Interactive Learning Platform
+          </div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Customer Compatibility
+            <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Exercise
+            </span>
+          </h1>
+          <p className="text-lg text-gray-600">
             Sign in to access the business compatibility platform
-          </CardDescription>
-        </CardHeader>
+          </p>
+        </div>
+
+        <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+          <CardHeader className="space-y-1 pb-6">
+            <CardTitle className="text-2xl font-bold text-center text-gray-900">
+              Welcome Back
+            </CardTitle>
+            <CardDescription className="text-center text-gray-600">
+              Sign in to continue your learning journey
+            </CardDescription>
+          </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -128,7 +156,11 @@ export default function LoginPage() {
               <div className="text-red-600 text-sm text-center">{error}</div>
             )}
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button 
+              type="submit" 
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5" 
+              disabled={isLoading}
+            >
               {isLoading ? "Signing In..." : "Sign In"}
             </Button>
           </form>
@@ -193,11 +225,16 @@ export default function LoginPage() {
 
 
           {/* Admin Login */}
-          <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-            <p className="text-xs text-blue-700 font-medium mb-2">
-              Admin Access:
-            </p>
-            <p className="text-xs text-blue-600">
+          <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200">
+            <div className="flex items-center mb-2">
+              <svg className="w-4 h-4 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+              <p className="text-sm text-blue-700 font-semibold">
+                Admin Access
+              </p>
+            </div>
+            <p className="text-sm text-blue-600">
               Email: admin@123.com | Password: admin123
             </p>
           </div>
@@ -214,7 +251,8 @@ export default function LoginPage() {
             </p>
           </div>
         </CardContent>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 }
