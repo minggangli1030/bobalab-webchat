@@ -45,18 +45,18 @@ export default function Phase2Dashboard({
   const serviceExp = userPost.serviceExperience;
 
   // Debug: Log the post data to see what's available
-  console.log("Phase2Dashboard - userPost:", userPost);
-  console.log("Phase2Dashboard - comments:", userPost.comments);
-  console.log("Phase2Dashboard - highlights:", userPost.highlights);
-  console.log(
-    "Phase2Dashboard - highlight dates:",
-    userPost.highlights?.map((h) => ({
-      userName: h.userName,
-      createdAt: h.createdAt,
-      type: typeof h.createdAt,
-      isDate: h.createdAt instanceof Date,
-    }))
-  );
+  // console.log("Phase2Dashboard - userPost:", userPost);
+  // console.log("Phase2Dashboard - comments:", userPost.comments);
+  // console.log("Phase2Dashboard - highlights:", userPost.highlights);
+  // console.log(
+  //   "Phase2Dashboard - highlight dates:",
+  //   userPost.highlights?.map((h) => ({
+  //     userName: h.userName,
+  //     createdAt: h.createdAt,
+  //     type: typeof h.createdAt,
+  //     isDate: h.createdAt instanceof Date,
+  //   }))
+  // );
 
   // Sort attributes by ranking (1-6)
   const sortedAttributes = [...(serviceExp.serviceAttributes || [])].sort(
@@ -68,7 +68,16 @@ export default function Phase2Dashboard({
 
   // Robust date formatting function
   const formatDate = (date: any) => {
-    if (!date) return "N/A";
+    if (!date) {
+      // If no date is provided, return current date as fallback
+      return new Date().toLocaleDateString("en-US", {
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      });
+    }
 
     try {
       let dateObj: Date;
@@ -88,11 +97,13 @@ export default function Phase2Dashboard({
       } else if (typeof date === "number") {
         dateObj = new Date(date);
       } else {
-        return "N/A";
+        // Fallback to current date for unknown types
+        dateObj = new Date();
       }
 
       if (isNaN(dateObj.getTime())) {
-        return "N/A";
+        // If all parsing fails, use current date as fallback
+        dateObj = new Date();
       }
 
       return dateObj.toLocaleDateString("en-US", {
@@ -104,7 +115,14 @@ export default function Phase2Dashboard({
       });
     } catch (error) {
       console.error("Error formatting date:", error, "Original date:", date);
-      return "N/A";
+      // Fallback to current date on error
+      return new Date().toLocaleDateString("en-US", {
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      });
     }
   };
 
