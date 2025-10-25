@@ -113,131 +113,131 @@ export default function SignupPage() {
               Start your learning journey today
             </CardDescription>
           </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Email Address (Login ID)
+                </label>
+                <p className="text-xs text-gray-500 mt-1">
+                  Your email address will be used as your login ID
+                </p>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="mt-1"
+                  placeholder="your.email@university.edu"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Password
+                </label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="mt-1"
+                  placeholder="Create a password"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Confirm Password
+                </label>
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  required
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className="mt-1"
+                  placeholder="Confirm your password"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="formalName"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Formal Name
+                </label>
+                <Input
+                  id="formalName"
+                  name="formalName"
+                  type="text"
+                  required
+                  value={formData.formalName}
+                  onChange={handleChange}
+                  className="mt-1"
+                  placeholder="John Doe"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="preferredName"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Preferred Name
+                </label>
+                <Input
+                  id="preferredName"
+                  name="preferredName"
+                  type="text"
+                  required
+                  value={formData.preferredName}
+                  onChange={handleChange}
+                  className="mt-1"
+                  placeholder="Johnny"
+                />
+              </div>
+
+              {error && (
+                <div className="text-red-600 text-sm text-center">{error}</div>
+              )}
+
+              <Button
+                type="submit"
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+                disabled={isLoading}
               >
-                Email Address (Login ID)
-              </label>
-              <p className="text-xs text-gray-500 mt-1">
-                Your email address will be used as your login ID
+                {isLoading ? "Creating Account..." : "Create Account"}
+              </Button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <p className="text-sm text-gray-600">
+                Already have an account?{" "}
+                <Link
+                  href="/login"
+                  className="font-medium text-blue-600 hover:text-blue-500"
+                >
+                  Sign in
+                </Link>
               </p>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                className="mt-1"
-                placeholder="your.email@university.edu"
-              />
             </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Password
-              </label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                required
-                value={formData.password}
-                onChange={handleChange}
-                className="mt-1"
-                placeholder="Create a password"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Confirm Password
-              </label>
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                required
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className="mt-1"
-                placeholder="Confirm your password"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="formalName"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Formal Name
-              </label>
-              <Input
-                id="formalName"
-                name="formalName"
-                type="text"
-                required
-                value={formData.formalName}
-                onChange={handleChange}
-                className="mt-1"
-                placeholder="John Doe"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="preferredName"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Preferred Name
-              </label>
-              <Input
-                id="preferredName"
-                name="preferredName"
-                type="text"
-                required
-                value={formData.preferredName}
-                onChange={handleChange}
-                className="mt-1"
-                placeholder="Johnny"
-              />
-            </div>
-
-            {error && (
-              <div className="text-red-600 text-sm text-center">{error}</div>
-            )}
-
-            <Button 
-              type="submit" 
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5" 
-              disabled={isLoading}
-            >
-              {isLoading ? "Creating Account..." : "Create Account"}
-            </Button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              Already have an account?{" "}
-              <Link
-                href="/login"
-                className="font-medium text-blue-600 hover:text-blue-500"
-              >
-                Sign in
-              </Link>
-            </p>
-          </div>
-        </CardContent>
+          </CardContent>
         </Card>
       </div>
     </div>

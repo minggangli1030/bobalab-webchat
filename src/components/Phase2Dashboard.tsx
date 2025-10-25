@@ -127,27 +127,42 @@ export default function Phase2Dashboard({
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-8 space-y-8">
-      {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          {isAdminView
-            ? "Service Experience Dashboard"
-            : activeUser && phaseUtils.getCurrentPhase(activeUser) === 1
-            ? "Your Post Details"
-            : "Phase 2: Peer Feedback Dashboard"}
-        </h1>
-        <p className="text-gray-600">
-          {isAdminView
-            ? "Comprehensive analysis of service experience"
-            : activeUser && phaseUtils.getCurrentPhase(activeUser) === 1
-            ? "Review your service experience details"
-            : "Comprehensive analysis of your service experience"}
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-6">
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Interactive Learning Platform
+          </div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            {isAdminView
+              ? "Service Experience Dashboard"
+              : activeUser && phaseUtils.getCurrentPhase(activeUser) === 1
+              ? "Your Post Details"
+              : "Phase 2: Peer Feedback Dashboard"}
+          </h1>
+          <p className="text-xl text-gray-600">
+            {isAdminView
+              ? "Comprehensive analysis of service experience"
+              : activeUser && phaseUtils.getCurrentPhase(activeUser) === 1
+              ? "Review your service experience details"
+              : "Comprehensive analysis of your service experience"}
+          </p>
+        </div>
 
       {/* Business Details */}
-      <Card className="shadow-sm border-0 bg-white">
+        <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
         <CardHeader>
           <div className="flex justify-between items-center">
             <CardTitle className="text-lg font-semibold">
@@ -442,7 +457,7 @@ export default function Phase2Dashboard({
       </div>
 
       {/* Customer Experience - Full Width */}
-      <Card className="shadow-sm border-0 bg-white">
+        <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="text-lg font-semibold">
             Customer Experience
@@ -469,7 +484,7 @@ export default function Phase2Dashboard({
       </Card>
 
       {/* Managing Variability Table */}
-      <Card className="shadow-sm border-0 bg-white">
+        <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="text-lg font-semibold">
             Managing Variability
@@ -576,7 +591,7 @@ export default function Phase2Dashboard({
       </Card>
 
       {/* Peer Feedback Section */}
-      <Card className="shadow-sm border-0 bg-white">
+        <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="text-lg font-semibold">Peer Feedback</CardTitle>
         </CardHeader>
@@ -608,6 +623,7 @@ export default function Phase2Dashboard({
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

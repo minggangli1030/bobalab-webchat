@@ -190,7 +190,8 @@ export default function PostDetailPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
       {/* Back Button */}
       <Link href="/feed">
         <Button variant="ghost" className="flex items-center space-x-2">
@@ -200,7 +201,7 @@ export default function PostDetailPage() {
       </Link>
 
       {/* Post */}
-      <Card>
+      <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center space-x-3">
@@ -540,7 +541,7 @@ export default function PostDetailPage() {
       </Card>
 
       {/* Comments Section */}
-      <Card>
+      <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
         <CardHeader>
           <h3 className="text-lg font-semibold">
             Comments ({post.comments.length})
@@ -616,6 +617,7 @@ export default function PostDetailPage() {
         isHighlighted={isHighlighted}
         highlightCount={highlightCount}
       />
+      </div>
     </div>
   );
 }

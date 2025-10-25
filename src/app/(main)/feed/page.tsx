@@ -161,43 +161,51 @@ export default function FeedPage() {
   // Phase 2 users see the gallery with search/filter capabilities
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            {user && user.isAdmin
-              ? "Phase 1&2: Admin View"
-              : user && phaseUtils.getCurrentPhase(user) === 1
-              ? "Phase 1: Initial Assessment"
-              : "Phase 2: Peer Feedback"}
-          </h1>
-          <p className="text-gray-600 mt-1">Customer Compatibility Exercise</p>
-          {user && user.isAdmin && (
-            <p className="text-sm text-blue-600 mt-1">
-              Manage users, view posts, and export comprehensive reports
-            </p>
-          )}
+      <div className="text-center mb-8">
+        <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-6">
+          <svg
+            className="w-4 h-4 mr-2"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clipRule="evenodd"
+            />
+          </svg>
+          Interactive Learning Platform
         </div>
-        <div className="flex items-center space-x-3">
-          {user &&
-            (user.isAdmin ||
-              (phaseUtils.getCurrentPhase(user) === 1 &&
-                userPostCount < 2)) && (
-              <Link href="/create-post">
-                <Button className="flex items-center space-x-2">
-                  <Plus className="h-4 w-4" />
-                  <span>
-                    {user.isAdmin
-                      ? "Create Test Post"
-                      : userPostCount === 0
-                      ? "Create Post"
-                      : "Create Another Post"}
-                  </span>
-                </Button>
-              </Link>
-            )}
-        </div>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          {user && user.isAdmin
+            ? "Admin Dashboard"
+            : user && phaseUtils.getCurrentPhase(user) === 1
+            ? "Phase 1: Initial Assessment"
+            : "Phase 2: Peer Feedback"}
+        </h1>
+        <p className="text-xl text-gray-600">
+          {user && user.isAdmin
+            ? "Manage users, view posts, and export comprehensive reports"
+            : "Customer Compatibility Exercise"}
+        </p>
+        {user && !user.isAdmin && (
+          <div className="flex justify-center mt-6">
+            <Link href="/create-post">
+              <Button className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                <Plus className="h-4 w-4" />
+                <span>
+                  {userPostCount === 0
+                    ? "Create Post"
+                    : "Create Another Post"}
+                </span>
+              </Button>
+            </Link>
+          </div>
+        )}
+      </div>
       </div>
 
       {/* Phase 1 Note */}
@@ -220,7 +228,7 @@ export default function FeedPage() {
 
       {/* Search and Filter Controls - Only show for Phase 2 users and admins */}
       {user && (user.isAdmin || phaseUtils.getCurrentPhase(user) === 2) && (
-        <div className="bg-white p-4 rounded-lg border space-y-4">
+        <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl border-0 shadow-xl space-y-4">
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Search */}
             <div className="flex-1">
@@ -299,43 +307,49 @@ export default function FeedPage() {
 
       {/* Posts */}
       {filteredAndSortedPosts.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="text-gray-400 mb-4">
-            <svg
-              className="mx-auto h-12 w-12"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1}
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
+        <div className="text-center py-16">
+          <div className="bg-white/80 backdrop-blur-sm p-8 rounded-xl shadow-xl max-w-md mx-auto">
+            <div className="text-gray-400 mb-6">
+              <svg
+                className="mx-auto h-16 w-16"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1}
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-3">
+              {posts.length === 0
+                ? "No posts yet"
+                : "No posts match your filters"}
+            </h3>
+            <p className="text-gray-600 mb-8">
+              {posts.length === 0
+                ? "Be the first to share your business compatibility experience!"
+                : "Try adjusting your search or filter criteria."}
+            </p>
+            <Link href="/create-post">
+              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                Create Your First Post
+              </Button>
+            </Link>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
-            {posts.length === 0
-              ? "No posts yet"
-              : "No posts match your filters"}
-          </h3>
-          <p className="text-gray-600 mb-6">
-            {posts.length === 0
-              ? "Be the first to share your business compatibility experience!"
-              : "Try adjusting your search or filter criteria."}
-          </p>
-          <Link href="/create-post">
-            <Button>Create Your First Post</Button>
-          </Link>
         </div>
       ) : (
-        <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
+        <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
           {filteredAndSortedPosts.map((post) => (
             <PostCard key={post.id} post={post} onUpdate={refreshPosts} />
           ))}
         </div>
       )}
+      </div>
+    </div>
     </div>
   );
 }

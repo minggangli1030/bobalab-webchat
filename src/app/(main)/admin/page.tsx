@@ -467,17 +467,30 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-6">
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Interactive Learning Platform
+          </div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Phase 3: Admin Access and Data Analysis
           </h1>
-          <p className="text-gray-600">
+          <p className="text-xl text-gray-600">
             Manage users, view posts, and export comprehensive reports
           </p>
         </div>
-      </div>
 
       {/* Important Notes */}
       <div className="mb-6 space-y-4">
@@ -543,7 +556,7 @@ export default function AdminPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <Card>
+        <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
           <CardContent className="p-6">
             <div className="flex items-center">
               <MessageSquare className="h-8 w-8 text-blue-600" />
@@ -557,7 +570,7 @@ export default function AdminPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
           <CardContent className="p-6">
             <div className="flex items-center">
               <Users className="h-8 w-8 text-green-600" />
@@ -571,7 +584,7 @@ export default function AdminPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
           <CardContent className="p-6">
             <div className="flex items-center">
               <Calendar className="h-8 w-8 text-purple-600" />
@@ -588,7 +601,7 @@ export default function AdminPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
           <CardContent className="p-6">
             <div className="flex items-center">
               <Heart className="h-8 w-8 text-orange-600" />
@@ -759,7 +772,7 @@ export default function AdminPage() {
       {activeTab === "users" && (
         <div className="space-y-6">
           {users.length === 0 ? (
-            <Card>
+            <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
               <CardContent className="p-8">
                 <p className="text-gray-600 text-center py-8">
                   No users found.
@@ -953,6 +966,7 @@ export default function AdminPage() {
           )}
         </div>
       )}
+      </div>
     </div>
   );
 }
