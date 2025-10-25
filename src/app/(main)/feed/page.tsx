@@ -162,7 +162,8 @@ export default function FeedPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 w-full">
-      <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
+      <div className="w-full">
+        <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-6">
@@ -191,25 +192,25 @@ export default function FeedPage() {
               ? "Manage users, view posts, and export comprehensive reports"
               : "Customer Compatibility Exercise"}
           </p>
-          {user && (
-            (user.isAdmin) || 
-            (phaseUtils.getCurrentPhase(user) === 1 && userPostCount < 2)
-          ) && (
-            <div className="flex justify-center mt-6">
-              <Link href="/create-post">
-                <Button className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
-                  <Plus className="h-4 w-4" />
-                  <span>
-                    {user.isAdmin
-                      ? "Create Test Post"
-                      : userPostCount === 0
-                      ? "Create Post"
-                      : "Create Another Post"}
-                  </span>
-                </Button>
-              </Link>
-            </div>
-          )}
+          {user &&
+            (user.isAdmin ||
+              (phaseUtils.getCurrentPhase(user) === 1 &&
+                userPostCount < 2)) && (
+              <div className="flex justify-center mt-6">
+                <Link href="/create-post">
+                  <Button className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                    <Plus className="h-4 w-4" />
+                    <span>
+                      {user.isAdmin
+                        ? "Create Test Post"
+                        : userPostCount === 0
+                        ? "Create Post"
+                        : "Create Another Post"}
+                    </span>
+                  </Button>
+                </Link>
+              </div>
+            )}
         </div>
 
         {/* Phase 1 Note */}
@@ -355,6 +356,7 @@ export default function FeedPage() {
             ))}
           </div>
         )}
+        </div>
       </div>
     </div>
   );
