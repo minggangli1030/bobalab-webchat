@@ -127,7 +127,7 @@ export default function Phase2Dashboard({
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
+    <div className="max-w-7xl mx-auto p-8 space-y-8">
       {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -147,7 +147,7 @@ export default function Phase2Dashboard({
       </div>
 
       {/* Business Details */}
-      <Card className="mb-6">
+      <Card className="shadow-sm border-0 bg-white">
         <CardHeader>
           <div className="flex justify-between items-center">
             <CardTitle className="text-lg font-semibold">
@@ -170,45 +170,45 @@ export default function Phase2Dashboard({
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div className="space-y-2">
-              <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between py-2 border-b border-gray-100">
                 <span className="font-medium text-gray-700">Organization:</span>
-                <span className="ml-2 text-gray-900">
+                <span className="text-gray-900 font-medium">
                   {serviceExp.organizationName || "N/A"}
                 </span>
               </div>
-              <div>
+              <div className="flex items-center justify-between py-2 border-b border-gray-100">
                 <span className="font-medium text-gray-700">Type:</span>
-                <span className="ml-2 text-gray-900">
+                <span className="text-gray-900 font-medium">
                   {serviceExp.organizationType || "N/A"}
                 </span>
               </div>
-              <div>
+              <div className="flex items-center justify-between py-2 border-b border-gray-100">
                 <span className="font-medium text-gray-700">Location:</span>
-                <span className="ml-2 text-gray-900">
+                <span className="text-gray-900 font-medium">
                   {serviceExp.streetAddress || "N/A"}
                 </span>
               </div>
             </div>
-            <div className="space-y-2">
-              <div>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between py-2 border-b border-gray-100">
                 <span className="font-medium text-gray-700">
                   Relationship Length:
                 </span>
-                <span className="ml-2 text-gray-900">
+                <span className="text-gray-900 font-medium">
                   {serviceExp.relationshipLength || "N/A"}
                 </span>
               </div>
-              <div>
+              <div className="flex items-center justify-between py-2 border-b border-gray-100">
                 <span className="font-medium text-gray-700">Author:</span>
-                <span className="ml-2 text-gray-900">
+                <span className="text-gray-900 font-medium">
                   {userPost.authorName || "N/A"}
                 </span>
               </div>
-              <div>
+              <div className="flex items-center justify-between py-2 border-b border-gray-100">
                 <span className="font-medium text-gray-700">Date:</span>
-                <span className="ml-2 text-gray-900">
+                <span className="text-gray-900 font-medium">
                   {formatDate(userPost.createdAt)}
                 </span>
               </div>
@@ -217,9 +217,9 @@ export default function Phase2Dashboard({
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left Column */}
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Attribute Maps */}
           <Card>
             <CardHeader>
@@ -283,7 +283,7 @@ export default function Phase2Dashboard({
         </div>
 
         {/* Right Column */}
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Service Evaluation */}
           <Card>
             <CardHeader>
@@ -466,7 +466,7 @@ export default function Phase2Dashboard({
       </div>
 
       {/* Managing Variability Table */}
-      <Card>
+      <Card className="shadow-sm border-0 bg-white">
         <CardHeader>
           <CardTitle className="text-lg font-semibold">
             Managing Variability
@@ -476,17 +476,17 @@ export default function Phase2Dashboard({
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b">
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">
+                <tr className="border-b bg-gray-50">
+                  <th className="text-left py-4 px-6 font-semibold text-gray-900">
                     Variability
                   </th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">
+                  <th className="text-left py-4 px-6 font-semibold text-gray-900">
                     Description
                   </th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">
+                  <th className="text-center py-4 px-6 font-semibold text-gray-900">
                     Company Response
                   </th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">
+                  <th className="text-left py-4 px-6 font-semibold text-gray-900">
                     Impact On Experience
                   </th>
                 </tr>
@@ -505,27 +505,33 @@ export default function Phase2Dashboard({
                     return null;
 
                   return (
-                    <tr key={index} className="border-b">
-                      <td className="py-3 px-4 font-medium text-gray-900">
+                    <tr
+                      key={index}
+                      className="border-b hover:bg-gray-50 transition-colors"
+                    >
+                      <td className="py-4 px-6 font-medium text-gray-900">
                         {variabilityTypes[assessment.type] || assessment.type}
                       </td>
-                      <td className="py-3 px-4 text-gray-600">
-                        {assessment.description || "No description"}
+                      <td className="py-4 px-6 text-gray-600 max-w-xs">
+                        <div className="break-words">
+                          {assessment.description || "No description"}
+                        </div>
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-4 px-6 text-center">
                         <Badge
                           variant={
                             assessment.companyResponse === "accommodate"
                               ? "default"
                               : "destructive"
                           }
+                          className="inline-block"
                         >
                           {assessment.companyResponse === "accommodate"
                             ? "Accommodate variability"
                             : "Reduce variability"}
                         </Badge>
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-4 px-6">
                         <div className="flex items-center space-x-3">
                           <div className="flex-1 bg-gray-200 rounded-full h-4 relative">
                             <div
@@ -546,7 +552,7 @@ export default function Phase2Dashboard({
                             ></div>
                           </div>
                           <span
-                            className={`text-sm font-medium ${
+                            className={`text-sm font-medium min-w-[3rem] text-right ${
                               (assessment.impactRating || 0) >= 0
                                 ? "text-blue-600"
                                 : "text-red-600"
@@ -567,7 +573,7 @@ export default function Phase2Dashboard({
       </Card>
 
       {/* Peer Feedback Section */}
-      <Card>
+      <Card className="shadow-sm border-0 bg-white">
         <CardHeader>
           <CardTitle className="text-lg font-semibold">Peer Feedback</CardTitle>
         </CardHeader>
