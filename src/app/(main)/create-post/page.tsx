@@ -197,7 +197,8 @@ export default function CreatePostPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="max-w-6xl mx-auto px-4 py-8">
       <Card className="mb-8">
         <CardHeader>
           <CardTitle className="text-2xl">
@@ -233,6 +234,7 @@ export default function CreatePostPage() {
         isLoading={isLoading}
         initialData={existingPost?.serviceExperience}
       />
+      </div>
     </div>
   );
 }

@@ -7,7 +7,7 @@ import { phaseUtils } from "@/lib/phase-utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Link from "next/link";
-import { LogOut, Home, Plus, User } from "lucide-react";
+import { LogOut, Home, User } from "lucide-react";
 
 export default function MainLayout({
   children,
@@ -83,9 +83,9 @@ export default function MainLayout({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       {/* Navigation Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo and Navigation */}
@@ -150,10 +150,8 @@ export default function MainLayout({
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {children}
-      </main>
+      {/* Main Content - Full width, each page manages its own container */}
+      <main className="w-full">{children}</main>
     </div>
   );
 }
