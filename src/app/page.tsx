@@ -293,7 +293,6 @@ export default function Home() {
         </div>
       </div>
 
-
       {/* Help Section */}
       <div className="py-20 bg-white">
         <div className="container mx-auto px-4">

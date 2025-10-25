@@ -209,6 +209,15 @@ export default function FeedPage() {
         </div>
       )}
 
+      {/* Phase 2 Note */}
+      {user && phaseUtils.getCurrentPhase(user) === 2 && !user.isAdmin && (
+        <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg">
+          <p className="font-medium">
+            Review your peers' work and highlight posts you agree with or find insightful. Click on any post to view details and add your feedback.
+          </p>
+        </div>
+      )}
+
       {/* Search and Filter Controls - Only show for Phase 2 users and admins */}
       {user && (user.isAdmin || phaseUtils.getCurrentPhase(user) === 2) && (
         <div className="bg-white p-4 rounded-lg border space-y-4">
