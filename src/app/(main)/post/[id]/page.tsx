@@ -190,7 +190,7 @@ export default function PostDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 w-full">
       <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
         {/* Back Button */}
         <Link href="/feed">

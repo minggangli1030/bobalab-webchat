@@ -161,192 +161,200 @@ export default function FeedPage() {
   // Phase 2 users see the gallery with search/filter capabilities
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 w-full">
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
-      {/* Header */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-6">
-          <svg
-            className="w-4 h-4 mr-2"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Interactive Learning Platform
-        </div>
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          {user && user.isAdmin
-            ? "Admin Dashboard"
-            : user && phaseUtils.getCurrentPhase(user) === 1
-            ? "Phase 1: Initial Assessment"
-            : "Phase 2: Peer Feedback"}
-        </h1>
-        <p className="text-xl text-gray-600">
-          {user && user.isAdmin
-            ? "Manage users, view posts, and export comprehensive reports"
-            : "Customer Compatibility Exercise"}
-        </p>
-        {user && !user.isAdmin && (
-          <div className="flex justify-center mt-6">
-            <Link href="/create-post">
-              <Button className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
-                <Plus className="h-4 w-4" />
-                <span>
-                  {userPostCount === 0
-                    ? "Create Post"
-                    : "Create Another Post"}
-                </span>
-              </Button>
-            </Link>
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-6">
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Interactive Learning Platform
           </div>
-        )}
-      </div>
-
-      {/* Phase 1 Note */}
-      {user && phaseUtils.getCurrentPhase(user) === 1 && !user.isAdmin && (
-        <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
-          <p className="font-medium">
-            Good job on posting! You can review your post here, and wait for your instructor to start Phase 2.
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            {user && user.isAdmin
+              ? "Admin Dashboard"
+              : user && phaseUtils.getCurrentPhase(user) === 1
+              ? "Phase 1: Initial Assessment"
+              : "Phase 2: Peer Feedback"}
+          </h1>
+          <p className="text-xl text-gray-600">
+            {user && user.isAdmin
+              ? "Manage users, view posts, and export comprehensive reports"
+              : "Customer Compatibility Exercise"}
           </p>
-        </div>
-      )}
-
-      {/* Phase 2 Note */}
-      {user && phaseUtils.getCurrentPhase(user) === 2 && !user.isAdmin && (
-        <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg">
-          <p className="font-medium">
-            Review your peers' work and highlight posts you agree with or find insightful. Click on any post to view details and add your feedback.
-          </p>
-        </div>
-      )}
-
-      {/* Search and Filter Controls - Only show for Phase 2 users and admins */}
-      {user && (user.isAdmin || phaseUtils.getCurrentPhase(user) === 2) && (
-        <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl border-0 shadow-xl space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            {/* Search */}
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  placeholder="Search businesses, authors, or content..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-
-            {/* Category Filter */}
-            <div className="sm:w-48">
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">All Categories</option>
-                {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Sort */}
-            <div className="sm:w-48">
-              <select
-                value={sortBy}
-                onChange={(e) =>
-                  setSortBy(
-                    e.target.value as "time" | "highlights" | "category"
-                  )
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="highlights">Most Highlighted</option>
-                <option value="time">Most Recent</option>
-                <option value="category">By Category</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Active Filters */}
-          {(searchTerm || selectedCategory) && (
-            <div className="flex flex-wrap gap-2">
-              {searchTerm && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setSearchTerm("")}
-                  className="text-xs"
-                >
-                  Search: "{searchTerm}" ×
+          {user && (
+            (user.isAdmin) || 
+            (phaseUtils.getCurrentPhase(user) === 1 && userPostCount < 2)
+          ) && (
+            <div className="flex justify-center mt-6">
+              <Link href="/create-post">
+                <Button className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                  <Plus className="h-4 w-4" />
+                  <span>
+                    {user.isAdmin
+                      ? "Create Test Post"
+                      : userPostCount === 0
+                      ? "Create Post"
+                      : "Create Another Post"}
+                  </span>
                 </Button>
-              )}
-              {selectedCategory && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setSelectedCategory("")}
-                  className="text-xs"
-                >
-                  Category: {selectedCategory} ×
-                </Button>
-              )}
+              </Link>
             </div>
           )}
         </div>
-      )}
 
-      {/* Posts */}
-      {filteredAndSortedPosts.length === 0 ? (
-        <div className="text-center py-16">
-          <div className="bg-white/80 backdrop-blur-sm p-8 rounded-xl shadow-xl max-w-md mx-auto">
-            <div className="text-gray-400 mb-6">
-              <svg
-                className="mx-auto h-16 w-16"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1}
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-3">
-              {posts.length === 0
-                ? "No posts yet"
-                : "No posts match your filters"}
-            </h3>
-            <p className="text-gray-600 mb-8">
-              {posts.length === 0
-                ? "Be the first to share your business compatibility experience!"
-                : "Try adjusting your search or filter criteria."}
+        {/* Phase 1 Note */}
+        {user && phaseUtils.getCurrentPhase(user) === 1 && !user.isAdmin && (
+          <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+            <p className="font-medium">
+              Good job on posting! You can review your post here, and wait for
+              your instructor to start Phase 2.
             </p>
-            <Link href="/create-post">
-              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
-                Create Your First Post
-              </Button>
-            </Link>
           </div>
-        </div>
-      ) : (
-        <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
-          {filteredAndSortedPosts.map((post) => (
-            <PostCard key={post.id} post={post} onUpdate={refreshPosts} />
-          ))}
-        </div>
-      )}
+        )}
+
+        {/* Phase 2 Note */}
+        {user && phaseUtils.getCurrentPhase(user) === 2 && !user.isAdmin && (
+          <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg">
+            <p className="font-medium">
+              Review your peers' work and highlight posts you agree with or find
+              insightful. Click on any post to view details and add your
+              feedback.
+            </p>
+          </div>
+        )}
+
+        {/* Search and Filter Controls - Only show for Phase 2 users and admins */}
+        {user && (user.isAdmin || phaseUtils.getCurrentPhase(user) === 2) && (
+          <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl border-0 shadow-xl space-y-4">
+            <div className="flex flex-col sm:flex-row gap-4">
+              {/* Search */}
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    placeholder="Search businesses, authors, or content..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+
+              {/* Category Filter */}
+              <div className="sm:w-48">
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">All Categories</option>
+                  {categories.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sort */}
+              <div className="sm:w-48">
+                <select
+                  value={sortBy}
+                  onChange={(e) =>
+                    setSortBy(
+                      e.target.value as "time" | "highlights" | "category"
+                    )
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="highlights">Most Highlighted</option>
+                  <option value="time">Most Recent</option>
+                  <option value="category">By Category</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Active Filters */}
+            {(searchTerm || selectedCategory) && (
+              <div className="flex flex-wrap gap-2">
+                {searchTerm && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSearchTerm("")}
+                    className="text-xs"
+                  >
+                    Search: "{searchTerm}" ×
+                  </Button>
+                )}
+                {selectedCategory && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSelectedCategory("")}
+                    className="text-xs"
+                  >
+                    Category: {selectedCategory} ×
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Posts */}
+        {filteredAndSortedPosts.length === 0 ? (
+          <div className="text-center py-16">
+            <div className="bg-white/80 backdrop-blur-sm p-8 rounded-xl shadow-xl max-w-md mx-auto">
+              <div className="text-gray-400 mb-6">
+                <svg
+                  className="mx-auto h-16 w-16"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">
+                {posts.length === 0
+                  ? "No posts yet"
+                  : "No posts match your filters"}
+              </h3>
+              <p className="text-gray-600 mb-8">
+                {posts.length === 0
+                  ? "Be the first to share your business compatibility experience!"
+                  : "Try adjusting your search or filter criteria."}
+              </p>
+              <Link href="/create-post">
+                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                  Create Your First Post
+                </Button>
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
+            {filteredAndSortedPosts.map((post) => (
+              <PostCard key={post.id} post={post} onUpdate={refreshPosts} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
