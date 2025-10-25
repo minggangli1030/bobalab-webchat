@@ -73,7 +73,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link href="/signup">
                 <Button className="px-8 py-4 text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                  Get Started Free
+                  Get Started
                 </Button>
               </Link>
               <Link href="/login">
@@ -84,6 +84,104 @@ export default function Home() {
                   Sign In
                 </Button>
               </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* About Section */}
+      <div className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <h2 className="text-4xl font-bold text-gray-900 mb-6">
+                  About This Exercise
+                </h2>
+                <div className="space-y-4 text-gray-600 leading-relaxed">
+                  <p>
+                    Customers impose considerable variability on the operating
+                    systems of service organizations. They show up when they
+                    wish (arrival variability), they ask for different things
+                    (request variability), they vary in their willingness and
+                    ability to help themselves (effort and capability
+                    variability), and they have different preferences
+                    (subjective preference variability).
+                  </p>
+                  <p>
+                    All this variability leaves the front lines of many service
+                    organizations struggling to deliver consistent, high-quality
+                    service. The Customer Compatibility Exercise provides
+                    students with a window into this reality through the lens of
+                    their own experiences.
+                  </p>
+                </div>
+              </div>
+              <div className="relative">
+                <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl p-8 text-white">
+                  <h3 className="text-2xl font-bold mb-4">
+                    Key Learning Outcomes
+                  </h3>
+                  <ul className="space-y-3">
+                    <li className="flex items-center">
+                      <svg
+                        className="w-5 h-5 mr-3"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      Understand customer variability patterns
+                    </li>
+                    <li className="flex items-center">
+                      <svg
+                        className="w-5 h-5 mr-3"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      Develop service management skills
+                    </li>
+                    <li className="flex items-center">
+                      <svg
+                        className="w-5 h-5 mr-3"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      Learn from peer experiences
+                    </li>
+                    <li className="flex items-center">
+                      <svg
+                        className="w-5 h-5 mr-3"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      Build analytical thinking
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -195,131 +293,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* About Section */}
-      <div className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                  About This Exercise
-                </h2>
-                <div className="space-y-4 text-gray-600 leading-relaxed">
-                  <p>
-                    Customers impose considerable variability on the operating
-                    systems of service organizations. They show up when they
-                    wish (arrival variability), they ask for different things
-                    (request variability), they vary in their willingness and
-                    ability to help themselves (effort and capability
-                    variability), and they have different preferences
-                    (subjective preference variability).
-                  </p>
-                  <p>
-                    All this variability leaves the front lines of many service
-                    organizations struggling to deliver consistent, high-quality
-                    service. The Customer Compatibility Exercise provides
-                    students with a window into this reality through the lens of
-                    their own experiences.
-                  </p>
-                </div>
-              </div>
-              <div className="relative">
-                <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl p-8 text-white">
-                  <h3 className="text-2xl font-bold mb-4">
-                    Key Learning Outcomes
-                  </h3>
-                  <ul className="space-y-3">
-                    <li className="flex items-center">
-                      <svg
-                        className="w-5 h-5 mr-3"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      Understand customer variability patterns
-                    </li>
-                    <li className="flex items-center">
-                      <svg
-                        className="w-5 h-5 mr-3"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      Develop service management skills
-                    </li>
-                    <li className="flex items-center">
-                      <svg
-                        className="w-5 h-5 mr-3"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      Learn from peer experiences
-                    </li>
-                    <li className="flex items-center">
-                      <svg
-                        className="w-5 h-5 mr-3"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      Build analytical thinking
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* CTA Section */}
-      <div className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="container mx-auto px-4 text-center">
-          <div className="max-w-3xl mx-auto text-white">
-            <h2 className="text-4xl font-bold mb-6">Ready to Get Started?</h2>
-            <p className="text-xl mb-8 opacity-90">
-              Join hundreds of students learning to manage customer variability
-              in service organizations.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/signup">
-                <Button className="px-8 py-4 text-lg font-semibold bg-white text-blue-600 hover:bg-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                  Start Your Journey
-                </Button>
-              </Link>
-              <Link href="/login">
-                <Button
-                  variant="outline"
-                  className="px-8 py-4 text-lg font-semibold border-2 border-white text-white hover:bg-white hover:text-blue-600 transition-all duration-300"
-                >
-                  Sign In
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Help Section */}
       <div className="py-20 bg-white">
@@ -328,9 +301,6 @@ export default function Home() {
             <h2 className="text-4xl font-bold text-gray-900 mb-6">
               Need Help?
             </h2>
-            <p className="text-xl text-gray-600 mb-8">
-              Our team is here to support your learning journey
-            </p>
             <Card className="max-w-2xl mx-auto shadow-lg border-0">
               <CardContent className="p-8">
                 <div className="flex items-center justify-center mb-6">
