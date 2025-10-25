@@ -239,7 +239,7 @@ export default function Phase2Dashboard({
                     </div>
                     <div className="flex-1 bg-gray-200 rounded-full h-6 relative">
                       <div
-                        className="bg-blue-500 h-6 rounded-full transition-all duration-300"
+                        className="bg-green-500 h-6 rounded-full transition-all duration-300"
                         style={{
                           width: `${attr.performanceRating || 0}%`,
                         }}
@@ -253,33 +253,6 @@ export default function Phase2Dashboard({
                     </div>
                   </div>
                 ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Customer Experience */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold">
-                Customer Experience
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">
-                    Experience Narrative
-                  </h4>
-                  <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
-                    {serviceExp.experienceNarrative || "No narrative provided"}
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Key Lesson</h4>
-                  <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
-                    {serviceExp.generalizableLesson || "No lesson provided"}
-                  </p>
-                </div>
               </div>
             </CardContent>
           </Card>
@@ -301,7 +274,7 @@ export default function Phase2Dashboard({
                   <h4 className="font-medium text-gray-900 mb-2">Exposure</h4>
                   <div className="bg-gray-200 rounded-full h-6 relative">
                     <div
-                      className="bg-blue-500 h-6 rounded-full"
+                      className="bg-purple-500 h-6 rounded-full"
                       style={{ width: `${serviceExp.needsAlignment || 0}%` }}
                     ></div>
                     <div className="absolute inset-0 flex items-center justify-center text-sm font-medium text-white">
@@ -338,7 +311,7 @@ export default function Phase2Dashboard({
                         </div>
                         <div className="flex-1 bg-gray-200 rounded-full h-4 relative">
                           <div
-                            className="bg-blue-500 h-4 rounded-full"
+                            className="bg-purple-500 h-4 rounded-full"
                             style={{ width: `${metric.value}%` }}
                           ></div>
                           <div className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white">
@@ -467,6 +440,33 @@ export default function Phase2Dashboard({
           )}
         </div>
       </div>
+
+      {/* Customer Experience - Full Width */}
+      <Card className="shadow-sm border-0 bg-white">
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold">
+            Customer Experience
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 className="font-medium text-gray-900 mb-3">
+                Experience Narrative
+              </h4>
+              <p className="text-sm text-gray-600 bg-gray-50 p-4 rounded-lg border">
+                {serviceExp.experienceNarrative || "No narrative provided"}
+              </p>
+            </div>
+            <div>
+              <h4 className="font-medium text-gray-900 mb-3">Key Lesson</h4>
+              <p className="text-sm text-gray-600 bg-gray-50 p-4 rounded-lg border">
+                {serviceExp.generalizableLesson || "No lesson provided"}
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Managing Variability Table */}
       <Card className="shadow-sm border-0 bg-white">
