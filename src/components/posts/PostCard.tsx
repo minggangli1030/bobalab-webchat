@@ -7,7 +7,7 @@ import { firebasePostUtils } from "@/lib/firebase-posts";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, MessageCircle, Eye } from "lucide-react";
+import { Heart, Eye } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { HighlightModal } from "@/components/HighlightModal";
@@ -134,17 +134,6 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
                 />
                 <span className="text-xs">{highlightCount}</span>
               </Button>
-
-              <Link href={`/post/${post.id}`}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="flex items-center space-x-1 p-1 h-auto text-gray-600"
-                >
-                  <MessageCircle className="h-4 w-4" />
-                  <span className="text-xs">{post.comments.length}</span>
-                </Button>
-              </Link>
             </div>
 
             <Link href={`/post/${post.id}`}>
