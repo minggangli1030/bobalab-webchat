@@ -44,6 +44,11 @@ export default function Phase2Dashboard({
 
   const serviceExp = userPost.serviceExperience;
 
+  // Debug: Log the post data to see what's available
+  console.log("Phase2Dashboard - userPost:", userPost);
+  console.log("Phase2Dashboard - comments:", userPost.comments);
+  console.log("Phase2Dashboard - highlights:", userPost.highlights);
+
   // Sort attributes by ranking (1-6)
   const sortedAttributes = [...(serviceExp.serviceAttributes || [])].sort(
     (a, b) => a.userRanking - b.userRanking
@@ -204,6 +209,78 @@ export default function Phase2Dashboard({
                   <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
                     {serviceExp.generalizableLesson || "No lesson provided"}
                   </p>
+                </div>
+
+                {/* Comments Section */}
+                <div>
+                  <h4 className="font-medium text-gray-900 mb-2">Comments</h4>
+                  {userPost.comments && userPost.comments.length > 0 ? (
+                    <div className="space-y-3">
+                      {userPost.comments.map((comment, index) => (
+                        <div
+                          key={comment.id || index}
+                          className="bg-gray-50 p-3 rounded"
+                        >
+                          <div className="flex justify-between items-start mb-1">
+                            <span className="text-sm font-medium text-gray-900">
+                              {comment.authorName}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              {comment.createdAt
+                                ? new Date(
+                                    comment.createdAt
+                                  ).toLocaleDateString()
+                                : "N/A"}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-700">
+                            {comment.content}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 italic">
+                      No comments yet
+                    </p>
+                  )}
+                </div>
+
+                {/* Highlights Section */}
+                <div>
+                  <h4 className="font-medium text-gray-900 mb-2">
+                    Who Highlighted
+                  </h4>
+                  {userPost.highlights && userPost.highlights.length > 0 ? (
+                    <div className="space-y-3">
+                      {userPost.highlights.map((highlight, index) => (
+                        <div
+                          key={index}
+                          className="bg-blue-50 p-3 rounded border-l-4 border-blue-400"
+                        >
+                          <div className="flex justify-between items-start mb-1">
+                            <span className="text-sm font-medium text-blue-900">
+                              {highlight.userName}
+                            </span>
+                            <span className="text-xs text-blue-600">
+                              {highlight.createdAt
+                                ? new Date(
+                                    highlight.createdAt
+                                  ).toLocaleDateString()
+                                : "N/A"}
+                            </span>
+                          </div>
+                          <p className="text-sm text-blue-800">
+                            {highlight.reason}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 italic">
+                      No highlights yet
+                    </p>
+                  )}
                 </div>
               </div>
             </CardContent>

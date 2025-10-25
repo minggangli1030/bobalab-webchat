@@ -664,9 +664,6 @@ export default function ServiceExperienceForm({
                         {assessment.impactRating || 0}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Note: Minimum value must be at least 1
-                    </p>
                   </div>
                 </>
               )}
