@@ -48,6 +48,15 @@ export default function Phase2Dashboard({
   console.log("Phase2Dashboard - userPost:", userPost);
   console.log("Phase2Dashboard - comments:", userPost.comments);
   console.log("Phase2Dashboard - highlights:", userPost.highlights);
+  console.log(
+    "Phase2Dashboard - highlight dates:",
+    userPost.highlights?.map((h) => ({
+      userName: h.userName,
+      createdAt: h.createdAt,
+      type: typeof h.createdAt,
+      isDate: h.createdAt instanceof Date,
+    }))
+  );
 
   // Sort attributes by ranking (1-6)
   const sortedAttributes = [...(serviceExp.serviceAttributes || [])].sort(
@@ -56,6 +65,48 @@ export default function Phase2Dashboard({
 
   // Get variability assessments
   const variabilityAssessments = serviceExp.variabilityAssessments || [];
+
+  // Robust date formatting function
+  const formatDate = (date: any) => {
+    if (!date) return "N/A";
+
+    try {
+      let dateObj: Date;
+
+      if (date instanceof Date) {
+        dateObj = date;
+      } else if (typeof date === "string") {
+        // Try different date parsing methods
+        dateObj = new Date(date);
+        if (isNaN(dateObj.getTime())) {
+          // Try parsing as timestamp
+          const timestamp = parseInt(date);
+          if (!isNaN(timestamp)) {
+            dateObj = new Date(timestamp);
+          }
+        }
+      } else if (typeof date === "number") {
+        dateObj = new Date(date);
+      } else {
+        return "N/A";
+      }
+
+      if (isNaN(dateObj.getTime())) {
+        return "N/A";
+      }
+
+      return dateObj.toLocaleDateString("en-US", {
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      });
+    } catch (error) {
+      console.error("Error formatting date:", error, "Original date:", date);
+      return "N/A";
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-6">
@@ -140,15 +191,7 @@ export default function Phase2Dashboard({
               <div>
                 <span className="font-medium text-gray-700">Date:</span>
                 <span className="ml-2 text-gray-900">
-                  {userPost.createdAt
-                    ? new Date(userPost.createdAt).toLocaleDateString("en-US", {
-                        month: "2-digit",
-                        day: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: false,
-                      })
-                    : "N/A"}
+                  {formatDate(userPost.createdAt)}
                 </span>
               </div>
             </div>
@@ -525,27 +568,7 @@ export default function Phase2Dashboard({
                         {highlight.userName}
                       </span>
                       <span className="text-xs text-blue-600">
-                        {highlight.createdAt &&
-                        highlight.createdAt instanceof Date
-                          ? highlight.createdAt.toLocaleDateString("en-US", {
-                              month: "2-digit",
-                              day: "2-digit",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: false,
-                            })
-                          : highlight.createdAt
-                          ? new Date(highlight.createdAt).toLocaleDateString(
-                              "en-US",
-                              {
-                                month: "2-digit",
-                                day: "2-digit",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: false,
-                              }
-                            )
-                          : "N/A"}
+                        {formatDate(highlight.createdAt)}
                       </span>
                     </div>
                     <p className="text-sm text-blue-800">{highlight.reason}</p>
