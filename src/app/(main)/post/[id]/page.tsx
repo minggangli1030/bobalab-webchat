@@ -192,431 +192,439 @@ export default function PostDetailPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
-      {/* Back Button */}
-      <Link href="/feed">
-        <Button variant="ghost" className="flex items-center space-x-2">
-          <ArrowLeft className="h-4 w-4" />
-          <span>Back to Feed</span>
-        </Button>
-      </Link>
+        {/* Back Button */}
+        <Link href="/feed">
+          <Button variant="ghost" className="flex items-center space-x-2">
+            <ArrowLeft className="h-4 w-4" />
+            <span>Back to Feed</span>
+          </Button>
+        </Link>
 
-      {/* Post */}
-      <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center space-x-3">
-              <Avatar className="h-10 w-10">
-                <AvatarFallback>
-                  {post.authorName.charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <h3 className="font-semibold text-gray-900">
-                  {post.authorName}
+        {/* Post */}
+        <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+          <CardHeader className="pb-3">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center space-x-3">
+                <Avatar className="h-10 w-10">
+                  <AvatarFallback>
+                    {post.authorName.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-gray-900">
+                    {post.authorName}
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    {formatDate(post.createdAt)}
+                  </p>
+                </div>
+              </div>
+              {post.category && (
+                <Badge variant="outline">{post.category}</Badge>
+              )}
+            </div>
+            {post.businessName && (
+              <div className="mt-2">
+                <h2 className="text-xl font-bold text-gray-900">
+                  {post.businessName}
+                </h2>
+              </div>
+            )}
+          </CardHeader>
+
+          <CardContent className="space-y-4">
+            {/* Post Content */}
+            <div className="prose max-w-none">
+              <p className="text-gray-800 whitespace-pre-wrap">
+                {post.content}
+              </p>
+            </div>
+
+            {/* Service Experience Data - Comprehensive View */}
+            {post.serviceExperience && (
+              <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Service Experience Details
                 </h3>
-                <p className="text-sm text-gray-500">
-                  {formatDate(post.createdAt)}
-                </p>
-              </div>
-            </div>
-            {post.category && <Badge variant="outline">{post.category}</Badge>}
-          </div>
-          {post.businessName && (
-            <div className="mt-2">
-              <h2 className="text-xl font-bold text-gray-900">
-                {post.businessName}
-              </h2>
-            </div>
-          )}
-        </CardHeader>
 
-        <CardContent className="space-y-4">
-          {/* Post Content */}
-          <div className="prose max-w-none">
-            <p className="text-gray-800 whitespace-pre-wrap">{post.content}</p>
-          </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Basic Information */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm font-medium text-gray-600">
+                        Organization:
+                      </span>
+                      <span className="text-sm text-gray-900">
+                        {post.serviceExperience.organizationName}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm font-medium text-gray-600">
+                        Type:
+                      </span>
+                      <span className="text-sm text-gray-900">
+                        {post.serviceExperience.organizationType}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm font-medium text-gray-600">
+                        Relationship Length:
+                      </span>
+                      <span className="text-sm text-gray-900">
+                        {post.serviceExperience.relationshipLength} years
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm font-medium text-gray-600">
+                        Address:
+                      </span>
+                      <span className="text-sm text-gray-900">
+                        {post.serviceExperience.streetAddress}
+                      </span>
+                    </div>
+                  </div>
 
-          {/* Service Experience Data - Comprehensive View */}
-          {post.serviceExperience && (
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Service Experience Details
-              </h3>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Basic Information */}
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium text-gray-600">
-                      Organization:
-                    </span>
-                    <span className="text-sm text-gray-900">
-                      {post.serviceExperience.organizationName}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium text-gray-600">
-                      Type:
-                    </span>
-                    <span className="text-sm text-gray-900">
-                      {post.serviceExperience.organizationType}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium text-gray-600">
-                      Relationship Length:
-                    </span>
-                    <span className="text-sm text-gray-900">
-                      {post.serviceExperience.relationshipLength} years
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium text-gray-600">
-                      Address:
-                    </span>
-                    <span className="text-sm text-gray-900">
-                      {post.serviceExperience.streetAddress}
-                    </span>
+                  {/* Ratings */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm font-medium text-gray-600">
+                        Satisfaction:
+                      </span>
+                      <span className="text-sm text-gray-900">
+                        {post.serviceExperience.satisfactionRating}/100
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm font-medium text-gray-600">
+                        Loyalty:
+                      </span>
+                      <span className="text-sm text-gray-900">
+                        {post.serviceExperience.loyaltyRating}/100
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm font-medium text-gray-600">
+                        Recommendation:
+                      </span>
+                      <span className="text-sm text-gray-900">
+                        {post.serviceExperience.recommendationLikelihood}/100
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm font-medium text-gray-600">
+                        Needs Alignment:
+                      </span>
+                      <span className="text-sm text-gray-900">
+                        {post.serviceExperience.needsAlignment}/100
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Ratings */}
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium text-gray-600">
-                      Satisfaction:
-                    </span>
-                    <span className="text-sm text-gray-900">
-                      {post.serviceExperience.satisfactionRating}/100
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium text-gray-600">
-                      Loyalty:
-                    </span>
-                    <span className="text-sm text-gray-900">
-                      {post.serviceExperience.loyaltyRating}/100
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium text-gray-600">
-                      Recommendation:
-                    </span>
-                    <span className="text-sm text-gray-900">
-                      {post.serviceExperience.recommendationLikelihood}/100
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium text-gray-600">
-                      Needs Alignment:
-                    </span>
-                    <span className="text-sm text-gray-900">
-                      {post.serviceExperience.needsAlignment}/100
-                    </span>
-                  </div>
-                </div>
-              </div>
+                {/* Service Attributes */}
+                {post.serviceExperience.serviceAttributes &&
+                  post.serviceExperience.serviceAttributes.length > 0 && (
+                    <div className="mt-4">
+                      <h4 className="text-md font-medium text-gray-900 mb-2">
+                        Service Attributes (Ranked by Importance)
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {post.serviceExperience.serviceAttributes
+                          .sort((a, b) => a.userRanking - b.userRanking)
+                          .map((attr, index) => (
+                            <div
+                              key={index}
+                              className="flex justify-between items-center p-2 bg-white rounded border"
+                            >
+                              <span className="text-sm font-medium text-gray-700">
+                                {attr.userRanking}. {attr.name}
+                              </span>
+                              <span className="text-sm text-gray-600">
+                                Performance: {attr.performanceRating || 0}/100
+                              </span>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
 
-              {/* Service Attributes */}
-              {post.serviceExperience.serviceAttributes &&
-                post.serviceExperience.serviceAttributes.length > 0 && (
+                {/* Google Review Data */}
+                {(post.serviceExperience.googleScore ||
+                  post.serviceExperience.googlePriceRange) && (
                   <div className="mt-4">
                     <h4 className="text-md font-medium text-gray-900 mb-2">
-                      Service Attributes (Ranked by Importance)
+                      Google Review Data
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {post.serviceExperience.serviceAttributes
-                        .sort((a, b) => a.userRanking - b.userRanking)
-                        .map((attr, index) => (
-                          <div
-                            key={index}
-                            className="flex justify-between items-center p-2 bg-white rounded border"
-                          >
-                            <span className="text-sm font-medium text-gray-700">
-                              {attr.userRanking}. {attr.name}
-                            </span>
-                            <span className="text-sm text-gray-600">
-                              Performance: {attr.performanceRating || 0}/100
+                      {post.serviceExperience.googleScore && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium text-gray-600">
+                            Google Score:
+                          </span>
+                          <div className="flex items-center space-x-2">
+                            <div className="flex items-center">
+                              {[1, 2, 3, 4, 5].map((star) => {
+                                const score =
+                                  post.serviceExperience?.googleScore || 0;
+                                const isFull = star <= Math.floor(score);
+                                const isHalf =
+                                  star === Math.ceil(score) && score % 1 >= 0.5;
+
+                                return (
+                                  <span key={star} className="text-yellow-400">
+                                    {isFull ? "★" : isHalf ? "☆" : "☆"}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                            <span className="text-sm text-gray-900">
+                              ({post.serviceExperience?.googleScore}/5)
                             </span>
                           </div>
-                        ))}
+                        </div>
+                      )}
+                      {post.serviceExperience.googlePriceRange && (
+                        <div className="flex justify-between">
+                          <span className="text-sm font-medium text-gray-600">
+                            Price Range:
+                          </span>
+                          <span className="text-sm text-gray-900">
+                            {"$".repeat(
+                              post.serviceExperience.googlePriceRange
+                            )}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
 
-              {/* Google Review Data */}
-              {(post.serviceExperience.googleScore ||
-                post.serviceExperience.googlePriceRange) && (
-                <div className="mt-4">
-                  <h4 className="text-md font-medium text-gray-900 mb-2">
-                    Google Review Data
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {post.serviceExperience.googleScore && (
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium text-gray-600">
-                          Google Score:
-                        </span>
-                        <div className="flex items-center space-x-2">
-                          <div className="flex items-center">
-                            {[1, 2, 3, 4, 5].map((star) => {
-                              const score =
-                                post.serviceExperience?.googleScore || 0;
-                              const isFull = star <= Math.floor(score);
-                              const isHalf =
-                                star === Math.ceil(score) && score % 1 >= 0.5;
+                {/* Imgur Media */}
+                {post.imgurLinks && post.imgurLinks.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="text-md font-medium text-gray-900 mb-2">
+                      Media
+                    </h4>
+                    <div className="space-y-4">
+                      {post.imgurLinks.map((link, index) => {
+                        // Check if it's an Imgur image link
+                        const isImgurImage =
+                          link.includes("imgur.com") &&
+                          (link.includes(".jpg") ||
+                            link.includes(".jpeg") ||
+                            link.includes(".png") ||
+                            link.includes(".gif") ||
+                            link.includes(".webp"));
 
-                              return (
-                                <span key={star} className="text-yellow-400">
-                                  {isFull ? "★" : isHalf ? "☆" : "☆"}
-                                </span>
-                              );
-                            })}
-                          </div>
-                          <span className="text-sm text-gray-900">
-                            ({post.serviceExperience?.googleScore}/5)
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                    {post.serviceExperience.googlePriceRange && (
-                      <div className="flex justify-between">
-                        <span className="text-sm font-medium text-gray-600">
-                          Price Range:
-                        </span>
-                        <span className="text-sm text-gray-900">
-                          {"$".repeat(post.serviceExperience.googlePriceRange)}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Imgur Media */}
-              {post.imgurLinks && post.imgurLinks.length > 0 && (
-                <div className="mt-4">
-                  <h4 className="text-md font-medium text-gray-900 mb-2">
-                    Media
-                  </h4>
-                  <div className="space-y-4">
-                    {post.imgurLinks.map((link, index) => {
-                      // Check if it's an Imgur image link
-                      const isImgurImage =
-                        link.includes("imgur.com") &&
-                        (link.includes(".jpg") ||
-                          link.includes(".jpeg") ||
-                          link.includes(".png") ||
-                          link.includes(".gif") ||
-                          link.includes(".webp"));
-
-                      if (isImgurImage) {
-                        return (
-                          <div
-                            key={index}
-                            className="bg-white rounded border p-2"
-                          >
-                            <img
-                              src={link}
-                              alt={`Media ${index + 1}`}
-                              className="max-w-full h-auto rounded"
-                              onError={(e) => {
-                                // Fallback to link if image fails to load
-                                e.currentTarget.style.display = "none";
-                                const linkElement = e.currentTarget
-                                  .nextElementSibling as HTMLElement;
-                                if (linkElement)
-                                  linkElement.style.display = "block";
-                              }}
-                            />
-                            <a
-                              href={link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-sm text-blue-600 hover:text-blue-800 break-all hidden"
+                        if (isImgurImage) {
+                          return (
+                            <div
+                              key={index}
+                              className="bg-white rounded border p-2"
                             >
-                              {link}
-                            </a>
-                          </div>
-                        );
-                      } else {
-                        // For non-image links, show as regular link
-                        return (
-                          <div
-                            key={index}
-                            className="p-2 bg-white rounded border"
-                          >
-                            <a
-                              href={link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-sm text-blue-600 hover:text-blue-800 break-all"
+                              <img
+                                src={link}
+                                alt={`Media ${index + 1}`}
+                                className="max-w-full h-auto rounded"
+                                onError={(e) => {
+                                  // Fallback to link if image fails to load
+                                  e.currentTarget.style.display = "none";
+                                  const linkElement = e.currentTarget
+                                    .nextElementSibling as HTMLElement;
+                                  if (linkElement)
+                                    linkElement.style.display = "block";
+                                }}
+                              />
+                              <a
+                                href={link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm text-blue-600 hover:text-blue-800 break-all hidden"
+                              >
+                                {link}
+                              </a>
+                            </div>
+                          );
+                        } else {
+                          // For non-image links, show as regular link
+                          return (
+                            <div
+                              key={index}
+                              className="p-2 bg-white rounded border"
                             >
-                              {link}
-                            </a>
-                          </div>
-                        );
-                      }
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Images */}
-          {post.images.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {post.images.map((image, index) => (
-                <div
-                  key={index}
-                  className="relative aspect-video rounded-lg overflow-hidden"
-                >
-                  <Image
-                    src={image}
-                    alt={`Post image ${index + 1}`}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Actions */}
-          <div className="flex items-center justify-between pt-4 border-t">
-            <div className="flex items-center space-x-6">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleHighlightClick}
-                className={`flex items-center space-x-2 ${
-                  isHighlighted ? "text-orange-600" : "text-gray-600"
-                }`}
-              >
-                <Heart
-                  className={`h-4 w-4 ${isHighlighted ? "fill-current" : ""}`}
-                />
-                <span>{highlightCount}</span>
-              </Button>
-
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowHighlightedBy(!showHighlightedBy)}
-                className="flex items-center space-x-2 text-gray-600"
-              >
-                <Users className="h-4 w-4" />
-                <span>Who highlighted</span>
-              </Button>
-
-              <div className="flex items-center space-x-2 text-gray-600">
-                <MessageCircle className="h-4 w-4" />
-                <span>{post.comments.length}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Show who highlighted (if any) */}
-          {showHighlightedBy &&
-            post.highlights &&
-            post.highlights.length > 0 && (
-              <div className="pt-3 border-t">
-                <p className="text-sm text-gray-600 mb-2">Highlighted by:</p>
-                <div className="space-y-2">
-                  {post.highlights.map((highlight, index) => (
-                    <div key={index} className="flex items-start space-x-2">
-                      <Badge variant="secondary" className="text-xs">
-                        {highlight.userName}
-                      </Badge>
-                      <span className="text-xs text-gray-500 italic">
-                        "{highlight.reason}"
-                      </span>
+                              <a
+                                href={link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm text-blue-600 hover:text-blue-800 break-all"
+                              >
+                                {link}
+                              </a>
+                            </div>
+                          );
+                        }
+                      })}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                )}
               </div>
             )}
-        </CardContent>
-      </Card>
 
-      {/* Comments Section */}
-      <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-        <CardHeader>
-          <h3 className="text-lg font-semibold">
-            Comments ({post.comments.length})
-          </h3>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Add Comment Form */}
-          {user && (
-            <form onSubmit={handleAddComment} className="flex space-x-3">
-              <Avatar className="h-8 w-8">
-                <AvatarFallback>
-                  {user.preferredName.charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <Input
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  placeholder="Write a comment..."
-                  className="w-full"
-                />
+            {/* Images */}
+            {post.images.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {post.images.map((image, index) => (
+                  <div
+                    key={index}
+                    className="relative aspect-video rounded-lg overflow-hidden"
+                  >
+                    <Image
+                      src={image}
+                      alt={`Post image ${index + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                ))}
               </div>
-              <Button
-                type="submit"
-                disabled={!newComment.trim() || isSubmittingComment}
-                size="sm"
-              >
-                {isSubmittingComment ? "Posting..." : "Post"}
-              </Button>
-            </form>
-          )}
+            )}
 
-          {/* Comments List */}
-          {post.comments.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <MessageCircle className="h-8 w-8 mx-auto mb-2 text-gray-300" />
-              <p>No comments yet. Be the first to comment!</p>
+            {/* Actions */}
+            <div className="flex items-center justify-between pt-4 border-t">
+              <div className="flex items-center space-x-6">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleHighlightClick}
+                  className={`flex items-center space-x-2 ${
+                    isHighlighted ? "text-orange-600" : "text-gray-600"
+                  }`}
+                >
+                  <Heart
+                    className={`h-4 w-4 ${isHighlighted ? "fill-current" : ""}`}
+                  />
+                  <span>{highlightCount}</span>
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowHighlightedBy(!showHighlightedBy)}
+                  className="flex items-center space-x-2 text-gray-600"
+                >
+                  <Users className="h-4 w-4" />
+                  <span>Who highlighted</span>
+                </Button>
+
+                <div className="flex items-center space-x-2 text-gray-600">
+                  <MessageCircle className="h-4 w-4" />
+                  <span>{post.comments.length}</span>
+                </div>
+              </div>
             </div>
-          ) : (
-            <div className="space-y-4">
-              {post.comments.map((comment) => (
-                <div key={comment.id} className="flex space-x-3">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback>
-                      {comment.authorName.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="bg-gray-50 rounded-lg p-3">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <span className="font-medium text-sm">
-                          {comment.authorName}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          {formatDate(comment.createdAt)}
+
+            {/* Show who highlighted (if any) */}
+            {showHighlightedBy &&
+              post.highlights &&
+              post.highlights.length > 0 && (
+                <div className="pt-3 border-t">
+                  <p className="text-sm text-gray-600 mb-2">Highlighted by:</p>
+                  <div className="space-y-2">
+                    {post.highlights.map((highlight, index) => (
+                      <div key={index} className="flex items-start space-x-2">
+                        <Badge variant="secondary" className="text-xs">
+                          {highlight.userName}
+                        </Badge>
+                        <span className="text-xs text-gray-500 italic">
+                          "{highlight.reason}"
                         </span>
                       </div>
-                      <p className="text-sm text-gray-800">{comment.content}</p>
-                    </div>
+                    ))}
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+              )}
+          </CardContent>
+        </Card>
 
-      {/* Highlight Modal */}
-      <HighlightModal
-        isOpen={showHighlightModal}
-        onClose={() => setShowHighlightModal(false)}
-        onConfirm={handleHighlightConfirm}
-        isHighlighted={isHighlighted}
-        highlightCount={highlightCount}
-      />
+        {/* Comments Section */}
+        <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <h3 className="text-lg font-semibold">
+              Comments ({post.comments.length})
+            </h3>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Add Comment Form */}
+            {user && (
+              <form onSubmit={handleAddComment} className="flex space-x-3">
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback>
+                    {user.preferredName.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                  <Input
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    placeholder="Write a comment..."
+                    className="w-full"
+                  />
+                </div>
+                <Button
+                  type="submit"
+                  disabled={!newComment.trim() || isSubmittingComment}
+                  size="sm"
+                >
+                  {isSubmittingComment ? "Posting..." : "Post"}
+                </Button>
+              </form>
+            )}
+
+            {/* Comments List */}
+            {post.comments.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <MessageCircle className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+                <p>No comments yet. Be the first to comment!</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {post.comments.map((comment) => (
+                  <div key={comment.id} className="flex space-x-3">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback>
+                        {comment.authorName.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <div className="bg-gray-50 rounded-lg p-3">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <span className="font-medium text-sm">
+                            {comment.authorName}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {formatDate(comment.createdAt)}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-800">
+                          {comment.content}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Highlight Modal */}
+        <HighlightModal
+          isOpen={showHighlightModal}
+          onClose={() => setShowHighlightModal(false)}
+          onConfirm={handleHighlightConfirm}
+          isHighlighted={isHighlighted}
+          highlightCount={highlightCount}
+        />
       </div>
     </div>
   );

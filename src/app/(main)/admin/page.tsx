@@ -492,480 +492,487 @@ export default function AdminPage() {
           </p>
         </div>
 
-      {/* Important Notes */}
-      <div className="mb-6 space-y-4">
-        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <div className="flex items-start space-x-3">
-            <div className="flex-shrink-0">
-              <svg
-                className="h-5 w-5 text-blue-600"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                  clipRule="evenodd"
-                />
-              </svg>
+        {/* Important Notes */}
+        <div className="mb-6 space-y-4">
+          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-start space-x-3">
+              <div className="flex-shrink-0">
+                <svg
+                  className="h-5 w-5 text-blue-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-medium text-blue-800">
+                  Phase Management
+                </h3>
+                <p className="mt-1 text-sm text-blue-700">
+                  <strong>Phase 1:</strong> Users create their initial service
+                  experience posts (max 2 posts).
+                  <br />
+                  <strong>Phase 2:</strong> Users can view all posts, provide
+                  feedback, and engage with the gallery.
+                </p>
+              </div>
             </div>
-            <div className="flex-1">
-              <h3 className="text-sm font-medium text-blue-800">
-                Phase Management
-              </h3>
-              <p className="mt-1 text-sm text-blue-700">
-                <strong>Phase 1:</strong> Users create their initial service
-                experience posts (max 2 posts).
-                <br />
-                <strong>Phase 2:</strong> Users can view all posts, provide
-                feedback, and engage with the gallery.
-              </p>
+          </div>
+
+          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div className="flex items-start space-x-3">
+              <div className="flex-shrink-0">
+                <svg
+                  className="h-5 w-5 text-yellow-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-medium text-yellow-800">
+                  Note: Authentication Accounts Not Deleted
+                </h3>
+                <p className="mt-1 text-sm text-yellow-700">
+                  "Delete All Data" removes posts and user profiles, but does
+                  NOT delete Firebase Authentication accounts. To fully reset,
+                  manually delete auth users from the Firebase Console
+                  (Authentication → Users tab).
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <div className="flex items-start space-x-3">
-            <div className="flex-shrink-0">
-              <svg
-                className="h-5 w-5 text-yellow-600"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-            <div className="flex-1">
-              <h3 className="text-sm font-medium text-yellow-800">
-                Note: Authentication Accounts Not Deleted
-              </h3>
-              <p className="mt-1 text-sm text-yellow-700">
-                "Delete All Data" removes posts and user profiles, but does NOT
-                delete Firebase Authentication accounts. To fully reset,
-                manually delete auth users from the Firebase Console
-                (Authentication → Users tab).
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <MessageSquare className="h-8 w-8 text-blue-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Posts</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {stats.totalPosts}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <Users className="h-8 w-8 text-green-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Users</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {stats.totalUsers}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <Calendar className="h-8 w-8 text-purple-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
-                  Recent Posts
-                </p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {stats.recentPosts}
-                </p>
-                <p className="text-xs text-gray-500">Last 7 days</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <Heart className="h-8 w-8 text-orange-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
-                  Total Highlights
-                </p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {stats.totalHighlights}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Control Buttons */}
-      <div className="mb-8">
-        <div className="flex flex-wrap gap-4">
-          <Button
-            onClick={downloadCSV}
-            className="flex items-center space-x-2 bg-green-600 hover:bg-green-700"
-          >
-            <Download className="h-4 w-4" />
-            <span>Download CSV</span>
-          </Button>
-          <Button
-            onClick={() => handleBulkPhaseTransition(1)}
-            className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700"
-          >
-            <ArrowUp className="h-4 w-4" />
-            <span>Move All Users to Phase 1: Initial Assessment</span>
-          </Button>
-          <Button
-            onClick={() => handleBulkPhaseTransition(2)}
-            className="flex items-center space-x-2 bg-orange-600 hover:bg-orange-700"
-          >
-            <ArrowUp className="h-4 w-4" />
-            <span>Move All Users to Phase 2: Peer Feedback</span>
-          </Button>
-          <Button
-            variant="destructive"
-            onClick={deleteAllData}
-            className="flex items-center space-x-2"
-          >
-            <Trash2 className="h-4 w-4" />
-            <span>Delete All Data</span>
-          </Button>
-        </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="border-b border-gray-200 mb-8">
-        <nav className="-mb-px flex space-x-8">
-          <button
-            onClick={() => setActiveTab("posts")}
-            className={`py-3 px-1 border-b-2 font-medium text-sm ${
-              activeTab === "posts"
-                ? "border-blue-500 text-blue-600"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-            }`}
-          >
-            Posts ({posts.length})
-          </button>
-          <button
-            onClick={() => setActiveTab("users")}
-            className={`py-3 px-1 border-b-2 font-medium text-sm ${
-              activeTab === "users"
-                ? "border-blue-500 text-blue-600"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-            }`}
-          >
-            Users ({users.filter((u) => !u.isAdmin).length})
-          </button>
-        </nav>
-      </div>
-
-      {/* Content */}
-
-      {activeTab === "posts" && (
-        <div className="space-y-6">
-          {posts.map((post) => (
-            <Card key={post.id} className="border-2">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <Badge variant="outline" className="px-3 py-1">
-                        {post.authorName}
-                      </Badge>
-                      <span className="text-sm text-gray-500">
-                        {formatDate(post.createdAt)}
-                      </span>
-                    </div>
-
-                    {/* Post Content */}
-                    <div className="mb-4">
-                      <h3 className="font-semibold text-gray-900 mb-2">
-                        {post.serviceExperience?.organizationName ||
-                          "No Organization"}
-                      </h3>
-                      <p className="text-gray-800 mb-3">{post.content}</p>
-                    </div>
-
-                    {/* Engagement Metrics */}
-                    <div className="flex items-center space-x-4 text-sm text-gray-600">
-                      <span className="flex items-center">
-                        <Heart className="h-4 w-4 mr-1 text-orange-500" />
-                        {post.highlights?.length || 0} highlights
-                      </span>
-                      <span className="flex items-center">
-                        <MessageSquare className="h-4 w-4 mr-1" />
-                        {post.comments.length} comments
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex flex-col space-y-2 ml-6">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => router.push(`/post/${post.id}`)}
-                      className="text-sm"
-                    >
-                      <Eye className="h-4 w-4 mr-2" />
-                      View Full Dashboard
-                    </Button>
-
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        const newImgurLinks = prompt(
-                          "Enter new Imgur links (one per line):",
-                          post.imgurLinks?.join("\n") || ""
-                        );
-                        if (newImgurLinks !== null) {
-                          const links = newImgurLinks
-                            .split("\n")
-                            .filter((link) => link.trim());
-                          handleEditPost(post.id, { imgurLinks: links });
-                        }
-                      }}
-                      className="text-sm"
-                    >
-                      <Download className="h-4 w-4 mr-2" />
-                      Add Media
-                    </Button>
-
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => deletePost(post.id)}
-                      className="text-sm"
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Remove
-                    </Button>
-                  </div>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center">
+                <MessageSquare className="h-8 w-8 text-blue-600" />
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">
+                    Total Posts
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stats.totalPosts}
+                  </p>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center">
+                <Users className="h-8 w-8 text-green-600" />
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">
+                    Total Users
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stats.totalUsers}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center">
+                <Calendar className="h-8 w-8 text-purple-600" />
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">
+                    Recent Posts
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stats.recentPosts}
+                  </p>
+                  <p className="text-xs text-gray-500">Last 7 days</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center">
+                <Heart className="h-8 w-8 text-orange-600" />
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">
+                    Total Highlights
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stats.totalHighlights}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      )}
 
-      {activeTab === "users" && (
-        <div className="space-y-6">
-          {users.length === 0 ? (
-            <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-8">
-                <p className="text-gray-600 text-center py-8">
-                  No users found.
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            users
-              .filter((user) => !user.isAdmin)
-              .map((user) => {
-                const userPosts = posts.filter((p) => p.authorId === user.id);
-                const currentPhase = phaseUtils.getCurrentPhase(user);
+        {/* Control Buttons */}
+        <div className="mb-8">
+          <div className="flex flex-wrap gap-4">
+            <Button
+              onClick={downloadCSV}
+              className="flex items-center space-x-2 bg-green-600 hover:bg-green-700"
+            >
+              <Download className="h-4 w-4" />
+              <span>Download CSV</span>
+            </Button>
+            <Button
+              onClick={() => handleBulkPhaseTransition(1)}
+              className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700"
+            >
+              <ArrowUp className="h-4 w-4" />
+              <span>Move All Users to Phase 1: Initial Assessment</span>
+            </Button>
+            <Button
+              onClick={() => handleBulkPhaseTransition(2)}
+              className="flex items-center space-x-2 bg-orange-600 hover:bg-orange-700"
+            >
+              <ArrowUp className="h-4 w-4" />
+              <span>Move All Users to Phase 2: Peer Feedback</span>
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={deleteAllData}
+              className="flex items-center space-x-2"
+            >
+              <Trash2 className="h-4 w-4" />
+              <span>Delete All Data</span>
+            </Button>
+          </div>
+        </div>
 
-                return (
-                  <Card key={user.id} className="border-2">
-                    <CardContent className="p-8">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1 space-y-4">
-                          {/* User Info Header */}
-                          <div className="flex items-center space-x-4">
-                            <Badge
-                              variant={user.isAdmin ? "destructive" : "outline"}
-                              className="px-3 py-1"
-                            >
-                              {user.isAdmin ? "Admin" : "User"}
-                            </Badge>
-                            <div>
-                              <h3 className="text-lg font-semibold text-gray-900">
-                                {user.formalName} ({user.preferredName})
-                              </h3>
-                              <p className="text-sm text-gray-500">
-                                {user.email}
-                              </p>
+        {/* Tabs */}
+        <div className="border-b border-gray-200 mb-8">
+          <nav className="-mb-px flex space-x-8">
+            <button
+              onClick={() => setActiveTab("posts")}
+              className={`py-3 px-1 border-b-2 font-medium text-sm ${
+                activeTab === "posts"
+                  ? "border-blue-500 text-blue-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+            >
+              Posts ({posts.length})
+            </button>
+            <button
+              onClick={() => setActiveTab("users")}
+              className={`py-3 px-1 border-b-2 font-medium text-sm ${
+                activeTab === "users"
+                  ? "border-blue-500 text-blue-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+            >
+              Users ({users.filter((u) => !u.isAdmin).length})
+            </button>
+          </nav>
+        </div>
+
+        {/* Content */}
+
+        {activeTab === "posts" && (
+          <div className="space-y-6">
+            {posts.map((post) => (
+              <Card key={post.id} className="border-2">
+                <CardContent className="p-6">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-4">
+                        <Badge variant="outline" className="px-3 py-1">
+                          {post.authorName}
+                        </Badge>
+                        <span className="text-sm text-gray-500">
+                          {formatDate(post.createdAt)}
+                        </span>
+                      </div>
+
+                      {/* Post Content */}
+                      <div className="mb-4">
+                        <h3 className="font-semibold text-gray-900 mb-2">
+                          {post.serviceExperience?.organizationName ||
+                            "No Organization"}
+                        </h3>
+                        <p className="text-gray-800 mb-3">{post.content}</p>
+                      </div>
+
+                      {/* Engagement Metrics */}
+                      <div className="flex items-center space-x-4 text-sm text-gray-600">
+                        <span className="flex items-center">
+                          <Heart className="h-4 w-4 mr-1 text-orange-500" />
+                          {post.highlights?.length || 0} highlights
+                        </span>
+                        <span className="flex items-center">
+                          <MessageSquare className="h-4 w-4 mr-1" />
+                          {post.comments.length} comments
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-col space-y-2 ml-6">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => router.push(`/post/${post.id}`)}
+                        className="text-sm"
+                      >
+                        <Eye className="h-4 w-4 mr-2" />
+                        View Full Dashboard
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const newImgurLinks = prompt(
+                            "Enter new Imgur links (one per line):",
+                            post.imgurLinks?.join("\n") || ""
+                          );
+                          if (newImgurLinks !== null) {
+                            const links = newImgurLinks
+                              .split("\n")
+                              .filter((link) => link.trim());
+                            handleEditPost(post.id, { imgurLinks: links });
+                          }
+                        }}
+                        className="text-sm"
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Add Media
+                      </Button>
+
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => deletePost(post.id)}
+                        className="text-sm"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Remove
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {activeTab === "users" && (
+          <div className="space-y-6">
+            {users.length === 0 ? (
+              <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+                <CardContent className="p-8">
+                  <p className="text-gray-600 text-center py-8">
+                    No users found.
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              users
+                .filter((user) => !user.isAdmin)
+                .map((user) => {
+                  const userPosts = posts.filter((p) => p.authorId === user.id);
+                  const currentPhase = phaseUtils.getCurrentPhase(user);
+
+                  return (
+                    <Card key={user.id} className="border-2">
+                      <CardContent className="p-8">
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1 space-y-4">
+                            {/* User Info Header */}
+                            <div className="flex items-center space-x-4">
+                              <Badge
+                                variant={
+                                  user.isAdmin ? "destructive" : "outline"
+                                }
+                                className="px-3 py-1"
+                              >
+                                {user.isAdmin ? "Admin" : "User"}
+                              </Badge>
+                              <div>
+                                <h3 className="text-lg font-semibold text-gray-900">
+                                  {user.formalName} ({user.preferredName})
+                                </h3>
+                                <p className="text-sm text-gray-500">
+                                  {user.email}
+                                </p>
+                              </div>
+                              {/* Phase Badge with Color Coding */}
+                              <Badge
+                                variant={
+                                  currentPhase === 1 ? "default" : "secondary"
+                                }
+                                className={`px-4 py-2 text-sm font-medium ${
+                                  currentPhase === 1
+                                    ? "bg-blue-100 text-blue-800 border-blue-200"
+                                    : "bg-orange-100 text-orange-800 border-orange-200"
+                                }`}
+                              >
+                                {phaseUtils.getPhaseName(currentPhase)}
+                              </Badge>
                             </div>
-                            {/* Phase Badge with Color Coding */}
-                            <Badge
-                              variant={
-                                currentPhase === 1 ? "default" : "secondary"
-                              }
-                              className={`px-4 py-2 text-sm font-medium ${
-                                currentPhase === 1
-                                  ? "bg-blue-100 text-blue-800 border-blue-200"
-                                  : "bg-orange-100 text-orange-800 border-orange-200"
-                              }`}
-                            >
-                              {phaseUtils.getPhaseName(currentPhase)}
-                            </Badge>
-                          </div>
 
-                          {/* Posts Info */}
-                          {userPosts.length > 0 && (
-                            <div className="space-y-3">
-                              <h4 className="font-semibold text-gray-900">
-                                Posts ({userPosts.length})
-                              </h4>
-                              {userPosts.map((post, index) => (
-                                <div
-                                  key={post.id}
-                                  className="p-4 bg-gray-50 rounded-lg border"
-                                >
-                                  <div className="flex items-center justify-between">
-                                    <div>
-                                      <h5 className="font-medium text-gray-900">
-                                        {post.businessName ||
-                                          `Post ${index + 1}`}
-                                      </h5>
-                                      <p className="text-sm text-gray-600">
-                                        {post.serviceExperience
-                                          ?.organizationType || "Unknown Type"}
-                                      </p>
-                                      <p className="text-xs text-gray-500">
-                                        {formatDate(post.createdAt)}
-                                      </p>
-                                    </div>
-                                    <div className="flex items-center space-x-3">
-                                      <div className="text-right">
-                                        <div className="flex items-center space-x-2 text-sm">
-                                          <Heart className="h-4 w-4 text-orange-500" />
-                                          <span>
-                                            {post.highlights?.length || 0}{" "}
-                                            highlights
-                                          </span>
-                                        </div>
-                                        <div className="flex items-center space-x-2 text-sm text-gray-500">
-                                          <MessageSquare className="h-4 w-4" />
-                                          <span>
-                                            {post.comments.length} comments
-                                          </span>
-                                        </div>
+                            {/* Posts Info */}
+                            {userPosts.length > 0 && (
+                              <div className="space-y-3">
+                                <h4 className="font-semibold text-gray-900">
+                                  Posts ({userPosts.length})
+                                </h4>
+                                {userPosts.map((post, index) => (
+                                  <div
+                                    key={post.id}
+                                    className="p-4 bg-gray-50 rounded-lg border"
+                                  >
+                                    <div className="flex items-center justify-between">
+                                      <div>
+                                        <h5 className="font-medium text-gray-900">
+                                          {post.businessName ||
+                                            `Post ${index + 1}`}
+                                        </h5>
+                                        <p className="text-sm text-gray-600">
+                                          {post.serviceExperience
+                                            ?.organizationType ||
+                                            "Unknown Type"}
+                                        </p>
+                                        <p className="text-xs text-gray-500">
+                                          {formatDate(post.createdAt)}
+                                        </p>
                                       </div>
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() =>
-                                          router.push(`/post/${post.id}`)
-                                        }
-                                        className="text-sm"
-                                      >
-                                        <Eye className="h-4 w-4 mr-2" />
-                                        View
-                                      </Button>
+                                      <div className="flex items-center space-x-3">
+                                        <div className="text-right">
+                                          <div className="flex items-center space-x-2 text-sm">
+                                            <Heart className="h-4 w-4 text-orange-500" />
+                                            <span>
+                                              {post.highlights?.length || 0}{" "}
+                                              highlights
+                                            </span>
+                                          </div>
+                                          <div className="flex items-center space-x-2 text-sm text-gray-500">
+                                            <MessageSquare className="h-4 w-4" />
+                                            <span>
+                                              {post.comments.length} comments
+                                            </span>
+                                          </div>
+                                        </div>
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          onClick={() =>
+                                            router.push(`/post/${post.id}`)
+                                          }
+                                          className="text-sm"
+                                        >
+                                          <Eye className="h-4 w-4 mr-2" />
+                                          View
+                                        </Button>
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
+                                ))}
+                              </div>
+                            )}
 
-                          {/* User Details */}
-                          <div className="flex items-center space-x-6 text-sm text-gray-600">
-                            <span>ID: {user.id}</span>
-                            <span>Joined: {formatDate(user.createdAt)}</span>
-                            {user.studentId && (
-                              <span>Student ID: {user.studentId}</span>
+                            {/* User Details */}
+                            <div className="flex items-center space-x-6 text-sm text-gray-600">
+                              <span>ID: {user.id}</span>
+                              <span>Joined: {formatDate(user.createdAt)}</span>
+                              {user.studentId && (
+                                <span>Student ID: {user.studentId}</span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col space-y-4 ml-6">
+                            {/* User Management Buttons */}
+                            {!user.isAdmin && (
+                              <div className="flex flex-col space-y-3">
+                                {/* Phase Management */}
+                                <div className="flex space-x-2">
+                                  {currentPhase > 1 && (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() =>
+                                        handlePhaseChange(
+                                          user.id,
+                                          currentPhase - 1
+                                        )
+                                      }
+                                      className="text-sm border-blue-200 text-blue-700 hover:bg-blue-50"
+                                    >
+                                      ← Move to Phase {currentPhase - 1}
+                                    </Button>
+                                  )}
+                                  {currentPhase < 2 && (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() =>
+                                        handlePhaseChange(
+                                          user.id,
+                                          currentPhase + 1
+                                        )
+                                      }
+                                      className="text-sm border-orange-200 text-orange-700 hover:bg-orange-50"
+                                    >
+                                      Move to Phase {currentPhase + 1} →
+                                    </Button>
+                                  )}
+                                </div>
+
+                                {/* Delete Actions */}
+                                <div className="flex space-x-2">
+                                  {userPosts.length > 0 && (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() =>
+                                        handleDeleteUserPosts(user.id)
+                                      }
+                                      className="text-sm text-orange-600 hover:text-orange-700"
+                                    >
+                                      <Trash2 className="h-4 w-4 mr-2" />
+                                      Delete Posts
+                                    </Button>
+                                  )}
+
+                                  <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    onClick={() => handleDeleteUser(user.id)}
+                                    className="text-sm"
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Delete User
+                                  </Button>
+                                </div>
+                              </div>
                             )}
                           </div>
                         </div>
-
-                        <div className="flex flex-col space-y-4 ml-6">
-                          {/* User Management Buttons */}
-                          {!user.isAdmin && (
-                            <div className="flex flex-col space-y-3">
-                              {/* Phase Management */}
-                              <div className="flex space-x-2">
-                                {currentPhase > 1 && (
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() =>
-                                      handlePhaseChange(
-                                        user.id,
-                                        currentPhase - 1
-                                      )
-                                    }
-                                    className="text-sm border-blue-200 text-blue-700 hover:bg-blue-50"
-                                  >
-                                    ← Move to Phase {currentPhase - 1}
-                                  </Button>
-                                )}
-                                {currentPhase < 2 && (
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() =>
-                                      handlePhaseChange(
-                                        user.id,
-                                        currentPhase + 1
-                                      )
-                                    }
-                                    className="text-sm border-orange-200 text-orange-700 hover:bg-orange-50"
-                                  >
-                                    Move to Phase {currentPhase + 1} →
-                                  </Button>
-                                )}
-                              </div>
-
-                              {/* Delete Actions */}
-                              <div className="flex space-x-2">
-                                {userPosts.length > 0 && (
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() =>
-                                      handleDeleteUserPosts(user.id)
-                                    }
-                                    className="text-sm text-orange-600 hover:text-orange-700"
-                                  >
-                                    <Trash2 className="h-4 w-4 mr-2" />
-                                    Delete Posts
-                                  </Button>
-                                )}
-
-                                <Button
-                                  variant="destructive"
-                                  size="sm"
-                                  onClick={() => handleDeleteUser(user.id)}
-                                  className="text-sm"
-                                >
-                                  <Trash2 className="h-4 w-4 mr-2" />
-                                  Delete User
-                                </Button>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })
-          )}
-        </div>
-      )}
+                      </CardContent>
+                    </Card>
+                  );
+                })
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
