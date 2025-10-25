@@ -141,7 +141,13 @@ export default function Phase2Dashboard({
                 <span className="font-medium text-gray-700">Date:</span>
                 <span className="ml-2 text-gray-900">
                   {userPost.createdAt
-                    ? new Date(userPost.createdAt).toLocaleDateString()
+                    ? new Date(userPost.createdAt).toLocaleDateString("en-US", {
+                        month: "2-digit",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false,
+                      })
                     : "N/A"}
                 </span>
               </div>
@@ -521,9 +527,24 @@ export default function Phase2Dashboard({
                       <span className="text-xs text-blue-600">
                         {highlight.createdAt &&
                         highlight.createdAt instanceof Date
-                          ? highlight.createdAt.toLocaleDateString()
+                          ? highlight.createdAt.toLocaleDateString("en-US", {
+                              month: "2-digit",
+                              day: "2-digit",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                            })
                           : highlight.createdAt
-                          ? new Date(highlight.createdAt).toLocaleDateString()
+                          ? new Date(highlight.createdAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "2-digit",
+                                day: "2-digit",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: false,
+                              }
+                            )
                           : "N/A"}
                       </span>
                     </div>

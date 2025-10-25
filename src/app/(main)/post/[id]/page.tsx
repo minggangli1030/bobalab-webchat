@@ -132,11 +132,11 @@ export default function PostDetailPage() {
         return "Invalid Date";
       }
       return dateObj.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
+        month: "2-digit",
+        day: "2-digit",
         hour: "2-digit",
         minute: "2-digit",
+        hour12: false,
       });
     } catch (error) {
       console.error("Error formatting date:", error);
@@ -175,7 +175,9 @@ export default function PostDetailPage() {
   if (user && post) {
     // Admin viewing any post
     if (user.isAdmin) {
-      return <Phase2Dashboard posts={[post]} currentUser={user} isAdminView={true} />;
+      return (
+        <Phase2Dashboard posts={[post]} currentUser={user} isAdminView={true} />
+      );
     }
 
     // Regular users

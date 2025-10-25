@@ -61,8 +61,11 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
         return "Invalid Date";
       }
       return dateObj.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
       });
     } catch (error) {
       console.error("Error formatting date:", error);

@@ -6,10 +6,7 @@ import { firebasePostUtils } from "@/lib/firebase-posts";
 import { Post, User } from "@/lib/types";
 import { phaseUtils } from "@/lib/phase-utils";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Trash2,
@@ -71,7 +68,6 @@ export default function AdminPage() {
     }
   };
 
-
   const deleteAllData = async () => {
     if (
       !window.confirm(
@@ -106,11 +102,11 @@ export default function AdminPage() {
 
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
+      month: "2-digit",
+      day: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
+      hour12: false,
     });
   };
 
