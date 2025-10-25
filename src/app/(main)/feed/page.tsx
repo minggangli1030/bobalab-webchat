@@ -206,7 +206,6 @@ export default function FeedPage() {
           </div>
         )}
       </div>
-      </div>
 
       {/* Phase 1 Note */}
       {user && phaseUtils.getCurrentPhase(user) === 1 && !user.isAdmin && (
