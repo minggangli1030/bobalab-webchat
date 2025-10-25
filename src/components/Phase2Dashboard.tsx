@@ -228,24 +228,27 @@ export default function Phase2Dashboard({
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
+              <div className="space-y-4">
                 {sortedAttributes.map((attr, index) => (
-                  <div key={attr.name} className="flex items-center space-x-3">
-                    <div className="w-24 text-sm text-gray-600 truncate">
+                  <div
+                    key={attr.name}
+                    className="flex items-center space-x-4 py-2"
+                  >
+                    <div className="w-32 text-sm font-medium text-gray-700 flex-shrink-0">
                       {attr.name}
                     </div>
-                    <div className="flex-1 bg-gray-200 rounded-full h-4 relative">
+                    <div className="flex-1 bg-gray-200 rounded-full h-6 relative">
                       <div
-                        className="bg-blue-500 h-4 rounded-full"
+                        className="bg-blue-500 h-6 rounded-full transition-all duration-300"
                         style={{
                           width: `${attr.performanceRating || 0}%`,
                         }}
                       ></div>
-                      <div className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white">
+                      <div className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-white">
                         {attr.performanceRating || 0}
                       </div>
                     </div>
-                    <div className="w-8 text-sm text-gray-600 text-center">
+                    <div className="w-12 text-sm font-semibold text-gray-600 text-center bg-gray-100 px-2 py-1 rounded">
                       #{attr.userRanking}
                     </div>
                   </div>
