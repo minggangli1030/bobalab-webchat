@@ -50,7 +50,8 @@ export default function Home() {
             Share your ideas and connect with others
           </p>
           <p className="text-gray-500">
-            Join our community to share thoughts, rate experiences, and connect with like-minded people.
+            Join our community to share thoughts, rate experiences, and connect
+            with like-minded people.
           </p>
         </div>
 
@@ -59,11 +60,23 @@ export default function Home() {
             <div className="space-y-6">
               <div className="text-center">
                 <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  <svg
+                    className="w-8 h-8 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    />
                   </svg>
                 </div>
-                <h2 className="text-2xl font-semibold text-gray-900 mb-2">Get Started</h2>
+                <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+                  Get Started
+                </h2>
                 <p className="text-gray-600">
                   Create your account or sign in to start sharing and rating
                 </p>
@@ -77,7 +90,10 @@ export default function Home() {
                 </Link>
 
                 <Link href="/login" className="block">
-                  <Button variant="outline" className="w-full h-12 text-lg font-semibold border-2 hover:bg-gray-50 transition-all duration-200">
+                  <Button
+                    variant="outline"
+                    className="w-full h-12 text-lg font-semibold border-2 hover:bg-gray-50 transition-all duration-200"
+                  >
                     Sign In
                   </Button>
                 </Link>
@@ -93,20 +109,44 @@ export default function Home() {
         <div className="mt-8 text-center">
           <div className="flex justify-center space-x-8 text-sm text-gray-500">
             <div className="flex items-center">
-              <svg className="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              <svg
+                className="w-4 h-4 mr-2 text-green-500"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clipRule="evenodd"
+                />
               </svg>
               Free to use
             </div>
             <div className="flex items-center">
-              <svg className="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              <svg
+                className="w-4 h-4 mr-2 text-green-500"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clipRule="evenodd"
+                />
               </svg>
               Community driven
             </div>
             <div className="flex items-center">
-              <svg className="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              <svg
+                className="w-4 h-4 mr-2 text-green-500"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clipRule="evenodd"
+                />
               </svg>
               Secure
             </div>
