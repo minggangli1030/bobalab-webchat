@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Customer Compatibility Exercise",
   description:
-    "A Harvard Business School exercise exploring customer variability and service operations",
+    "A Berkeley Operations and Behavioral Analytics Lab (BOBALAB) exercise exploring customer variability and service operations",
 };
 
 export default function RootLayout({
