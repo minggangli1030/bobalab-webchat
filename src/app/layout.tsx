@@ -14,9 +14,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Customer Compatibility Exercise",
+  title: "Rating Platform - BOBALAB",
   description:
-    "A Berkeley Operations and Behavioral Analytics Lab (BOBALAB) exercise exploring customer variability and service operations",
+    "A Berkeley Operations and Behavioral Analytics Lab (BOBALAB) platform for sharing ideas and connecting with others",
+  openGraph: {
+    title: "Rating Platform - BOBALAB",
+    description: "A Berkeley Operations and Behavioral Analytics Lab (BOBALAB) platform for sharing ideas and connecting with others",
+    type: "website",
+    siteName: "BOBALAB Rating Platform",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Rating Platform - BOBALAB",
+    description: "A Berkeley Operations and Behavioral Analytics Lab (BOBALAB) platform for sharing ideas and connecting with others",
+  },
 };
 
 export default function RootLayout({
