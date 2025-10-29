@@ -287,7 +287,8 @@ export default function AdminPage() {
 
         // Service Experience - Google Data
         "Google Score (1-5)": serviceExp?.googleScore || "",
-        "Google Price Range (1-4)": serviceExp?.googlePriceRange || "",
+        // COMMENTED OUT: Google Price Range - keeping stars only
+        // "Google Price Range (1-4)": serviceExp?.googlePriceRange || "",
 
         // Service Experience - Narratives
         "Experience Narrative": serviceExp?.experienceNarrative || "",
