@@ -227,6 +227,7 @@ export default function LoginPage() {
             )}
 
             {/* Admin Login */}
+            {/*
             <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200">
               <div className="flex items-center mb-2">
                 <svg
@@ -248,6 +249,7 @@ export default function LoginPage() {
                 Email: admin@123.com | Password: admin123
               </p>
             </div>
+            */}
 
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
