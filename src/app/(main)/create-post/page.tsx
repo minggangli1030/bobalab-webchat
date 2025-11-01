@@ -202,7 +202,7 @@ export default function CreatePostPage() {
       <Card className="mb-8">
         <CardHeader>
           <CardTitle className="text-2xl">
-            BOBALAB Rating Platform
+            Customer Compatibility Exercise
           </CardTitle>
           <CardDescription>
             Document your service experience to contribute to the class

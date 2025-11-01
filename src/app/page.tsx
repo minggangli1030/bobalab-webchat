@@ -44,15 +44,8 @@ export default function Home() {
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Welcome to</h1>
           <div className="text-5xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
-            Rating Platform
+            Customer Compatibility Exercise
           </div>
-          <p className="text-xl text-gray-600 mb-2">
-            Share your ideas and connect with others
-          </p>
-          <p className="text-gray-500">
-            Join our community to share thoughts, rate experiences, and connect
-            with like-minded people.
-          </p>
         </div>
 
         <Card className="w-full shadow-xl border-0 bg-white/80 backdrop-blur-sm">
@@ -99,9 +92,6 @@ export default function Home() {
                 </Link>
               </div>
 
-              <div className="text-center text-sm text-gray-500">
-                <p>Join thousands of users sharing their experiences</p>
-              </div>
             </div>
           </CardContent>
         </Card>

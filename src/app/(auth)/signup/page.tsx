@@ -100,7 +100,7 @@ export default function SignupPage() {
             </span>
           </h1>
           <p className="text-lg text-gray-600">
-            Join the BOBALAB Rating Platform
+            Join the Customer Compatibility Exercise
           </p>
         </div>
 

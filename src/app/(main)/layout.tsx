@@ -91,7 +91,7 @@ export default function MainLayout({
             {/* Logo and Navigation */}
             <div className="flex items-center space-x-8">
               <Link href="/feed" className="text-xl font-bold text-gray-900">
-                BOBALAB Rating Platform
+                Customer Compatibility Exercise
               </Link>
 
               <nav className="hidden md:flex space-x-6">

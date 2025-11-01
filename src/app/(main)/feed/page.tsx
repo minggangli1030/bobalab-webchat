@@ -189,7 +189,7 @@ export default function FeedPage() {
           <p className="text-xl text-gray-600">
             {user && user.isAdmin
               ? "Manage users, view posts, and export comprehensive reports"
-              : "BOBALAB Rating Platform"}
+              : "Customer Compatibility Exercise"}
           </p>
           {user &&
             (user.isAdmin ||
