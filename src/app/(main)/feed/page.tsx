@@ -184,7 +184,7 @@ export default function FeedPage() {
               ? "Admin Dashboard"
               : user && phaseUtils.getCurrentPhase(user) === 1
               ? "Phase 1: Initial Assessment"
-              : "Phase 2: Peer Feedback"}
+              : "Phase 2: Peer Feedback Gallery"}
           </h1>
           <p className="text-xl text-gray-600">
             {user && user.isAdmin

@@ -169,13 +169,13 @@ export default function Phase2Dashboard({
                 ? "Your Post Details"
                 : "Phase 2: Peer Feedback Dashboard"}
             </h1>
-            <p className="text-xl text-gray-600">
-              {isAdminView
-                ? "Comprehensive analysis of service experience"
-                : activeUser && phaseUtils.getCurrentPhase(activeUser) === 1
-                ? "Review your service experience details"
-                : "Comprehensive analysis of your service experience"}
-            </p>
+            {(isAdminView || (activeUser && phaseUtils.getCurrentPhase(activeUser) === 1)) && (
+              <p className="text-xl text-gray-600">
+                {isAdminView
+                  ? "Comprehensive analysis of service experience"
+                  : "Review your service experience details"}
+              </p>
+            )}
           </div>
 
           {/* Business Details */}
