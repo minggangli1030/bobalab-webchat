@@ -91,6 +91,13 @@ export const firebasePostUtils = {
           createdAt: data.createdAt?.toDate
             ? data.createdAt.toDate()
             : new Date(data.createdAt),
+          highlights:
+            data.highlights?.map((highlight: any) => ({
+              ...highlight,
+              createdAt: highlight.createdAt?.toDate
+                ? highlight.createdAt.toDate()
+                : new Date(highlight.createdAt),
+            })) || [],
           comments:
             data.comments?.map((comment: any) => ({
               ...comment,
@@ -113,14 +120,19 @@ export const firebasePostUtils = {
       if (postDoc.exists()) {
         const data = postDoc.data();
 
-        // Highlights are already stored with user info, no need to fetch separately
-
         return {
           id: postDoc.id,
           ...data,
           createdAt: data.createdAt?.toDate
             ? data.createdAt.toDate()
             : new Date(data.createdAt),
+          highlights:
+            data.highlights?.map((highlight: any) => ({
+              ...highlight,
+              createdAt: highlight.createdAt?.toDate
+                ? highlight.createdAt.toDate()
+                : new Date(highlight.createdAt),
+            })) || [],
           comments:
             data.comments?.map((comment: any) => ({
               ...comment,
@@ -144,7 +156,35 @@ export const firebasePostUtils = {
   ): Promise<boolean> => {
     try {
       const postRef = doc(db, "posts", postId);
-      await updateDoc(postRef, updates);
+      
+      // Convert dates to Timestamps for Firestore
+      const firestoreUpdates: any = { ...updates };
+      
+      // Convert highlight dates to Timestamps
+      if (firestoreUpdates.highlights) {
+        firestoreUpdates.highlights = firestoreUpdates.highlights.map((h: any) => ({
+          ...h,
+          createdAt: h.createdAt instanceof Date 
+            ? Timestamp.fromDate(h.createdAt)
+            : h.createdAt?.toDate 
+            ? h.createdAt 
+            : Timestamp.fromDate(new Date(h.createdAt)),
+        }));
+      }
+      
+      // Convert comment dates to Timestamps
+      if (firestoreUpdates.comments) {
+        firestoreUpdates.comments = firestoreUpdates.comments.map((c: any) => ({
+          ...c,
+          createdAt: c.createdAt instanceof Date 
+            ? Timestamp.fromDate(c.createdAt)
+            : c.createdAt?.toDate 
+            ? c.createdAt 
+            : Timestamp.fromDate(new Date(c.createdAt)),
+        }));
+      }
+      
+      await updateDoc(postRef, firestoreUpdates);
       return true;
     } catch (error) {
       console.error("Error updating post:", error);
@@ -407,8 +447,20 @@ export const firebasePostUtils = {
           imgurLinks: data.imgurLinks || [],
           hashtags: data.hashtags || [],
           category: data.category,
-          highlights: data.highlights || [],
-          comments: data.comments || [],
+          highlights:
+            data.highlights?.map((highlight: any) => ({
+              ...highlight,
+              createdAt: highlight.createdAt?.toDate
+                ? highlight.createdAt.toDate()
+                : new Date(highlight.createdAt),
+            })) || [],
+          comments:
+            data.comments?.map((comment: any) => ({
+              ...comment,
+              createdAt: comment.createdAt?.toDate
+                ? comment.createdAt.toDate()
+                : new Date(comment.createdAt),
+            })) || [],
           createdAt: data.createdAt?.toDate() || new Date(),
           phase: data.phase,
           serviceExperience: data.serviceExperience,
