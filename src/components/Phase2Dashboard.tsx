@@ -24,6 +24,7 @@ export default function Phase2Dashboard({
 }: Phase2DashboardProps) {
   const { user } = useAuth();
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [refreshedPost, setRefreshedPost] = useState<Post | null>(null);
 
   // Use currentUser if provided, otherwise fall back to user from context
   const activeUser = currentUser || user;
@@ -50,7 +51,27 @@ export default function Phase2Dashboard({
     userPost = posts[0];
   }
 
-  if (!userPost || !userPost.serviceExperience) {
+  // Refresh post data when post ID changes to ensure we have the latest highlights/comments
+  useEffect(() => {
+    const refreshPost = async () => {
+      if (userPost?.id) {
+        try {
+          const freshPost = await firebasePostUtils.getPostById(userPost.id);
+          if (freshPost) {
+            setRefreshedPost(freshPost);
+          }
+        } catch (error) {
+          console.error("Error refreshing post:", error);
+        }
+      }
+    };
+    refreshPost();
+  }, [userPost?.id]);
+
+  // Use refreshed post if available, otherwise use the passed post
+  const displayPost = refreshedPost || userPost;
+
+  if (!displayPost || !displayPost.serviceExperience) {
     return (
       <div className="text-center py-12">
         <p className="text-gray-600">No service experience data found.</p>
@@ -58,7 +79,7 @@ export default function Phase2Dashboard({
     );
   }
 
-  const serviceExp = userPost.serviceExperience;
+  const serviceExp = displayPost.serviceExperience;
 
   // Debug: Log the post data to see what's available
   // console.log("Phase2Dashboard - userPost:", userPost);
@@ -188,7 +209,7 @@ export default function Phase2Dashboard({
                 {!isAdminView &&
                   activeUser &&
                   phaseUtils.getCurrentPhase(activeUser) === 1 && (
-                    <Link href={`/create-post?edit=${userPost.id}`}>
+                    <Link href={`/create-post?edit=${displayPost.id}`}>
                       <Button
                         variant="outline"
                         size="sm"
@@ -237,13 +258,13 @@ export default function Phase2Dashboard({
                   <div className="flex items-center justify-between py-2 border-b border-gray-100">
                     <span className="font-medium text-gray-700">Author:</span>
                     <span className="text-gray-900 font-medium">
-                      {userPost.authorName || "N/A"}
+                      {displayPost.authorName || "N/A"}
                     </span>
                   </div>
                   <div className="flex items-center justify-between py-2 border-b border-gray-100">
                     <span className="font-medium text-gray-700">Date:</span>
                     <span className="text-gray-900 font-medium">
-                      {formatDate(userPost.createdAt)}
+                      {formatDate(displayPost.createdAt)}
                     </span>
                   </div>
                 </div>
@@ -417,7 +438,7 @@ export default function Phase2Dashboard({
               </Card>
 
               {/* Media */}
-              {userPost.imgurLinks && userPost.imgurLinks.length > 0 && (
+              {displayPost.imgurLinks && displayPost.imgurLinks.length > 0 && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold">
@@ -426,7 +447,7 @@ export default function Phase2Dashboard({
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      {userPost.imgurLinks.map((link, index) => {
+                      {displayPost.imgurLinks.map((link, index) => {
                         const isImgurImage =
                           link.includes("imgur.com") &&
                           (link.includes(".jpg") ||
@@ -635,9 +656,9 @@ export default function Phase2Dashboard({
                 <h4 className="font-medium text-gray-900 mb-3">
                   Who Highlighted
                 </h4>
-                {userPost.highlights && userPost.highlights.length > 0 ? (
+                {displayPost.highlights && displayPost.highlights.length > 0 ? (
                   <div className="space-y-3">
-                    {userPost.highlights.map((highlight, index) => (
+                    {displayPost.highlights.map((highlight, index) => (
                       <div
                         key={index}
                         className="bg-blue-50 p-3 rounded border-l-4 border-blue-400"

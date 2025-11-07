@@ -206,22 +206,16 @@ export const firebasePostUtils = {
   // Add a comment to a post
   addComment: async (postId: string, comment: Comment): Promise<boolean> => {
     try {
-      const postRef = doc(db, "posts", postId);
       const post = await firebasePostUtils.getPostById(postId);
 
       if (post) {
-        // Ensure comment has proper date format using Timestamp
-        const commentWithTimestamp = {
-          ...comment,
-          createdAt: Timestamp.fromDate(
-            comment.createdAt instanceof Date
-              ? comment.createdAt
-              : new Date(comment.createdAt)
-          ),
-        };
-
-        const updatedComments = [...post.comments, commentWithTimestamp];
-        await updateDoc(postRef, { comments: updatedComments });
+        // Add the new comment to the existing comments array
+        // The updatePost function will handle date conversion to Timestamps
+        const updatedComments = [...post.comments, comment];
+        
+        await firebasePostUtils.updatePost(postId, {
+          comments: updatedComments,
+        });
         return true;
       }
       return false;
