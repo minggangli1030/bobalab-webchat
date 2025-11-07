@@ -28,11 +28,27 @@ export default function Phase2Dashboard({
   // Use currentUser if provided, otherwise fall back to user from context
   const activeUser = currentUser || user;
 
-  // Get user's own post for the dashboard
-  // For admin view, just use the first post (since we're viewing someone else's post)
-  const userPost = isAdminView
-    ? posts[0]
-    : posts.find((post) => post.authorId === activeUser?.id);
+  // Get the post to display
+  // When viewing a post detail page, we should use the post that was passed in (posts[0])
+  // Only when viewing the user's own post in phase 1 should we search for their post
+  // For phase 2 users viewing any post, or admin viewing any post, use the passed post
+  const userPhase = activeUser ? phaseUtils.getCurrentPhase(activeUser) : 1;
+  const isViewingOwnPost = posts[0] && posts[0].authorId === activeUser?.id;
+  
+  let userPost: Post | undefined;
+  if (isAdminView) {
+    // Admin viewing any post - use the passed post
+    userPost = posts[0];
+  } else if (userPhase === 2) {
+    // Phase 2 users viewing any post - use the passed post
+    userPost = posts[0];
+  } else if (userPhase === 1 && isViewingOwnPost) {
+    // Phase 1 users viewing their own post - use their post
+    userPost = posts.find((post) => post.authorId === activeUser?.id);
+  } else {
+    // Fallback: use the first post
+    userPost = posts[0];
+  }
 
   if (!userPost || !userPost.serviceExperience) {
     return (
