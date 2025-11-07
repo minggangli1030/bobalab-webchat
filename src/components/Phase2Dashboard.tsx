@@ -1,13 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Post } from "@/lib/types";
+import { Post, Comment } from "@/lib/types";
 import { firebasePostUtils } from "@/lib/firebase-posts";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Star, TrendingUp, BarChart3, Edit } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Star, TrendingUp, BarChart3, Edit, MessageCircle } from "lucide-react";
 import { phaseUtils } from "@/lib/phase-utils";
 import Link from "next/link";
 
@@ -25,6 +27,8 @@ export default function Phase2Dashboard({
   const { user } = useAuth();
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [refreshedPost, setRefreshedPost] = useState<Post | null>(null);
+  const [newComment, setNewComment] = useState("");
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
   // Use currentUser if provided, otherwise fall back to user from context
   const activeUser = currentUser || user;
@@ -70,6 +74,39 @@ export default function Phase2Dashboard({
 
   // Use refreshed post if available, otherwise use the passed post
   const displayPost = refreshedPost || userPost;
+
+  // Handle adding a comment
+  const handleAddComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!activeUser || !displayPost || !newComment.trim()) return;
+
+    setIsSubmittingComment(true);
+
+    try {
+      const comment: Comment = {
+        id: Date.now().toString(),
+        postId: displayPost.id,
+        authorId: activeUser.id,
+        authorName: activeUser.preferredName,
+        content: newComment.trim(),
+        createdAt: new Date(),
+      };
+
+      const success = await firebasePostUtils.addComment(displayPost.id, comment);
+      if (success) {
+        // Refresh the post to get updated comments
+        const updatedPost = await firebasePostUtils.getPostById(displayPost.id);
+        if (updatedPost) {
+          setRefreshedPost(updatedPost);
+        }
+        setNewComment("");
+      }
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    } finally {
+      setIsSubmittingComment(false);
+    }
+  };
 
   if (!displayPost || !displayPost.serviceExperience) {
     return (
@@ -683,6 +720,77 @@ export default function Phase2Dashboard({
                   </p>
                 )}
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Comments Section */}
+          <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">
+                Comments ({displayPost.comments?.length || 0})
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Add Comment Form */}
+              {activeUser && (
+                <form onSubmit={handleAddComment} className="flex space-x-3">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback>
+                      {activeUser.preferredName.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <Input
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      placeholder="Write a comment..."
+                      className="w-full"
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    disabled={!newComment.trim() || isSubmittingComment}
+                    size="sm"
+                  >
+                    {isSubmittingComment ? "Posting..." : "Post"}
+                  </Button>
+                </form>
+              )}
+
+              {/* Comments List */}
+              {!displayPost.comments || displayPost.comments.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <MessageCircle className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+                  <p>No comments yet. Be the first to comment!</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {displayPost.comments.map((comment) => (
+                    <div key={comment.id} className="flex space-x-3">
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback>
+                          {comment.authorName.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <div className="bg-gray-50 rounded-lg p-3">
+                          <div className="flex items-center space-x-2 mb-1">
+                            <span className="font-medium text-sm">
+                              {comment.authorName}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              {formatDate(comment.createdAt)}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-800">
+                            {comment.content}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
