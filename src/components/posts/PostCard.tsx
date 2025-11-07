@@ -101,7 +101,13 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
         <div className="p-3">
           {/* Business Name */}
           <h3 className="font-bold text-sm text-gray-900 mb-1 line-clamp-2">
-            {post.businessName || "Business Name"}
+            {(() => {
+              const businessName = post.businessName || "Business Name";
+              const location = post.serviceExperience?.streetAddress;
+              return location 
+                ? `${businessName} (${location})`
+                : businessName;
+            })()}
           </h3>
 
           {/* Author and Date */}
