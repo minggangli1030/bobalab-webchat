@@ -43,10 +43,9 @@ service cloud.firestore {
       allow update: if request.auth != null && (
         resource.data.authorId == request.auth.uid ||
         isAdmin() ||
-        // Allow highlight and comment updates (only highlights and comments fields can be modified)
-        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['highlights', 'comments']) ||
-         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['highlights']) ||
-         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['comments']))
+        // Allow highlight and comment updates - ensure author hasn't changed (prevents post hijacking)
+        (request.resource.data.diff(resource.data).affectedKeys().hasAny(['highlights', 'comments']) &&
+         request.resource.data.authorId == resource.data.authorId)
       );
       
       // Only post authors and admins can delete posts
