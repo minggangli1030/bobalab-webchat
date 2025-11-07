@@ -75,11 +75,9 @@ export default function FeedPage() {
         // Phase 1 users can only see their own posts
         filtered = filtered.filter((post) => post.authorId === user.id);
       } else {
-        // Phase 2 users can see all posts
-        filtered = filtered.filter((post) => {
-          const postPhase = post.phase || 1;
-          return phaseUtils.canViewPhasePosts(user, postPhase);
-        });
+        // Phase 2 users can see all posts (regardless of post phase)
+        // No filtering needed - they can view all posts
+        // filtered = filtered; (already set above)
       }
     }
 

@@ -69,44 +69,73 @@ export const firebasePostUtils = {
   },
 
   // Get all posts (with pagination)
-  getAllPosts: async (limitCount: number = 50): Promise<Post[]> => {
+  getAllPosts: async (limitCount: number = 1000): Promise<Post[]> => {
     try {
       // Check if Firebase is initialized
       if (!db) {
         return [];
       }
 
-      const q = query(
-        collection(db, "posts"),
-        orderBy("createdAt", "desc"),
-        limit(limitCount)
-      );
-      const querySnapshot = await getDocs(q);
+      // Fetch all posts without orderBy to ensure we get every post
+      // Some posts might be missing createdAt or have data issues, so we fetch all and sort in memory
+      const querySnapshot = await getDocs(collection(db, "posts"));
 
-      return querySnapshot.docs.map((doc) => {
+      const posts = querySnapshot.docs.map((doc) => {
         const data = doc.data();
         return {
           id: doc.id,
-          ...data,
+          authorId: data.authorId || "",
+          authorName: data.authorName || "",
+          businessName: data.businessName,
+          content: data.content || "",
+          images: data.images || [],
+          imgurLinks: data.imgurLinks || [],
+          hashtags: data.hashtags || [],
+          category: data.category,
+          phase: data.phase,
+          serviceExperience: data.serviceExperience,
           createdAt: data.createdAt?.toDate
             ? data.createdAt.toDate()
-            : new Date(data.createdAt),
+            : data.createdAt instanceof Date
+            ? data.createdAt
+            : data.createdAt
+            ? new Date(data.createdAt)
+            : new Date(), // Fallback to current date if missing
           highlights:
             data.highlights?.map((highlight: any) => ({
               ...highlight,
               createdAt: highlight.createdAt?.toDate
                 ? highlight.createdAt.toDate()
-                : new Date(highlight.createdAt),
+                : highlight.createdAt instanceof Date
+                ? highlight.createdAt
+                : highlight.createdAt
+                ? new Date(highlight.createdAt)
+                : new Date(),
             })) || [],
           comments:
             data.comments?.map((comment: any) => ({
               ...comment,
               createdAt: comment.createdAt?.toDate
                 ? comment.createdAt.toDate()
-                : new Date(comment.createdAt),
+                : comment.createdAt instanceof Date
+                ? comment.createdAt
+                : comment.createdAt
+                ? new Date(comment.createdAt)
+                : new Date(),
             })) || [],
         } as Post;
       });
+
+      // Sort by createdAt in memory (newest first) if we didn't use orderBy
+      // This ensures all posts are included even if some are missing createdAt
+      posts.sort((a, b) => {
+        const dateA = a.createdAt instanceof Date ? a.createdAt.getTime() : 0;
+        const dateB = b.createdAt instanceof Date ? b.createdAt.getTime() : 0;
+        return dateB - dateA; // Descending order
+      });
+
+      // Apply limit after sorting
+      return posts.slice(0, limitCount);
     } catch (error) {
       console.error("Error getting posts:", error);
       return [];
