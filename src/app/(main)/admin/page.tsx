@@ -787,12 +787,6 @@ export default function AdminPage() {
                         const newValue = parseInt(e.target.value) || 1;
                         setSettings({ ...settings, currentBatch: newValue });
                       }}
-                      onBlur={(e) => {
-                        const newValue = parseInt(e.target.value) || 1;
-                        handleSettingsUpdate({
-                          currentBatch: newValue,
-                        });
-                      }}
                       className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
                   </div>
@@ -800,23 +794,35 @@ export default function AdminPage() {
                   <div className="flex items-center space-x-3">
                     <input
                       type="checkbox"
-                      id="prevBatchVisible"
+                      id="previousBatchVisible"
                       checked={settings.previousBatchVisible}
-                      onChange={(e) =>
-                        handleSettingsUpdate({
-                          previousBatchVisible: e.target.checked,
-                        })
-                      }
+                      onChange={(e) => {
+                        const newValue = e.target.checked;
+                        setSettings({
+                          ...settings,
+                          previousBatchVisible: newValue,
+                        });
+                      }}
                       className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                     />
                     <label
-                      htmlFor="prevBatchVisible"
-                      className="text-sm font-medium text-gray-700"
+                      htmlFor="previousBatchVisible"
+                      className="text-sm text-gray-700"
                     >
                       Allow Phase 2 students to view posts from previous batches
                     </label>
                   </div>
+
+                  <div className="pt-4">
+                    <Button
+                      onClick={() => handleSettingsUpdate(settings)}
+                      className="w-full sm:w-auto"
+                    >
+                      Save Settings
+                    </Button>
+                  </div>
                 </div>
+
               </CardContent>
             </Card>
 
