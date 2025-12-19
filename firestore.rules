@@ -63,8 +63,10 @@ service cloud.firestore {
       // Anyone authenticated can read settings
       allow read: if request.auth != null;
       
-      // Only admins can update settings
-      allow write: if isAdmin();
+      // Only admins can create or update settings
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
     }
   }
 }
