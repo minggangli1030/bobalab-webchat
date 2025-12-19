@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Post, Comment } from "@/lib/types";
+import { Post, Comment, User } from "@/lib/types";
 import { firebasePostUtils } from "@/lib/firebase-posts";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,7 +15,7 @@ import Link from "next/link";
 
 interface Phase2DashboardProps {
   posts: Post[];
-  currentUser?: any;
+  currentUser?: User;
   isAdminView?: boolean; // Flag to indicate admin is viewing someone else's post
 }
 
@@ -141,7 +141,7 @@ export default function Phase2Dashboard({
   const variabilityAssessments = serviceExp.variabilityAssessments || [];
 
   // Robust date formatting function
-  const formatDate = (date: any) => {
+  const formatDate = (date: unknown) => {
     if (!date) {
       // If no date is provided, return current date as fallback
       return new Date().toLocaleDateString("en-US", {

@@ -1,4 +1,4 @@
-import { User } from "./types";
+import { User, Post } from "./types";
 
 const STORAGE_KEYS = {
   USER: "web_chat_user",
@@ -74,19 +74,19 @@ export const authUtils = {
 
 export const postUtils = {
   // Post management
-  getAllPosts: (): any[] => {
+  getAllPosts: (): Post[] => {
     if (typeof window === "undefined") return [];
     const postsData = localStorage.getItem(STORAGE_KEYS.POSTS);
     return postsData ? JSON.parse(postsData) : [];
   },
 
-  savePost: (post: any): void => {
+  savePost: (post: Post): void => {
     const posts = postUtils.getAllPosts();
     posts.unshift(post); // Add to beginning for chronological order
     localStorage.setItem(STORAGE_KEYS.POSTS, JSON.stringify(posts));
   },
 
-  updatePost: (postId: string, updates: Partial<any>): void => {
+  updatePost: (postId: string, updates: Partial<Post>): void => {
     const posts = postUtils.getAllPosts();
     const index = posts.findIndex((p) => p.id === postId);
     if (index !== -1) {
@@ -95,7 +95,7 @@ export const postUtils = {
     }
   },
 
-  getPostById: (postId: string): any | null => {
+  getPostById: (postId: string): Post | null => {
     const posts = postUtils.getAllPosts();
     return posts.find((p) => p.id === postId) || null;
   },

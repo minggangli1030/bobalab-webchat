@@ -202,7 +202,7 @@ export default function AdminPage() {
     }
   };
 
-  const handleEditPost = async (postId: string, updates: any) => {
+  const handleEditPost = async (postId: string, updates: Record<string, unknown>) => {
     try {
       const success = await firebasePostUtils.updatePost(postId, updates);
       if (success) {
@@ -401,7 +401,7 @@ export default function AdminPage() {
           acc[`Attribute ${index + 1} Performance`] =
             attr.performanceRating || "";
           return acc;
-        }, {} as Record<string, any>) || {}),
+        }, {} as Record<string, string | number>) || {}),
 
         // Variability Assessments - Arrival
         "Arrival - Company Response":
@@ -486,7 +486,7 @@ export default function AdminPage() {
       ...csvData.map((row) =>
         headers
           .map((header) => {
-            const value = (row as any)[header];
+            const value = (row as Record<string, unknown>)[header];
             // Escape quotes and wrap in quotes if contains comma, quote, or newline
             if (
               typeof value === "string" &&
@@ -641,7 +641,7 @@ export default function AdminPage() {
                   Note: Authentication Accounts Not Deleted
                 </h3>
                 <p className="mt-1 text-sm text-yellow-700">
-                  "Delete All Data" removes posts and user profiles, but does
+                  &quot;Delete All Data&quot; removes posts and user profiles, but does
                   NOT delete Firebase Authentication accounts. To fully reset,
                   manually delete auth users from the Firebase Console
                   (Authentication → Users tab).

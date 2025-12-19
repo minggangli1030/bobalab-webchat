@@ -20,6 +20,7 @@ const clearAllData = () => {
 };
 
 // Export for console use
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 (window as any).clearAllData = clearAllData;
 
 console.log("📝 Data clearing script loaded!");

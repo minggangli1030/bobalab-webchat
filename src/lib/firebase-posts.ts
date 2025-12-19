@@ -25,7 +25,7 @@ export const firebasePostUtils = {
   getSystemSettings: async (): Promise<SystemSettings> => {
     try {
       if (!db) return { currentBatch: 1, previousBatchVisible: false };
-      const settingsRef = doc(db, "settings", "general");
+      const settingsRef = doc(db!, "settings", "general");
       const settingsDoc = await getDoc(settingsRef);
       
       if (settingsDoc.exists()) {
@@ -47,7 +47,8 @@ export const firebasePostUtils = {
 
   updateSystemSettings: async (settings: Partial<SystemSettings>): Promise<boolean> => {
     try {
-      const settingsRef = doc(db, "settings", "general");
+      if (!db) return false;
+      const settingsRef = doc(db!, "settings", "general");
       await setDoc(settingsRef, settings, { merge: true });
       return true;
     } catch (error) {
@@ -59,8 +60,9 @@ export const firebasePostUtils = {
   // Upload image to Firebase Storage
   uploadImage: async (file: File, postId: string): Promise<string | null> => {
     try {
+      if (!storage) return null;
       const storageRef = ref(
-        storage,
+        storage!,
         `posts/${postId}/${Date.now()}_${file.name}`
       );
       const snapshot = await uploadBytes(storageRef, file);
@@ -88,12 +90,13 @@ export const firebasePostUtils = {
     try {
       console.log("Firebase createPost called with:", postData);
 
+      // Check if Firebase is initialized
       if (!db) {
         console.error("Firebase not initialized");
         return null;
       }
 
-      const postRef = await addDoc(collection(db, "posts"), {
+      const postRef = await addDoc(collection(db!, "posts"), {
         ...postData,
         createdAt: Timestamp.now(),
       });
@@ -116,7 +119,9 @@ export const firebasePostUtils = {
 
       // Fetch all posts without orderBy to ensure we get every post
       // Some posts might be missing createdAt or have data issues, so we fetch all and sort in memory
-      const querySnapshot = await getDocs(collection(db, "posts"));
+      // Fetch all posts without orderBy to ensure we get every post
+      // Some posts might be missing createdAt or have data issues, so we fetch all and sort in memory
+      const querySnapshot = await getDocs(collection(db!, "posts"));
 
       const posts = querySnapshot.docs.map((doc) => {
         const data = doc.data();
@@ -142,6 +147,7 @@ export const firebasePostUtils = {
             ? new Date(data.createdAt)
             : new Date(), // Fallback to current date if missing
           highlights:
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             data.highlights?.map((highlight: any) => ({
               ...highlight,
               createdAt: highlight.createdAt?.toDate
@@ -153,6 +159,7 @@ export const firebasePostUtils = {
                 : new Date(),
             })) || [],
           comments:
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             data.comments?.map((comment: any) => ({
               ...comment,
               createdAt: comment.createdAt?.toDate
@@ -185,7 +192,8 @@ export const firebasePostUtils = {
   // Get a specific post by ID
   getPostById: async (postId: string): Promise<Post | null> => {
     try {
-      const postDoc = await getDoc(doc(db, "posts", postId));
+      if (!db) return null;
+      const postDoc = await getDoc(doc(db!, "posts", postId));
       if (postDoc.exists()) {
         const data = postDoc.data();
 
@@ -196,6 +204,7 @@ export const firebasePostUtils = {
             ? data.createdAt.toDate()
             : new Date(data.createdAt),
           highlights:
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             data.highlights?.map((highlight: any) => ({
               ...highlight,
               createdAt: highlight.createdAt?.toDate
@@ -203,7 +212,7 @@ export const firebasePostUtils = {
                 : new Date(highlight.createdAt),
             })) || [],
           comments:
-            data.comments?.map((comment: any) => ({
+            data.comments?.map((comment: Record<string, any>) => ({
               ...comment,
               createdAt: comment.createdAt?.toDate
                 ? comment.createdAt.toDate()
@@ -224,13 +233,16 @@ export const firebasePostUtils = {
     updates: Partial<Post>
   ): Promise<boolean> => {
     try {
-      const postRef = doc(db, "posts", postId);
+      if (!db) return false;
+      const postRef = doc(db!, "posts", postId);
       
       // Convert dates to Timestamps for Firestore
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const firestoreUpdates: any = { ...updates };
       
       // Convert highlight dates to Timestamps
       if (firestoreUpdates.highlights) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         firestoreUpdates.highlights = firestoreUpdates.highlights.map((h: any) => ({
           ...h,
           createdAt: h.createdAt instanceof Date 
@@ -243,6 +255,7 @@ export const firebasePostUtils = {
       
       // Convert comment dates to Timestamps
       if (firestoreUpdates.comments) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         firestoreUpdates.comments = firestoreUpdates.comments.map((c: any) => ({
           ...c,
           createdAt: c.createdAt instanceof Date 
@@ -264,7 +277,8 @@ export const firebasePostUtils = {
   // Delete a post
   deletePost: async (postId: string): Promise<boolean> => {
     try {
-      await deleteDoc(doc(db, "posts", postId));
+      if (!db) return false;
+      await deleteDoc(doc(db!, "posts", postId));
       return true;
     } catch (error) {
       console.error("Error deleting post:", error);
@@ -299,7 +313,7 @@ export const firebasePostUtils = {
   updateUserBatch: async (userId: string, batch: number): Promise<boolean> => {
     try {
       if (!db) return false;
-      await updateDoc(doc(db, "users", userId), { batch });
+      await updateDoc(doc(db!, "users", userId), { batch });
       return true;
     } catch (error) {
       console.error("Error updating user batch:", error);
@@ -311,7 +325,7 @@ export const firebasePostUtils = {
   updatePostBatch: async (postId: string, batch: number): Promise<boolean> => {
     try {
       if (!db) return false;
-      await updateDoc(doc(db, "posts", postId), { batch });
+      await updateDoc(doc(db!, "posts", postId), { batch });
       return true;
     } catch (error) {
       console.error("Error updating post batch:", error);
@@ -409,8 +423,9 @@ export const firebasePostUtils = {
         return [];
       }
 
-      const querySnapshot = await getDocs(collection(db, "users"));
+      const querySnapshot = await getDocs(collection(db!, "users"));
       const users = querySnapshot.docs.map((doc) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data = doc.data() as any;
         return {
           id: doc.id,
@@ -441,7 +456,7 @@ export const firebasePostUtils = {
         return false;
       }
 
-      const userRef = doc(db, "users", userId);
+      const userRef = doc(db!, "users", userId);
       await updateDoc(userRef, { phase: newPhase });
       console.log(`User ${userId} phase updated to ${newPhase}`);
       return true;
@@ -455,14 +470,15 @@ export const firebasePostUtils = {
   deleteAllData: async (): Promise<boolean> => {
     try {
       // Delete all posts
-      const postsSnapshot = await getDocs(collection(db, "posts"));
+      if (!db) return false;
+      const postsSnapshot = await getDocs(collection(db!, "posts"));
       const deletePostPromises = postsSnapshot.docs.map((doc) =>
         deleteDoc(doc.ref)
       );
       await Promise.all(deletePostPromises);
 
       // Delete all users except admin
-      const usersSnapshot = await getDocs(collection(db, "users"));
+      const usersSnapshot = await getDocs(collection(db!, "users"));
       const deleteUserPromises = usersSnapshot.docs
         .filter((doc) => !doc.data().isAdmin)
         .map((doc) => deleteDoc(doc.ref));
@@ -519,7 +535,8 @@ export const firebasePostUtils = {
   // Get all posts by a specific user
   getPostsByUser: async (userId: string): Promise<Post[]> => {
     try {
-      const postsRef = collection(db, "posts");
+      if (!db) return [];
+      const postsRef = collection(db!, "posts");
       const q = query(postsRef, where("authorId", "==", userId));
       const querySnapshot = await getDocs(q);
 
@@ -537,6 +554,7 @@ export const firebasePostUtils = {
           hashtags: data.hashtags || [],
           category: data.category,
           highlights:
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             data.highlights?.map((highlight: any) => ({
               ...highlight,
               createdAt: highlight.createdAt?.toDate
@@ -544,7 +562,7 @@ export const firebasePostUtils = {
                 : new Date(highlight.createdAt),
             })) || [],
           comments:
-            data.comments?.map((comment: any) => ({
+            data.comments?.map((comment: Record<string, any>) => ({
               ...comment,
               createdAt: comment.createdAt?.toDate
                 ? comment.createdAt.toDate()

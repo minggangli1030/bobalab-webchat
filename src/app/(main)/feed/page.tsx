@@ -163,7 +163,7 @@ export default function FeedPage() {
             Welcome to Phase 1!
           </h2>
           <p className="text-gray-700 mb-6">
-            You haven't created any posts yet. Create your first business
+            You haven&apos;t created any posts yet. Create your first business
             compatibility assessment to get started!
           </p>
           <Link href="/create-post">
@@ -245,7 +245,7 @@ export default function FeedPage() {
         {user && phaseUtils.getCurrentPhase(user) === 2 && !user.isAdmin && (
           <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg">
             <p className="font-medium">
-              Review your peers' work and highlight posts you agree with or find
+              Review your peers&apos; work and highlight posts you agree with or find
               insightful. Click on any post to view details and add your
               feedback.
             </p>

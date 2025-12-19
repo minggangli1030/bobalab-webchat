@@ -589,7 +589,7 @@ export default function ServiceExperienceForm({
                   ))}
                 </select>
                 <span className="text-xs text-gray-500 flex-1">
-                  Rank this attribute's importance to the typical target customer.
+                  Rank this attribute&apos;s importance to the typical target customer.
                 </span>
               </div>
             </div>
@@ -994,7 +994,6 @@ export default function ServiceExperienceForm({
             required
           />
         </div>
-
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Upload Media to Imgur and Submit Links

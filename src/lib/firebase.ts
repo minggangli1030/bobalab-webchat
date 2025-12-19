@@ -1,10 +1,10 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
-import { getAuth } from "firebase/auth";
-import { getFunctions } from "firebase/functions";
+import { initializeApp, FirebaseApp } from "firebase/app";
+import { getAnalytics, Analytics } from "firebase/analytics";
+import { getFirestore, Firestore } from "firebase/firestore";
+import { getStorage, FirebaseStorage } from "firebase/storage";
+import { getAuth, Auth } from "firebase/auth";
+import { getFunctions, Functions } from "firebase/functions";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -29,12 +29,12 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase only in browser environment
-let app: any = null;
-let db: any = null;
-let storage: any = null;
-let auth: any = null;
-let analytics: any = null;
-let functions: any = null;
+let app: FirebaseApp | null = null;
+let db: Firestore | null = null;
+let storage: FirebaseStorage | null = null;
+let auth: Auth | null = null;
+let analytics: Analytics | null = null;
+let functions: Functions | null = null;
 
 if (typeof window !== "undefined") {
   app = initializeApp(firebaseConfig);

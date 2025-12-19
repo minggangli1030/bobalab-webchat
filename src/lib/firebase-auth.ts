@@ -58,10 +58,12 @@ export const firebaseAuthUtils = {
       if (firebaseAuthUtils.isAdminLogin(email, password)) {
         const adminUser = firebaseAuthUtils.createAdminUser(firebaseUser.uid);
         // Create admin user document in Firestore
-        await setDoc(doc(db, "users", firebaseUser.uid), {
-          ...adminUser,
-          createdAt: Timestamp.fromDate(adminUser.createdAt),
-        });
+        if (db) {
+          await setDoc(doc(db!, "users", firebaseUser.uid), {
+            ...adminUser,
+            createdAt: Timestamp.fromDate(adminUser.createdAt),
+          });
+        }
         console.log("Admin user created successfully:", adminUser);
         return { user: adminUser, error: null };
       }
@@ -69,10 +71,12 @@ export const firebaseAuthUtils = {
       // Get system settings for default batch
       let initialBatch = 1;
       try {
-        const settingsRef = doc(db, "settings", "general");
-        const settingsDoc = await getDoc(settingsRef);
-        if (settingsDoc.exists()) {
-          initialBatch = settingsDoc.data().currentBatch || 1;
+        if (db) {
+          const settingsRef = doc(db, "settings", "general");
+          const settingsDoc = await getDoc(settingsRef);
+          if (settingsDoc.exists()) {
+            initialBatch = settingsDoc.data().currentBatch || 1;
+          }
         }
       } catch (err) {
         console.error("Error fetching system settings during signup:", err);
@@ -92,30 +96,33 @@ export const firebaseAuthUtils = {
         batch: initialBatch,
       };
 
-      await setDoc(doc(db, "users", firebaseUser.uid), {
-        ...userData,
-         createdAt: Timestamp.fromDate(userData.createdAt),
-      });
+      if (db) {
+        await setDoc(doc(db!, "users", firebaseUser.uid), {
+          ...userData,
+          createdAt: Timestamp.fromDate(userData.createdAt),
+        });
+      }
       console.log("User created successfully:", userData);
       return { user: userData, error: null };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error creating user:", error);
 
       // Provide specific error messages
       let errorMessage = "An error occurred during signup";
+      const authError = error as { code?: string; message?: string };
 
-      if (error.code === "auth/email-already-in-use") {
+      if (authError.code === "auth/email-already-in-use") {
         errorMessage = "This email address is already in use";
-      } else if (error.code === "auth/invalid-email") {
+      } else if (authError.code === "auth/invalid-email") {
         errorMessage = "Please enter a valid email address";
-      } else if (error.code === "auth/weak-password") {
+      } else if (authError.code === "auth/weak-password") {
         errorMessage = "Password should be at least 6 characters";
-      } else if (error.code === "auth/operation-not-allowed") {
+      } else if (authError.code === "auth/operation-not-allowed") {
         errorMessage = "Email/password accounts are not enabled";
-      } else if (error.code === "auth/network-request-failed") {
+      } else if (authError.code === "auth/network-request-failed") {
         errorMessage = "Network error. Please check your connection";
-      } else if (error.message) {
-        errorMessage = error.message;
+      } else if (authError.message) {
+        errorMessage = authError.message;
       }
 
       return { user: null, error: errorMessage };
@@ -144,9 +151,9 @@ export const firebaseAuthUtils = {
       }
 
       // If user document doesn't exist but this is an admin login, create it
-      if (firebaseAuthUtils.isAdminLogin(email, password)) {
+      if (firebaseAuthUtils.isAdminLogin(email, password) && db) {
         const adminUser = firebaseAuthUtils.createAdminUser(firebaseUser.uid);
-        await setDoc(doc(db, "users", firebaseUser.uid), adminUser);
+        await setDoc(doc(db!, "users", firebaseUser.uid), adminUser);
         return adminUser;
       }
 
@@ -160,7 +167,9 @@ export const firebaseAuthUtils = {
   // Sign out
   logout: async (): Promise<void> => {
     try {
-      await signOut(auth);
+      if (auth) {
+        await signOut(auth);
+      }
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -182,9 +191,10 @@ export const firebaseAuthUtils = {
   // Get current user from Firestore
   getCurrentUser: async (): Promise<User | null> => {
     try {
-      if (!auth.currentUser) return null;
+      const currentUser = auth.currentUser;
+      if (!currentUser || !db) return null;
 
-      const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
+      const userDoc = await getDoc(doc(db, "users", currentUser.uid));
       if (userDoc.exists()) {
         return userDoc.data() as User;
       }
@@ -208,20 +218,24 @@ export const firebaseAuthUtils = {
       async (firebaseUser: FirebaseUser | null) => {
         if (firebaseUser) {
           try {
-            const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
-            if (userDoc.exists()) {
-              callback(userDoc.data() as User);
-            } else {
-              // If user document doesn't exist but this is an admin user, create it
-              if (firebaseUser.email === "admin@123.com") {
-                const adminUser = firebaseAuthUtils.createAdminUser(
-                  firebaseUser.uid
-                );
-                await setDoc(doc(db, "users", firebaseUser.uid), adminUser);
-                callback(adminUser);
+            if (db) {
+              const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+              if (userDoc.exists()) {
+                callback(userDoc.data() as User);
               } else {
-                callback(null);
+                // If user document doesn't exist but this is an admin user, create it
+                if (firebaseUser.email === "admin@123.com") {
+                  const adminUser = firebaseAuthUtils.createAdminUser(
+                    firebaseUser.uid
+                  );
+                  await setDoc(doc(db, "users", firebaseUser.uid), adminUser);
+                  callback(adminUser);
+                } else {
+                  callback(null);
+                }
               }
+            } else {
+              callback(null);
             }
           } catch (error) {
             console.error("Error getting user data:", error);
