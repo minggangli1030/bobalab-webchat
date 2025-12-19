@@ -7,6 +7,7 @@ export interface User {
   createdAt: Date;
   isAdmin?: boolean;
   phase?: number; // 1 or 2 for phase-based access
+  batch?: number; // Cohort batch number
   businessName?: string; // For business compatibility exercise
 }
 
@@ -80,7 +81,18 @@ export interface Post {
   comments: Comment[];
   createdAt: Date;
   phase?: number; // Which phase this post belongs to
+  batch?: number; // Cohort batch number
   serviceExperience?: ServiceExperience; // Detailed service experience data
+}
+
+export interface CreatePostData {
+  content: string;
+  images: string[];
+  hashtags: string[];
+  businessName?: string;
+  category?: string;
+  phase?: number;
+  batch?: number; // Cohort batch number
 }
 
 export interface AuthContextType {
@@ -100,11 +112,7 @@ export interface AuthContextType {
   isLoading: boolean;
 }
 
-export interface CreatePostData {
-  content: string;
-  images: string[];
-  hashtags: string[];
-  businessName?: string;
-  category?: string;
-  phase?: number;
+export interface SystemSettings {
+  currentBatch: number;
+  previousBatchVisible: boolean; // For Phase 2 students to see previous batches
 }

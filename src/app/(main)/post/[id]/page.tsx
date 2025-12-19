@@ -162,7 +162,7 @@ export default function PostDetailPage() {
           Post Not Found
         </h2>
         <p className="text-gray-600 mb-6">
-          The post you're looking for doesn't exist.
+          The post you&apos;re looking for doesn&apos;t exist.
         </p>
         <Link href="/feed">
           <Button>Back to Feed</Button>
@@ -322,29 +322,82 @@ export default function PostDetailPage() {
                     </div>
                   </div>
 
-                  {/* Service Attributes */}
+                  {/* Service Attributes Comparison */}
                   {post.serviceExperience.serviceAttributes &&
                     post.serviceExperience.serviceAttributes.length > 0 && (
-                      <div className="mt-4">
-                        <h4 className="text-md font-medium text-gray-900 mb-2">
-                          Service Attributes (Ranked by Importance)
+                      <div className="mt-8 border-t pt-6">
+                        <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                          Attribute Maps: Priority Comparison
                         </h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                          {post.serviceExperience.serviceAttributes
-                            .sort((a, b) => a.userRanking - b.userRanking)
-                            .map((attr, index) => (
-                              <div
-                                key={index}
-                                className="flex justify-between items-center p-2 bg-white rounded border"
-                              >
-                                <span className="text-sm font-medium text-gray-700">
-                                  {attr.userRanking}. {attr.name}
-                                </span>
-                                <span className="text-sm text-gray-600">
-                                  Performance: {attr.performanceRating || 0}/100
-                                </span>
-                              </div>
-                            ))}
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                          {/* This Customer's Ranking */}
+                          <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                            <h5 className="font-bold text-blue-900 mb-3 text-center uppercase tracking-wide">
+                              This Customer
+                            </h5>
+                            <div className="space-y-3">
+                              {post.serviceExperience.serviceAttributes
+                                .sort((a, b) => a.userRanking - b.userRanking)
+                                .map((attr) => (
+                                  <div
+                                    key={attr.name}
+                                    className="flex items-center p-2 bg-white rounded shadow-sm"
+                                  >
+                                    <div className="h-6 w-6 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0">
+                                      {attr.userRanking}
+                                    </div>
+                                    <div className="flex-1">
+                                      <span className="text-sm font-medium text-gray-900 block">
+                                        {attr.name}
+                                      </span>
+                                      <span className="text-xs text-gray-500">
+                                        Performance: {attr.performanceRating || 0}/100
+                                      </span>
+                                    </div>
+                                  </div>
+                                ))}
+                            </div>
+                            <div className="mt-4 text-center">
+                              <span className="text-xs font-medium text-blue-400 uppercase">
+                                Most Important ↑
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Target Customer's Ranking */}
+                          <div className="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                            <h5 className="font-bold text-purple-900 mb-3 text-center uppercase tracking-wide">
+                              Target Customer
+                            </h5>
+                            <div className="space-y-3">
+                              {post.serviceExperience.serviceAttributes
+                                .sort((a, b) => {
+                                  // Attributes without target ranking go to bottom
+                                  const rankA = a.targetCustomerRanking || 999;
+                                  const rankB = b.targetCustomerRanking || 999;
+                                  return rankA - rankB;
+                                })
+                                .map((attr) => (
+                                  <div
+                                    key={attr.name}
+                                    className="flex items-center p-2 bg-white rounded shadow-sm"
+                                  >
+                                    <div className="h-6 w-6 rounded-full bg-purple-100 text-purple-800 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0">
+                                      {attr.targetCustomerRanking || "-"}
+                                    </div>
+                                    <span className="text-sm font-medium text-gray-900 flex-1">
+                                      {attr.name}
+                                    </span>
+                                  </div>
+                                ))}
+                            </div>
+                            <div className="mt-4 text-center">
+                              <span className="text-xs font-medium text-purple-400 uppercase">
+                                Most Important ↑
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -545,7 +598,7 @@ export default function PostDetailPage() {
                             {highlight.userName}
                           </Badge>
                           <span className="text-xs text-gray-500 italic">
-                            "{highlight.reason}"
+                            &quot;{highlight.reason}&quot;
                           </span>
                         </div>
                       ))}

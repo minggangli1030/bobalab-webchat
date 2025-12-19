@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { Post } from "@/lib/types";
+import { Post, SystemSettings } from "@/lib/types";
 import { firebasePostUtils } from "@/lib/firebase-posts";
 import { phaseUtils } from "@/lib/phase-utils";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,25 +20,32 @@ export default function FeedPage() {
   const [sortBy, setSortBy] = useState<"time" | "highlights" | "category">(
     "highlights"
   );
+  const [systemSettings, setSystemSettings] = useState<SystemSettings | null>(null);
 
   useEffect(() => {
-    const loadPosts = async () => {
+    const loadData = async () => {
       try {
-        const allPosts = await firebasePostUtils.getAllPosts();
+        const [allPosts, settings] = await Promise.all([
+          firebasePostUtils.getAllPosts(),
+          firebasePostUtils.getSystemSettings(),
+        ]);
         setPosts(allPosts);
+        setSystemSettings(settings);
       } catch (error) {
-        console.error("Error loading posts:", error);
+        console.error("Error loading data:", error);
       } finally {
         setIsLoading(false);
       }
     };
-    loadPosts();
+    loadData();
   }, []);
 
   const refreshPosts = async () => {
     try {
       const allPosts = await firebasePostUtils.getAllPosts();
       setPosts(allPosts);
+      const settings = await firebasePostUtils.getSystemSettings();
+      setSystemSettings(settings);
     } catch (error) {
       console.error("Error refreshing posts:", error);
     }
@@ -96,6 +103,20 @@ export default function FeedPage() {
       filtered = filtered.filter((post) => post.category === selectedCategory);
     }
 
+    // Batch filter
+    if (user && !user.isAdmin && systemSettings) {
+      const userBatch = user.batch || 1;
+      
+      // If previous batches are NOT visible, strictly filter by batch
+      if (!systemSettings.previousBatchVisible) {
+        filtered = filtered.filter((post) => (post.batch || 1) === userBatch);
+      } else {
+        // If previous batches ARE visible, show posts from current and earlier batches
+        // But do not show future batches (if any exist)
+        filtered = filtered.filter((post) => (post.batch || 1) <= userBatch);
+      }
+    }
+
     // Sort posts
     switch (sortBy) {
       case "time":
@@ -114,7 +135,7 @@ export default function FeedPage() {
       default:
         return filtered;
     }
-  }, [posts, searchTerm, selectedCategory, sortBy, user]);
+  }, [posts, searchTerm, selectedCategory, sortBy, user, systemSettings]);
 
   if (isLoading) {
     return (
@@ -292,7 +313,7 @@ export default function FeedPage() {
                     onClick={() => setSearchTerm("")}
                     className="text-xs"
                   >
-                    Search: "{searchTerm}" ×
+                    Search: &quot;{searchTerm}&quot; ×
                   </Button>
                 )}
                 {selectedCategory && (

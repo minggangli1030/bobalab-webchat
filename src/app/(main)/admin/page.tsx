@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { firebasePostUtils } from "@/lib/firebase-posts";
-import { Post, User } from "@/lib/types";
+import { Post, User, SystemSettings } from "@/lib/types";
 import { phaseUtils } from "@/lib/phase-utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -26,7 +26,11 @@ export default function AdminPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"posts" | "users">("users");
+  const [activeTab, setActiveTab] = useState<"posts" | "users" | "settings">("users");
+  const [settings, setSettings] = useState<SystemSettings>({
+    currentBatch: 1,
+    previousBatchVisible: false,
+  });
 
   useEffect(() => {
     // Redirect if not admin
@@ -43,6 +47,10 @@ export default function AdminPage() {
         // Load all users from Firebase
         const allUsers = await firebasePostUtils.getAllUsers();
         setUsers(allUsers);
+
+        // Load settings
+        const sysSettings = await firebasePostUtils.getSystemSettings();
+        setSettings(sysSettings);
       } catch (error) {
         console.error("Error loading admin data:", error);
       } finally {
@@ -252,6 +260,94 @@ export default function AdminPage() {
     } catch (error) {
       console.error("Error in bulk phase transition:", error);
       alert("Failed to perform bulk phase transition.");
+    }
+
+  };
+
+  const handleSettingsUpdate = async (updates: Partial<SystemSettings>) => {
+    try {
+      const newSettings = { ...settings, ...updates };
+      const success = await firebasePostUtils.updateSystemSettings(newSettings);
+      if (success) {
+        setSettings(newSettings);
+        alert("Settings updated successfully!");
+      } else {
+        alert("Failed to update settings.");
+      }
+    } catch (error) {
+      console.error("Error updating settings:", error);
+      alert("Failed to update settings.");
+    }
+  };
+
+  const handleUserBatchUpdate = async (userId: string, newBatch: number) => {
+    try {
+      const success = await firebasePostUtils.updateUserBatch(userId, newBatch);
+      if (success) {
+        // Refresh users
+        const allUsers = await firebasePostUtils.getAllUsers();
+        setUsers(allUsers);
+        alert(`User batch updated to ${newBatch}`);
+      } else {
+        alert("Failed to update user batch.");
+      }
+    } catch (error) {
+      console.error("Error updating user batch:", error);
+      alert("Failed to update user batch.");
+    }
+  };
+
+  const handlePostBatchUpdate = async (postId: string, newBatch: number) => {
+    try {
+      const success = await firebasePostUtils.updatePostBatch(postId, newBatch);
+      if (success) {
+        // Refresh posts
+        const allPosts = await firebasePostUtils.getAllPosts();
+        setPosts(allPosts);
+      } else {
+        alert("Failed to update post batch.");
+      }
+    } catch (error) {
+      console.error("Error updating post batch:", error);
+      alert("Failed to update post batch.");
+    }
+  };
+
+  const handleBulkPostBatchUpdateByDate = async (
+    startDate: string,
+    endDate: string,
+    targetBatch: number
+  ) => {
+    if (
+      !window.confirm(
+        `Are you sure you want to set Batch to ${targetBatch} for posts between ${startDate} and ${endDate}?`
+      )
+    )
+      return;
+
+    try {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      // Set end date to end of day
+      end.setHours(23, 59, 59, 999);
+
+      const postsToUpdate = posts.filter((p) => {
+        const pDate = new Date(p.createdAt);
+        return pDate >= start && pDate <= end;
+      });
+
+      let successCount = 0;
+      for (const post of postsToUpdate) {
+        const success = await firebasePostUtils.updatePostBatch(post.id, targetBatch); // TYPO FIX: post.id
+        if (success) successCount++;
+      }
+
+      const allPosts = await firebasePostUtils.getAllPosts();
+      setPosts(allPosts);
+      alert(`Updated ${successCount} posts to Batch ${targetBatch}`);
+    } catch (error) {
+      console.error("Error bulk updating posts:", error);
+      alert("Failed to bulk update posts.");
     }
   };
 
@@ -681,10 +777,129 @@ export default function AdminPage() {
             >
               Users ({users.filter((u) => !u.isAdmin).length})
             </button>
+            <button
+              onClick={() => setActiveTab("settings")}
+              className={`py-3 px-1 border-b-2 font-medium text-sm ${
+                activeTab === "settings"
+                  ? "border-blue-500 text-blue-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+            >
+              Settings
+            </button>
           </nav>
         </div>
 
         {/* Content */}
+
+        {activeTab === "settings" && (
+          <div className="space-y-6 max-w-4xl mx-auto">
+            <Card>
+              <CardContent className="p-6">
+                <h3 className="text-lg font-bold mb-4">System Settings</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Current Batch (assigned to new users)
+                    </label>
+                    <input
+                      type="number"
+                      value={settings.currentBatch}
+                      onChange={(e) =>
+                        handleSettingsUpdate({
+                          currentBatch: parseInt(e.target.value) || 1,
+                        })
+                      }
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    />
+                  </div>
+
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      id="prevBatchVisible"
+                      checked={settings.previousBatchVisible}
+                      onChange={(e) =>
+                        handleSettingsUpdate({
+                          previousBatchVisible: e.target.checked,
+                        })
+                      }
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <label
+                      htmlFor="prevBatchVisible"
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      Allow Phase 2 students to view posts from previous batches
+                    </label>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <h3 className="text-lg font-bold mb-4">Bulk Post Batch Update</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Update the batch number for all posts created within a specific
+                  date range.
+                </p>
+                <form
+                  onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.currentTarget);
+                    handleBulkPostBatchUpdateByDate(
+                      formData.get("startDate") as string,
+                      formData.get("endDate") as string,
+                      parseInt(formData.get("targetBatch") as string)
+                    );
+                  }}
+                  className="space-y-4"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Start Date
+                      </label>
+                      <input
+                        name="startDate"
+                        type="date"
+                        required
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        End Date
+                      </label>
+                      <input
+                        name="endDate"
+                        type="date"
+                        required
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Target Batch
+                      </label>
+                      <input
+                        name="targetBatch"
+                        type="number"
+                        defaultValue={settings.currentBatch}
+                        required
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      />
+                    </div>
+                  </div>
+                  <Button type="submit" className="w-full">
+                    Update Batches
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {activeTab === "posts" && (
           <div className="space-y-6">
@@ -704,10 +919,15 @@ export default function AdminPage() {
 
                       {/* Post Content */}
                       <div className="mb-4">
-                        <h3 className="font-semibold text-gray-900 mb-2">
-                          {post.serviceExperience?.organizationName ||
-                            "No Organization"}
-                        </h3>
+                        <div className="flex items-center space-x-2 mb-2">
+                          <h3 className="font-semibold text-gray-900">
+                            {post.serviceExperience?.organizationName ||
+                              "No Organization"}
+                          </h3>
+                          <Badge variant="secondary" className="text-xs">
+                            Batch {post.batch || 1}
+                          </Badge>
+                        </div>
                         <p className="text-gray-800 mb-3">{post.content}</p>
                       </div>
 
@@ -755,6 +975,27 @@ export default function AdminPage() {
                       >
                         <Download className="h-4 w-4 mr-2" />
                         Add Media
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const newBatch = prompt(
+                            "Enter new batch number:",
+                            (post.batch || 1).toString()
+                          );
+                          if (newBatch !== null) {
+                            const batchNum = parseInt(newBatch);
+                            if (!isNaN(batchNum)) {
+                              handlePostBatchUpdate(post.id, batchNum);
+                            }
+                          }
+                        }}
+                        className="text-sm"
+                      >
+                        <Calendar className="h-4 w-4 mr-2" />
+                        Set Batch
                       </Button>
 
                       <Button
@@ -896,6 +1137,7 @@ export default function AdminPage() {
                               {user.studentId && (
                                 <span>Student ID: {user.studentId}</span>
                               )}
+                              <span className="font-semibold text-blue-600">Batch: {user.batch || 1}</span>
                             </div>
                           </div>
 
@@ -903,7 +1145,26 @@ export default function AdminPage() {
                             {/* User Management Buttons */}
                             {!user.isAdmin && (
                               <div className="flex flex-col space-y-3">
-                                {/* Phase Management */}
+
+                                  {/* Batch Management */}
+                                  <div className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                                     <span className="text-sm text-gray-600">Batch: {user.batch || 1}</span>
+                                     <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => {
+                                          const newBatch = prompt("Enter new batch number:", (user.batch || 1).toString());
+                                          if (newBatch && !isNaN(parseInt(newBatch))) {
+                                              handleUserBatchUpdate(user.id, parseInt(newBatch));
+                                          }
+                                      }}
+                                      className="text-xs h-7 px-2"
+                                    >
+                                      Change
+                                    </Button>
+                                  </div>
+
+                                  {/* Phase Management */}
                                 <div className="flex space-x-2">
                                   {currentPhase > 1 && (
                                     <Button

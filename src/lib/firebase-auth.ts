@@ -66,6 +66,18 @@ export const firebaseAuthUtils = {
         return { user: adminUser, error: null };
       }
 
+      // Get system settings for default batch
+      let initialBatch = 1;
+      try {
+        const settingsRef = doc(db, "settings", "general");
+        const settingsDoc = await getDoc(settingsRef);
+        if (settingsDoc.exists()) {
+          initialBatch = settingsDoc.data().currentBatch || 1;
+        }
+      } catch (err) {
+        console.error("Error fetching system settings during signup:", err);
+      }
+
       // Create user document in Firestore
       const userData: User = {
         id: firebaseUser.uid,
@@ -77,11 +89,12 @@ export const firebaseAuthUtils = {
         createdAt: new Date(),
         isAdmin: false,
         phase: 1, // Default to phase 1
+        batch: initialBatch,
       };
 
       await setDoc(doc(db, "users", firebaseUser.uid), {
         ...userData,
-        createdAt: Timestamp.fromDate(userData.createdAt),
+         createdAt: Timestamp.fromDate(userData.createdAt),
       });
       console.log("User created successfully:", userData);
       return { user: userData, error: null };

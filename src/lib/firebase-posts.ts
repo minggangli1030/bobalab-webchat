@@ -11,13 +11,51 @@ import {
   orderBy,
   limit,
   Timestamp,
+  setDoc,
 } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage, functions } from "./firebase";
-import { Post, Comment, User } from "./types";
+import { Post, Comment, User, SystemSettings } from "./types";
+
+
 
 export const firebasePostUtils = {
+  // System Settings Logic
+  getSystemSettings: async (): Promise<SystemSettings> => {
+    try {
+      if (!db) return { currentBatch: 1, previousBatchVisible: false };
+      const settingsRef = doc(db, "settings", "general");
+      const settingsDoc = await getDoc(settingsRef);
+      
+      if (settingsDoc.exists()) {
+        const data = settingsDoc.data();
+        return {
+          currentBatch: data.currentBatch || 1,
+          previousBatchVisible: data.previousBatchVisible || false,
+        };
+      }
+      
+      // Initialize if not exists
+      await setDoc(settingsRef, { currentBatch: 1, previousBatchVisible: false });
+      return { currentBatch: 1, previousBatchVisible: false };
+    } catch (error) {
+      console.error("Error getting system settings:", error);
+      return { currentBatch: 1, previousBatchVisible: false };
+    }
+  },
+
+  updateSystemSettings: async (settings: Partial<SystemSettings>): Promise<boolean> => {
+    try {
+      const settingsRef = doc(db, "settings", "general");
+      await setDoc(settingsRef, settings, { merge: true });
+      return true;
+    } catch (error) {
+      console.error("Error updating system settings:", error);
+      return false;
+    }
+  },
+
   // Upload image to Firebase Storage
   uploadImage: async (file: File, postId: string): Promise<string | null> => {
     try {
@@ -93,6 +131,8 @@ export const firebasePostUtils = {
           hashtags: data.hashtags || [],
           category: data.category,
           phase: data.phase,
+
+          batch: data.batch || 1, // Default to batch 1 if missing
           serviceExperience: data.serviceExperience,
           createdAt: data.createdAt?.toDate
             ? data.createdAt.toDate()
@@ -250,6 +290,31 @@ export const firebasePostUtils = {
       return false;
     } catch (error) {
       console.error("Error adding comment:", error);
+
+      return false;
+    }
+  },
+
+  // Update user batch (admin only)
+  updateUserBatch: async (userId: string, batch: number): Promise<boolean> => {
+    try {
+      if (!db) return false;
+      await updateDoc(doc(db, "users", userId), { batch });
+      return true;
+    } catch (error) {
+      console.error("Error updating user batch:", error);
+      return false;
+    }
+  },
+
+  // Update post batch (admin only)
+  updatePostBatch: async (postId: string, batch: number): Promise<boolean> => {
+    try {
+      if (!db) return false;
+      await updateDoc(doc(db, "posts", postId), { batch });
+      return true;
+    } catch (error) {
+      console.error("Error updating post batch:", error);
       return false;
     }
   },
@@ -346,10 +411,11 @@ export const firebasePostUtils = {
 
       const querySnapshot = await getDocs(collection(db, "users"));
       const users = querySnapshot.docs.map((doc) => {
-        const data = doc.data();
+        const data = doc.data() as any;
         return {
           id: doc.id,
           ...data,
+          batch: data.batch || 1, // Default to batch 1
           createdAt: data.createdAt?.toDate
             ? data.createdAt.toDate()
             : new Date(data.createdAt),
@@ -486,6 +552,7 @@ export const firebasePostUtils = {
             })) || [],
           createdAt: data.createdAt?.toDate() || new Date(),
           phase: data.phase,
+          batch: data.batch || 1,
           serviceExperience: data.serviceExperience,
         });
       });
