@@ -601,6 +601,42 @@ export default function ServiceExperienceForm({
                 </span>
               </div>
             </div>
+
+            {/* Target Customer Performance Rating */}
+            <div className="space-y-2 border-t pt-4 mt-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Performance Rating (Target Customer Perspective)
+              </label>
+              <div className="flex items-center space-x-4">
+                <span className="text-xs text-gray-500 w-20 text-right">
+                  Poor Performance
+                </span>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={attr.targetCustomerPerformanceRating || 50}
+                  onChange={(e) => {
+                    const newAttributes = [
+                      ...(formData.serviceAttributes || []),
+                    ];
+                    newAttributes[index].targetCustomerPerformanceRating =
+                      parseInt(e.target.value);
+                    updateFormData({ serviceAttributes: newAttributes });
+                  }}
+                  className="flex-1"
+                />
+                <span className="text-xs text-gray-500 w-20">
+                  Excellent Performance
+                </span>
+                <span className="text-sm font-medium w-8 text-center">
+                  {attr.targetCustomerPerformanceRating || 50}
+                </span>
+              </div>
+              <p className="text-xs text-gray-500">
+                How would the target customer rate the performance?
+              </p>
+            </div>
           </div>
         ))}
       </CardContent>

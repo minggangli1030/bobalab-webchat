@@ -25,6 +25,7 @@ export interface ServiceAttribute {
   userRanking: number; // 1-6, where 1 is most important
   targetCustomerRanking?: number; // 1-6, where 1 is most important
   performanceRating?: number; // 0-100 scale
+  targetCustomerPerformanceRating?: number; // 0-100 scale
 }
 
 export interface VariabilityAssessment {

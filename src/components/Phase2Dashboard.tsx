@@ -39,7 +39,7 @@ export default function Phase2Dashboard({
   // For phase 2 users viewing any post, or admin viewing any post, use the passed post
   const userPhase = activeUser ? phaseUtils.getCurrentPhase(activeUser) : 1;
   const isViewingOwnPost = posts[0] && posts[0].authorId === activeUser?.id;
-  
+
   let userPost: Post | undefined;
   if (isAdminView) {
     // Admin viewing any post - use the passed post
@@ -92,7 +92,10 @@ export default function Phase2Dashboard({
         createdAt: new Date(),
       };
 
-      const success = await firebasePostUtils.addComment(displayPost.id, comment);
+      const success = await firebasePostUtils.addComment(
+        displayPost.id,
+        comment
+      );
       if (success) {
         // Refresh the post to get updated comments
         const updatedPost = await firebasePostUtils.getPostById(displayPost.id);
@@ -227,7 +230,8 @@ export default function Phase2Dashboard({
                 ? "Your Post Details"
                 : "Phase 2: Peer Feedback Dashboard"}
             </h1>
-            {(isAdminView || (activeUser && phaseUtils.getCurrentPhase(activeUser) === 1)) && (
+            {(isAdminView ||
+              (activeUser && phaseUtils.getCurrentPhase(activeUser) === 1)) && (
               <p className="text-xl text-gray-600">
                 {isAdminView
                   ? "Comprehensive analysis of service experience"
@@ -324,24 +328,52 @@ export default function Phase2Dashboard({
                     {sortedAttributes.map((attr, index) => (
                       <div
                         key={attr.name}
-                        className="flex items-center space-x-4 py-2"
+                        className="py-4 border-b last:border-0"
                       >
-                        <div className="w-32 text-sm font-medium text-gray-700 flex-shrink-0">
+                        <div className="font-semibold text-gray-800 mb-2">
                           {attr.name}
                         </div>
-                        <div className="flex-1 bg-gray-200 rounded-full h-6 relative">
-                          <div
-                            className="bg-green-500 h-6 rounded-full transition-all duration-300"
-                            style={{
-                              width: `${attr.performanceRating || 0}%`,
-                            }}
-                          ></div>
-                          <div className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-white">
-                            {attr.performanceRating || 0}
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {/* User Perspective */}
+                          <div className="space-y-1">
+                            <div className="flex justify-between text-xs text-gray-500 mb-1">
+                              <span>Your Perspective</span>
+                              <span className="bg-gray-100 px-2 py-0.5 rounded text-gray-600 font-medium">Rank #{attr.userRanking}</span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <div className="flex-1 bg-gray-200 rounded-full h-4 relative">
+                                <div
+                                  className="bg-green-500 h-4 rounded-full transition-all duration-300"
+                                  style={{
+                                    width: `${attr.performanceRating || 0}%`,
+                                  }}
+                                ></div>
+                              </div>
+                              <span className="text-xs font-bold w-6 text-right">{attr.performanceRating || 0}</span>
+                            </div>
                           </div>
-                        </div>
-                        <div className="w-12 text-sm font-semibold text-gray-600 text-center bg-gray-100 px-2 py-1 rounded">
-                          #{attr.userRanking}
+
+                          {/* Target Customer Perspective */}
+                          <div className="space-y-1">
+                            <div className="flex justify-between text-xs text-gray-500 mb-1">
+                              <span>Target Customer</span>
+                              <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-medium">
+                                Rank #{attr.targetCustomerRanking || "-"}
+                              </span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <div className="flex-1 bg-gray-200 rounded-full h-4 relative">
+                                <div
+                                  className="bg-blue-500 h-4 rounded-full transition-all duration-300"
+                                  style={{
+                                    width: `${attr.targetCustomerPerformanceRating || 0}%`,
+                                  }}
+                                ></div>
+                              </div>
+                              <span className="text-xs font-bold w-6 text-right">{attr.targetCustomerPerformanceRating || 0}</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     ))}
