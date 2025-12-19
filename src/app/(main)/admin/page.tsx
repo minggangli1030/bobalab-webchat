@@ -369,6 +369,81 @@ export default function AdminPage() {
     }
   };
 
+  const handleSyncAllPostsWithAuthorBatch = async () => {
+    if (
+      !window.confirm(
+        "This will sync all posts to match their author's current batch. This may update many posts. Continue?"
+      )
+    )
+      return;
+
+    try {
+      let successCount = 0;
+      let failCount = 0;
+      const mismatches: Array<{
+        postId: string;
+        authorName: string;
+        postBatch: number;
+        userBatch: number;
+      }> = [];
+
+      for (const post of posts) {
+        const author = users.find((u) => u.id === post.authorId);
+        if (!author) {
+          failCount++;
+          continue;
+        }
+
+        const authorBatch = author.batch || 1;
+        const postBatch = post.batch || 1;
+
+        // Only update if there's a mismatch
+        if (authorBatch !== postBatch) {
+          mismatches.push({
+            postId: post.id,
+            authorName: post.authorName,
+            postBatch,
+            userBatch: authorBatch,
+          });
+
+          const success = await firebasePostUtils.updatePostBatch(
+            post.id,
+            authorBatch
+          );
+          if (success) {
+            successCount++;
+          } else {
+            failCount++;
+          }
+        }
+      }
+
+      // Refresh posts
+      const allPosts = await firebasePostUtils.getAllPosts();
+      setPosts(allPosts);
+
+      if (mismatches.length > 0) {
+        alert(
+          `Sync completed!\n\nFixed ${successCount} posts with batch mismatches.\nFailed: ${failCount}\n\nPosts updated:\n${mismatches
+            .slice(0, 10)
+            .map(
+              (m) => `- ${m.authorName}: Batch ${m.postBatch} → ${m.userBatch}`
+            )
+            .join("\n")}${
+            mismatches.length > 10
+              ? `\n... and ${mismatches.length - 10} more`
+              : ""
+          }`
+        );
+      } else {
+        alert("All posts are already synced with their author's batch!");
+      }
+    } catch (error) {
+      console.error("Error syncing posts with author batch:", error);
+      alert("Failed to sync posts with author batch.");
+    }
+  };
+
   // Get unique batch numbers from users and posts
   const uniqueUserBatches = useMemo(() => {
     const batches = new Set<number>();
@@ -888,6 +963,25 @@ export default function AdminPage() {
                     </Button>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <h3 className="text-lg font-bold mb-4">
+                  Sync Posts with Author Batch
+                </h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Automatically sync all posts to match their author&apos;s
+                  current batch. This fixes any discrepancies where posts have a
+                  different batch than their author.
+                </p>
+                <Button
+                  onClick={handleSyncAllPostsWithAuthorBatch}
+                  className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700"
+                >
+                  Sync All Posts with Author Batch
+                </Button>
               </CardContent>
             </Card>
 

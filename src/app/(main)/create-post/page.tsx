@@ -119,9 +119,11 @@ export default function CreatePostPage() {
 
       if (isCurrentlyEditing && existingPost) {
         // Update existing post
+        // Ensure batch matches user's current batch (in case user's batch changed)
         console.log("Updating post with service experience data:", postData);
         const success = await firebasePostUtils.updatePost(existingPost.id, {
           ...postData,
+          batch: user.batch || 1, // Always sync with user's current batch
           id: existingPost.id, // Keep the original ID
           createdAt: existingPost.createdAt, // Keep original creation date
         });
