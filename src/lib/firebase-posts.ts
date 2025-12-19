@@ -242,30 +242,42 @@ export const firebasePostUtils = {
       const firestoreUpdates: any = { ...updates };
 
       // Convert highlight dates to Timestamps
-      if (firestoreUpdates.highlights && Array.isArray(firestoreUpdates.highlights)) {
-        firestoreUpdates.highlights = (firestoreUpdates.highlights as Highlight[]).map(
-          (h: Highlight) => ({
-            ...h,
-            createdAt:
-              h.createdAt instanceof Date
-                ? Timestamp.fromDate(h.createdAt)
-                : (h.createdAt as { toDate?: () => Date })?.toDate
-                ? (h.createdAt as { toDate: () => Date }).toDate()
-                : Timestamp.fromDate(new Date(h.createdAt as string | number | Date)),
-          })
-        );
+      if (
+        firestoreUpdates.highlights &&
+        Array.isArray(firestoreUpdates.highlights)
+      ) {
+        firestoreUpdates.highlights = (
+          firestoreUpdates.highlights as Highlight[]
+        ).map((h: Highlight) => ({
+          ...h,
+          createdAt:
+            h.createdAt instanceof Date
+              ? Timestamp.fromDate(h.createdAt)
+              : (h.createdAt as { toDate?: () => Date })?.toDate
+              ? (h.createdAt as { toDate: () => Date }).toDate()
+              : Timestamp.fromDate(
+                  new Date(h.createdAt as string | number | Date)
+                ),
+        }));
       }
 
       // Convert comment dates to Timestamps
-      if (firestoreUpdates.comments && Array.isArray(firestoreUpdates.comments)) {
-        firestoreUpdates.comments = (firestoreUpdates.comments as Comment[]).map((c: Comment) => ({
+      if (
+        firestoreUpdates.comments &&
+        Array.isArray(firestoreUpdates.comments)
+      ) {
+        firestoreUpdates.comments = (
+          firestoreUpdates.comments as Comment[]
+        ).map((c: Comment) => ({
           ...c,
           createdAt:
             c.createdAt instanceof Date
               ? Timestamp.fromDate(c.createdAt)
               : (c.createdAt as { toDate?: () => Date })?.toDate
               ? (c.createdAt as { toDate: () => Date }).toDate()
-              : Timestamp.fromDate(new Date(c.createdAt as string | number | Date)),
+              : Timestamp.fromDate(
+                  new Date(c.createdAt as string | number | Date)
+                ),
         }));
       }
 

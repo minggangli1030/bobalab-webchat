@@ -54,5 +54,14 @@ service cloud.firestore {
         isAdmin()
       );
     }
+
+    // Settings collection
+    match /settings/{settingsId} {
+      // Anyone authenticated can read settings
+      allow read: if request.auth != null;
+      
+      // Only admins can update settings
+      allow write: if isAdmin();
+    }
   }
 }

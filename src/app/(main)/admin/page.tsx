@@ -26,7 +26,9 @@ export default function AdminPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"posts" | "users" | "settings">("users");
+  const [activeTab, setActiveTab] = useState<"posts" | "users" | "settings">(
+    "users"
+  );
   const [settings, setSettings] = useState<SystemSettings>({
     currentBatch: 1,
     previousBatchVisible: false,
@@ -202,7 +204,10 @@ export default function AdminPage() {
     }
   };
 
-  const handleEditPost = async (postId: string, updates: Record<string, unknown>) => {
+  const handleEditPost = async (
+    postId: string,
+    updates: Record<string, unknown>
+  ) => {
     try {
       const success = await firebasePostUtils.updatePost(postId, updates);
       if (success) {
@@ -261,7 +266,6 @@ export default function AdminPage() {
       console.error("Error in bulk phase transition:", error);
       alert("Failed to perform bulk phase transition.");
     }
-
   };
 
   const handleSettingsUpdate = async (updates: Partial<SystemSettings>) => {
@@ -338,7 +342,10 @@ export default function AdminPage() {
 
       let successCount = 0;
       for (const post of postsToUpdate) {
-        const success = await firebasePostUtils.updatePostBatch(post.id, targetBatch); // TYPO FIX: post.id
+        const success = await firebasePostUtils.updatePostBatch(
+          post.id,
+          targetBatch
+        ); // TYPO FIX: post.id
         if (success) successCount++;
       }
 
@@ -620,35 +627,6 @@ export default function AdminPage() {
               </div>
             </div>
           </div>
-
-          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <div className="flex items-start space-x-3">
-              <div className="flex-shrink-0">
-                <svg
-                  className="h-5 w-5 text-yellow-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              <div className="flex-1">
-                <h3 className="text-sm font-medium text-yellow-800">
-                  Note: Authentication Accounts Not Deleted
-                </h3>
-                <p className="mt-1 text-sm text-yellow-700">
-                  &quot;Delete All Data&quot; removes posts and user profiles, but does
-                  NOT delete Firebase Authentication accounts. To fully reset,
-                  manually delete auth users from the Firebase Console
-                  (Authentication → Users tab).
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Stats Cards */}
@@ -805,11 +783,18 @@ export default function AdminPage() {
                     <input
                       type="number"
                       value={settings.currentBatch}
-                      onChange={(e) =>
-                        handleSettingsUpdate({
-                          currentBatch: parseInt(e.target.value) || 1,
-                        })
-                      }
+                      onChange={(e) => {
+                        const newValue = parseInt(e.target.value) || 1;
+                        setSettings({ ...settings, currentBatch: newValue });
+                      }}
+                      onBlur={(e) => {
+                        const newValue = parseInt(e.target.value) || 1;
+                        if (newValue !== settings.currentBatch) {
+                          handleSettingsUpdate({
+                            currentBatch: newValue,
+                          });
+                        }
+                      }}
                       className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
                   </div>
@@ -839,10 +824,12 @@ export default function AdminPage() {
 
             <Card>
               <CardContent className="p-6">
-                <h3 className="text-lg font-bold mb-4">Bulk Post Batch Update</h3>
+                <h3 className="text-lg font-bold mb-4">
+                  Bulk Post Batch Update
+                </h3>
                 <p className="text-sm text-gray-600 mb-4">
-                  Update the batch number for all posts created within a specific
-                  date range.
+                  Update the batch number for all posts created within a
+                  specific date range.
                 </p>
                 <form
                   onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
@@ -1137,7 +1124,9 @@ export default function AdminPage() {
                               {user.studentId && (
                                 <span>Student ID: {user.studentId}</span>
                               )}
-                              <span className="font-semibold text-blue-600">Batch: {user.batch || 1}</span>
+                              <span className="font-semibold text-blue-600">
+                                Batch: {user.batch || 1}
+                              </span>
                             </div>
                           </div>
 
@@ -1145,26 +1134,36 @@ export default function AdminPage() {
                             {/* User Management Buttons */}
                             {!user.isAdmin && (
                               <div className="flex flex-col space-y-3">
+                                {/* Batch Management */}
+                                <div className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                                  <span className="text-sm text-gray-600">
+                                    Batch: {user.batch || 1}
+                                  </span>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                      const newBatch = prompt(
+                                        "Enter new batch number:",
+                                        (user.batch || 1).toString()
+                                      );
+                                      if (
+                                        newBatch &&
+                                        !isNaN(parseInt(newBatch))
+                                      ) {
+                                        handleUserBatchUpdate(
+                                          user.id,
+                                          parseInt(newBatch)
+                                        );
+                                      }
+                                    }}
+                                    className="text-xs h-7 px-2"
+                                  >
+                                    Change
+                                  </Button>
+                                </div>
 
-                                  {/* Batch Management */}
-                                  <div className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                                     <span className="text-sm text-gray-600">Batch: {user.batch || 1}</span>
-                                     <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() => {
-                                          const newBatch = prompt("Enter new batch number:", (user.batch || 1).toString());
-                                          if (newBatch && !isNaN(parseInt(newBatch))) {
-                                              handleUserBatchUpdate(user.id, parseInt(newBatch));
-                                          }
-                                      }}
-                                      className="text-xs h-7 px-2"
-                                    >
-                                      Change
-                                    </Button>
-                                  </div>
-
-                                  {/* Phase Management */}
+                                {/* Phase Management */}
                                 <div className="flex space-x-2">
                                   {currentPhase > 1 && (
                                     <Button
