@@ -48,12 +48,25 @@ export const firebasePostUtils = {
     settings: Partial<SystemSettings>
   ): Promise<boolean> => {
     try {
-      if (!db) return false;
+      if (!db) {
+        console.error("Firebase db not initialized");
+        return false;
+      }
       const settingsRef = doc(db!, "settings", "general");
-      await setDoc(settingsRef, settings, { merge: true });
+      // Ensure we have all required fields
+      const completeSettings: SystemSettings = {
+        currentBatch: settings.currentBatch ?? 1,
+        previousBatchVisible: settings.previousBatchVisible ?? false,
+      };
+      console.log("Saving settings to Firestore:", completeSettings);
+      await setDoc(settingsRef, completeSettings, { merge: true });
+      console.log("Settings saved successfully");
       return true;
     } catch (error) {
       console.error("Error updating system settings:", error);
+      if (error instanceof Error) {
+        console.error("Error details:", error.message, error.stack);
+      }
       return false;
     }
   },

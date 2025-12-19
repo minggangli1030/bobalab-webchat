@@ -271,16 +271,23 @@ export default function AdminPage() {
   const handleSettingsUpdate = async (updates: Partial<SystemSettings>) => {
     try {
       const newSettings = { ...settings, ...updates };
+      console.log("Updating settings with:", newSettings);
       const success = await firebasePostUtils.updateSystemSettings(newSettings);
       if (success) {
         setSettings(newSettings);
         alert("Settings updated successfully!");
       } else {
-        alert("Failed to update settings.");
+        alert(
+          "Failed to update settings. Please check the console for errors."
+        );
       }
     } catch (error) {
       console.error("Error updating settings:", error);
-      alert("Failed to update settings.");
+      alert(
+        `Failed to update settings: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     }
   };
 
@@ -817,12 +824,12 @@ export default function AdminPage() {
                     <Button
                       onClick={() => handleSettingsUpdate(settings)}
                       className="w-full sm:w-auto"
+                      type="button"
                     >
                       Save Settings
                     </Button>
                   </div>
                 </div>
-
               </CardContent>
             </Card>
 
