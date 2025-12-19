@@ -4,7 +4,6 @@ import {
   signOut,
   User as FirebaseUser,
   onAuthStateChanged,
-  deleteUser,
   sendPasswordResetEmail,
 } from "firebase/auth";
 import { doc, setDoc, getDoc, Timestamp } from "firebase/firestore";
@@ -145,13 +144,14 @@ export const firebaseAuthUtils = {
       const firebaseUser = userCredential.user;
 
       // Get user data from Firestore
+      if (!db) return null;
       const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
       if (userDoc.exists()) {
         return userDoc.data() as User;
       }
 
       // If user document doesn't exist but this is an admin login, create it
-      if (firebaseAuthUtils.isAdminLogin(email, password) && db) {
+      if (firebaseAuthUtils.isAdminLogin(email, password)) {
         const adminUser = firebaseAuthUtils.createAdminUser(firebaseUser.uid);
         await setDoc(doc(db!, "users", firebaseUser.uid), adminUser);
         return adminUser;
@@ -191,8 +191,9 @@ export const firebaseAuthUtils = {
   // Get current user from Firestore
   getCurrentUser: async (): Promise<User | null> => {
     try {
+      if (!auth || !db) return null;
       const currentUser = auth.currentUser;
-      if (!currentUser || !db) return null;
+      if (!currentUser) return null;
 
       const userDoc = await getDoc(doc(db, "users", currentUser.uid));
       if (userDoc.exists()) {
@@ -204,7 +205,6 @@ export const firebaseAuthUtils = {
       return null;
     }
   },
-
 
   // Listen to auth state changes
   onAuthStateChanged: (callback: (user: User | null) => void) => {
@@ -249,7 +249,8 @@ export const firebaseAuthUtils = {
   },
 
   // Delete Firebase Authentication account (admin only)
-  deleteAuthUser: async (userId: string): Promise<boolean> => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  deleteAuthUser: async (_userId: string): Promise<boolean> => {
     try {
       if (!auth) {
         console.error("Firebase not initialized");

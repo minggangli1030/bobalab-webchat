@@ -6,20 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  ChevronLeft,
-  ChevronRight,
-  GripVertical,
-  Star,
-  DollarSign,
-  AlertCircle,
-  CheckCircle,
-} from "lucide-react";
-import {
-  ServiceExperience,
-  ServiceAttribute,
-  VariabilityAssessment,
-} from "@/lib/types";
+import { ChevronLeft, ChevronRight, GripVertical } from "lucide-react";
+import { ServiceExperience, ServiceAttribute } from "@/lib/types";
 import {
   DndContext,
   closestCenter,
@@ -140,8 +128,6 @@ const ORGANIZATION_TYPES = [
   "Telecom",
   "Transportation",
 ];
-
-const DEFAULT_ATTRIBUTES: string[] = []; // Start with empty array for custom attributes
 
 const VARIABILITY_TYPES = [
   {
@@ -521,14 +507,18 @@ export default function ServiceExperienceForm({
       <CardHeader>
         <CardTitle>Performance Evaluation</CardTitle>
         <p className="text-sm text-gray-600">
-          <strong>Step 3:</strong> Rate the organization&apos;s performance on each
-          of your 6 attributes relative to competitors. Also, estimate how
-          important each attribute is to the organization&apos;s <strong>Target Customer</strong>.
+          <strong>Step 3:</strong> Rate the organization&apos;s performance on
+          each of your 6 attributes relative to competitors. Also, estimate how
+          important each attribute is to the organization&apos;s{" "}
+          <strong>Target Customer</strong>.
         </p>
       </CardHeader>
       <CardContent className="space-y-8">
         {formData.serviceAttributes?.map((attr, index) => (
-          <div key={attr.name} className="p-4 border rounded-lg bg-gray-50 space-y-4">
+          <div
+            key={attr.name}
+            className="p-4 border rounded-lg bg-gray-50 space-y-4"
+          >
             <div className="flex items-center justify-between">
               <label className="block text-lg font-medium text-gray-900">
                 {attr.name}
@@ -544,14 +534,18 @@ export default function ServiceExperienceForm({
                 Performance Rating (Your Perspective)
               </label>
               <div className="flex items-center space-x-4">
-                <span className="text-xs text-gray-500 w-20 text-right">Worst in Class</span>
+                <span className="text-xs text-gray-500 w-20 text-right">
+                  Worst in Class
+                </span>
                 <input
                   type="range"
                   min="0"
                   max="100"
                   value={attr.performanceRating || 50}
                   onChange={(e) => {
-                    const newAttributes = [...(formData.serviceAttributes || [])];
+                    const newAttributes = [
+                      ...(formData.serviceAttributes || []),
+                    ];
                     newAttributes[index].performanceRating = parseInt(
                       e.target.value
                     );
@@ -559,7 +553,9 @@ export default function ServiceExperienceForm({
                   }}
                   className="flex-1"
                 />
-                <span className="text-xs text-gray-500 w-20">Best in Class</span>
+                <span className="text-xs text-gray-500 w-20">
+                  Best in Class
+                </span>
                 <span className="text-sm font-medium w-8 text-center">
                   {attr.performanceRating || 50}
                 </span>
@@ -575,21 +571,33 @@ export default function ServiceExperienceForm({
                 <select
                   value={attr.targetCustomerRanking || ""}
                   onChange={(e) => {
-                    const newAttributes = [...(formData.serviceAttributes || [])];
-                    newAttributes[index].targetCustomerRanking = parseInt(e.target.value);
+                    const newAttributes = [
+                      ...(formData.serviceAttributes || []),
+                    ];
+                    newAttributes[index].targetCustomerRanking = parseInt(
+                      e.target.value
+                    );
                     updateFormData({ serviceAttributes: newAttributes });
                   }}
                   className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
                 >
-                  <option value="" disabled>Select Rank</option>
+                  <option value="" disabled>
+                    Select Rank
+                  </option>
                   {[1, 2, 3, 4, 5, 6].map((rank) => (
                     <option key={rank} value={rank}>
-                      #{rank} {rank === 1 ? "(Most Important)" : rank === 6 ? "(Least Important)" : ""}
+                      #{rank}{" "}
+                      {rank === 1
+                        ? "(Most Important)"
+                        : rank === 6
+                        ? "(Least Important)"
+                        : ""}
                     </option>
                   ))}
                 </select>
                 <span className="text-xs text-gray-500 flex-1">
-                  Rank this attribute&apos;s importance to the typical target customer.
+                  Rank this attribute&apos;s importance to the typical target
+                  customer.
                 </span>
               </div>
             </div>
@@ -722,8 +730,8 @@ export default function ServiceExperienceForm({
       <CardContent className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            How well do your needs align with this organization&apos;s capabilities?{" "}
-            <span className="text-red-500">*</span>
+            How well do your needs align with this organization&apos;s
+            capabilities? <span className="text-red-500">*</span>
           </label>
           <div className="flex items-center space-x-4">
             <span className="text-sm text-gray-500 w-32 text-right">

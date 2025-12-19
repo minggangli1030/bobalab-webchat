@@ -1,4 +1,4 @@
-import { User, Post } from "./types";
+import { User } from "./types";
 import { PHASES } from "./constants";
 
 export const phaseUtils = {
@@ -14,7 +14,8 @@ export const phaseUtils = {
   },
 
   // Check if user can create posts in a specific phase
-  canCreateInPhase: (user: User | null, phase: number): boolean => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  canCreateInPhase: (user: User | null, _phase: number): boolean => {
     if (!user) return false;
     if (user.isAdmin) return true; // Admins can create posts for debugging
 
@@ -39,7 +40,8 @@ export const phaseUtils = {
   },
 
   // Check if user can view posts from a specific phase
-  canViewPhasePosts: (user: User | null, phase: number): boolean => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  canViewPhasePosts: (user: User | null, _phase: number): boolean => {
     if (!user) return false;
     if (user.isAdmin) return true; // Admins can view all phases
 

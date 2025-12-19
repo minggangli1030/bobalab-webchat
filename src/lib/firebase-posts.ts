@@ -8,17 +8,13 @@ import {
   deleteDoc,
   query,
   where,
-  orderBy,
-  limit,
   Timestamp,
   setDoc,
 } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage, functions } from "./firebase";
-import { Post, Comment, User, SystemSettings } from "./types";
-
-
+import { Post, Comment, User, SystemSettings, Highlight } from "./types";
 
 export const firebasePostUtils = {
   // System Settings Logic
@@ -27,7 +23,7 @@ export const firebasePostUtils = {
       if (!db) return { currentBatch: 1, previousBatchVisible: false };
       const settingsRef = doc(db!, "settings", "general");
       const settingsDoc = await getDoc(settingsRef);
-      
+
       if (settingsDoc.exists()) {
         const data = settingsDoc.data();
         return {
@@ -35,9 +31,12 @@ export const firebasePostUtils = {
           previousBatchVisible: data.previousBatchVisible || false,
         };
       }
-      
+
       // Initialize if not exists
-      await setDoc(settingsRef, { currentBatch: 1, previousBatchVisible: false });
+      await setDoc(settingsRef, {
+        currentBatch: 1,
+        previousBatchVisible: false,
+      });
       return { currentBatch: 1, previousBatchVisible: false };
     } catch (error) {
       console.error("Error getting system settings:", error);
@@ -45,7 +44,9 @@ export const firebasePostUtils = {
     }
   },
 
-  updateSystemSettings: async (settings: Partial<SystemSettings>): Promise<boolean> => {
+  updateSystemSettings: async (
+    settings: Partial<SystemSettings>
+  ): Promise<boolean> => {
     try {
       if (!db) return false;
       const settingsRef = doc(db!, "settings", "general");
@@ -212,11 +213,11 @@ export const firebasePostUtils = {
                 : new Date(highlight.createdAt),
             })) || [],
           comments:
-            data.comments?.map((comment: Record<string, any>) => ({
+            data.comments?.map((comment: Record<string, unknown>) => ({
               ...comment,
-              createdAt: comment.createdAt?.toDate
-                ? comment.createdAt.toDate()
-                : new Date(comment.createdAt),
+              createdAt: (comment.createdAt as { toDate?: () => Date })?.toDate
+                ? (comment.createdAt as { toDate: () => Date }).toDate()
+                : new Date(comment.createdAt as string | number | Date),
             })) || [],
         } as Post;
       }
@@ -235,37 +236,39 @@ export const firebasePostUtils = {
     try {
       if (!db) return false;
       const postRef = doc(db!, "posts", postId);
-      
+
       // Convert dates to Timestamps for Firestore
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const firestoreUpdates: any = { ...updates };
-      
+
       // Convert highlight dates to Timestamps
-      if (firestoreUpdates.highlights) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        firestoreUpdates.highlights = firestoreUpdates.highlights.map((h: any) => ({
-          ...h,
-          createdAt: h.createdAt instanceof Date 
-            ? Timestamp.fromDate(h.createdAt)
-            : h.createdAt?.toDate 
-            ? h.createdAt 
-            : Timestamp.fromDate(new Date(h.createdAt)),
-        }));
+      if (firestoreUpdates.highlights && Array.isArray(firestoreUpdates.highlights)) {
+        firestoreUpdates.highlights = (firestoreUpdates.highlights as Highlight[]).map(
+          (h: Highlight) => ({
+            ...h,
+            createdAt:
+              h.createdAt instanceof Date
+                ? Timestamp.fromDate(h.createdAt)
+                : (h.createdAt as { toDate?: () => Date })?.toDate
+                ? (h.createdAt as { toDate: () => Date }).toDate()
+                : Timestamp.fromDate(new Date(h.createdAt as string | number | Date)),
+          })
+        );
       }
-      
+
       // Convert comment dates to Timestamps
-      if (firestoreUpdates.comments) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        firestoreUpdates.comments = firestoreUpdates.comments.map((c: any) => ({
+      if (firestoreUpdates.comments && Array.isArray(firestoreUpdates.comments)) {
+        firestoreUpdates.comments = (firestoreUpdates.comments as Comment[]).map((c: Comment) => ({
           ...c,
-          createdAt: c.createdAt instanceof Date 
-            ? Timestamp.fromDate(c.createdAt)
-            : c.createdAt?.toDate 
-            ? c.createdAt 
-            : Timestamp.fromDate(new Date(c.createdAt)),
+          createdAt:
+            c.createdAt instanceof Date
+              ? Timestamp.fromDate(c.createdAt)
+              : (c.createdAt as { toDate?: () => Date })?.toDate
+              ? (c.createdAt as { toDate: () => Date }).toDate()
+              : Timestamp.fromDate(new Date(c.createdAt as string | number | Date)),
         }));
       }
-      
+
       await updateDoc(postRef, firestoreUpdates);
       return true;
     } catch (error) {
@@ -295,7 +298,7 @@ export const firebasePostUtils = {
         // Add the new comment to the existing comments array
         // The updatePost function will handle date conversion to Timestamps
         const updatedComments = [...post.comments, comment];
-        
+
         await firebasePostUtils.updatePost(postId, {
           comments: updatedComments,
         });
@@ -383,7 +386,7 @@ export const firebasePostUtils = {
 
       const updatedHighlights = [...(post.highlights || []), newHighlight];
       const updatedComments = [...(post.comments || []), highlightComment];
-      
+
       await firebasePostUtils.updatePost(postId, {
         highlights: updatedHighlights,
         comments: updatedComments,
@@ -562,11 +565,11 @@ export const firebasePostUtils = {
                 : new Date(highlight.createdAt),
             })) || [],
           comments:
-            data.comments?.map((comment: Record<string, any>) => ({
+            data.comments?.map((comment: Record<string, unknown>) => ({
               ...comment,
-              createdAt: comment.createdAt?.toDate
-                ? comment.createdAt.toDate()
-                : new Date(comment.createdAt),
+              createdAt: (comment.createdAt as { toDate?: () => Date })?.toDate
+                ? (comment.createdAt as { toDate: () => Date }).toDate()
+                : new Date(comment.createdAt as string | number | Date),
             })) || [],
           createdAt: data.createdAt?.toDate() || new Date(),
           phase: data.phase,
