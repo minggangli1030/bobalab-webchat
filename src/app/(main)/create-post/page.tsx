@@ -58,7 +58,7 @@ export default function CreatePostPage() {
         const userPosts = await firebasePostUtils.getPostsByUser(user.id);
         const postCount = userPosts.length;
         setUserPostCount(postCount);
-        
+
         // If editing, always allow (bypass post limit)
         const editPostId = searchParams.get("edit");
         if (editPostId) {
@@ -67,8 +67,8 @@ export default function CreatePostPage() {
           setCanCreateMore(phaseUtils.canCreateMorePosts(user, postCount));
         }
       } catch (error) {
-          console.error("Error checking user post count:", error);
-        }
+        console.error("Error checking user post count:", error);
+      }
     };
 
     checkUserPostCount();
@@ -113,6 +113,7 @@ export default function CreatePostPage() {
         highlights: [],
         comments: [],
         phase: user.phase || PHASES.PHASE_1,
+        batch: user.batch || 1, // Assign user's batch to the post
         serviceExperience: experience,
       };
 
@@ -166,10 +167,11 @@ export default function CreatePostPage() {
   const currentPhase = phaseUtils.getCurrentPhase(user);
   const editPostId = searchParams.get("edit");
   const isCurrentlyEditing = !!editPostId;
-  
+
   // Allow editing even if post limit is reached
   const canCreate =
-    phaseUtils.canCreateInPhase(user, currentPhase) && (canCreateMore || isCurrentlyEditing);
+    phaseUtils.canCreateInPhase(user, currentPhase) &&
+    (canCreateMore || isCurrentlyEditing);
 
   if (!canCreate) {
     const isPhaseRestriction = !phaseUtils.canCreateInPhase(user, currentPhase);
@@ -199,41 +201,42 @@ export default function CreatePostPage() {
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="max-w-6xl mx-auto px-4 py-8">
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle className="text-2xl">
-            Customer Compatibility Exercise
-          </CardTitle>
-          <CardDescription>
-            Document your service experience to contribute to the class
-            discussion
-          </CardDescription>
-          {currentPhase === 1 && (
-            <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-              <p className="text-sm text-blue-700">
-                <strong>Phase 1:</strong> Complete your service experience
-                documentation to unlock the gallery and view other experiences!
-              </p>
-              <p className="text-sm text-blue-600 mt-2">
-                Posts created: {userPostCount}/2 (maximum 2 posts allowed)
-              </p>
-            </div>
-          )}
-        </CardHeader>
-      </Card>
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="text-2xl">
+              Customer Compatibility Exercise
+            </CardTitle>
+            <CardDescription>
+              Document your service experience to contribute to the class
+              discussion
+            </CardDescription>
+            {currentPhase === 1 && (
+              <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <p className="text-sm text-blue-700">
+                  <strong>Phase 1:</strong> Complete your service experience
+                  documentation to unlock the gallery and view other
+                  experiences!
+                </p>
+                <p className="text-sm text-blue-600 mt-2">
+                  Posts created: {userPostCount}/2 (maximum 2 posts allowed)
+                </p>
+              </div>
+            )}
+          </CardHeader>
+        </Card>
 
-      {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-red-600 text-sm">{error}</p>
-        </div>
-      )}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-600 text-sm">{error}</p>
+          </div>
+        )}
 
-      <ServiceExperienceForm
-        onSubmit={handleServiceExperienceSubmit}
-        onCancel={() => router.push("/feed")}
-        isLoading={isLoading}
-        initialData={existingPost?.serviceExperience}
-      />
+        <ServiceExperienceForm
+          onSubmit={handleServiceExperienceSubmit}
+          onCancel={() => router.push("/feed")}
+          isLoading={isLoading}
+          initialData={existingPost?.serviceExperience}
+        />
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { firebasePostUtils } from "@/lib/firebase-posts";
 import { Post, User, SystemSettings } from "@/lib/types";
@@ -33,6 +33,10 @@ export default function AdminPage() {
     currentBatch: 1,
     previousBatchVisible: false,
   });
+  // Filter states
+  const [userBatchFilter, setUserBatchFilter] = useState<number | "all">("all");
+  const [userPhaseFilter, setUserPhaseFilter] = useState<number | "all">("all");
+  const [postBatchFilter, setPostBatchFilter] = useState<number | "all">("all");
 
   useEffect(() => {
     // Redirect if not admin
@@ -364,6 +368,60 @@ export default function AdminPage() {
       alert("Failed to bulk update posts.");
     }
   };
+
+  // Get unique batch numbers from users and posts
+  const uniqueUserBatches = useMemo(() => {
+    const batches = new Set<number>();
+    users.forEach((user) => {
+      if (!user.isAdmin && user.batch) {
+        batches.add(user.batch);
+      }
+    });
+    return Array.from(batches).sort((a, b) => a - b);
+  }, [users]);
+
+  const uniquePostBatches = useMemo(() => {
+    const batches = new Set<number>();
+    posts.forEach((post) => {
+      if (post.batch) {
+        batches.add(post.batch);
+      }
+    });
+    return Array.from(batches).sort((a, b) => a - b);
+  }, [posts]);
+
+  // Filter users based on selected filters
+  const filteredUsers = useMemo(() => {
+    let filtered = users.filter((user) => !user.isAdmin);
+
+    if (userBatchFilter !== "all") {
+      filtered = filtered.filter(
+        (user) => (user.batch || 1) === userBatchFilter
+      );
+    }
+
+    if (userPhaseFilter !== "all") {
+      filtered = filtered.filter((user) => {
+        const userPhase = phaseUtils.getCurrentPhase(user);
+        return userPhase === userPhaseFilter;
+      });
+    }
+
+    return filtered;
+  }, [users, userBatchFilter, userPhaseFilter]);
+
+  // Filter posts based on selected filters
+  const filteredPosts = useMemo(() => {
+    let filtered = posts;
+
+    if (postBatchFilter !== "all") {
+      filtered = filtered.filter(
+        (post) => (post.batch || 1) === postBatchFilter
+      );
+    }
+
+    return filtered;
+  }, [posts, postBatchFilter]);
 
   const downloadCSV = () => {
     // Create CSV data for all posts with their service experience data
@@ -901,347 +959,436 @@ export default function AdminPage() {
 
         {activeTab === "posts" && (
           <div className="space-y-6">
-            {posts.map((post) => (
-              <Card key={post.id} className="border-2">
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-4">
-                        <Badge variant="outline" className="px-3 py-1">
-                          {post.authorName}
-                        </Badge>
-                        <span className="text-sm text-gray-500">
-                          {formatDate(post.createdAt)}
-                        </span>
-                      </div>
+            {/* Posts Filter Controls */}
+            <Card className="bg-gray-50">
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-4">
+                  <label className="text-sm font-medium text-gray-700">
+                    Filter by Batch:
+                  </label>
+                  <select
+                    value={postBatchFilter}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setPostBatchFilter(
+                        value === "all" ? "all" : parseInt(value)
+                      );
+                    }}
+                    className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  >
+                    <option value="all">All Batches</option>
+                    {uniquePostBatches.map((batch) => (
+                      <option key={batch} value={batch}>
+                        Batch {batch}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="text-sm text-gray-500">
+                    Showing {filteredPosts.length} of {posts.length} posts
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
 
-                      {/* Post Content */}
-                      <div className="mb-4">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <h3 className="font-semibold text-gray-900">
-                            {post.serviceExperience?.organizationName ||
-                              "No Organization"}
-                          </h3>
-                          <Badge variant="secondary" className="text-xs">
-                            Batch {post.batch || 1}
-                          </Badge>
-                        </div>
-                        <p className="text-gray-800 mb-3">{post.content}</p>
-                      </div>
-
-                      {/* Engagement Metrics */}
-                      <div className="flex items-center space-x-4 text-sm text-gray-600">
-                        <span className="flex items-center">
-                          <Heart className="h-4 w-4 mr-1 text-orange-500" />
-                          {post.highlights?.length || 0} highlights
-                        </span>
-                        <span className="flex items-center">
-                          <MessageSquare className="h-4 w-4 mr-1" />
-                          {post.comments.length} comments
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex flex-col space-y-2 ml-6">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => router.push(`/post/${post.id}`)}
-                        className="text-sm"
-                      >
-                        <Eye className="h-4 w-4 mr-2" />
-                        View Full Dashboard
-                      </Button>
-
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          const newImgurLinks = prompt(
-                            "Enter new Imgur links (one per line):",
-                            post.imgurLinks?.join("\n") || ""
-                          );
-                          if (newImgurLinks !== null) {
-                            const links = newImgurLinks
-                              .split("\n")
-                              .filter((link) => link.trim());
-                            handleEditPost(post.id, { imgurLinks: links });
-                          }
-                        }}
-                        className="text-sm"
-                      >
-                        <Download className="h-4 w-4 mr-2" />
-                        Add Media
-                      </Button>
-
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          const newBatch = prompt(
-                            "Enter new batch number:",
-                            (post.batch || 1).toString()
-                          );
-                          if (newBatch !== null) {
-                            const batchNum = parseInt(newBatch);
-                            if (!isNaN(batchNum)) {
-                              handlePostBatchUpdate(post.id, batchNum);
-                            }
-                          }
-                        }}
-                        className="text-sm"
-                      >
-                        <Calendar className="h-4 w-4 mr-2" />
-                        Set Batch
-                      </Button>
-
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => deletePost(post.id)}
-                        className="text-sm"
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Remove
-                      </Button>
-                    </div>
-                  </div>
+            {filteredPosts.length === 0 ? (
+              <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+                <CardContent className="p-8">
+                  <p className="text-gray-600 text-center py-8">
+                    No posts match the selected filters.
+                  </p>
                 </CardContent>
               </Card>
-            ))}
+            ) : (
+              filteredPosts.map((post) => (
+                <Card key={post.id} className="border-2">
+                  <CardContent className="p-6">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-3 mb-4">
+                          <Badge variant="outline" className="px-3 py-1">
+                            {post.authorName}
+                          </Badge>
+                          <span className="text-sm text-gray-500">
+                            {formatDate(post.createdAt)}
+                          </span>
+                        </div>
+
+                        {/* Post Content */}
+                        <div className="mb-4">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <h3 className="font-semibold text-gray-900">
+                              {post.serviceExperience?.organizationName ||
+                                "No Organization"}
+                            </h3>
+                            <Badge variant="secondary" className="text-xs">
+                              Batch {post.batch || 1}
+                            </Badge>
+                          </div>
+                          <p className="text-gray-800 mb-3">{post.content}</p>
+                        </div>
+
+                        {/* Engagement Metrics */}
+                        <div className="flex items-center space-x-4 text-sm text-gray-600">
+                          <span className="flex items-center">
+                            <Heart className="h-4 w-4 mr-1 text-orange-500" />
+                            {post.highlights?.length || 0} highlights
+                          </span>
+                          <span className="flex items-center">
+                            <MessageSquare className="h-4 w-4 mr-1" />
+                            {post.comments.length} comments
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex flex-col space-y-2 ml-6">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => router.push(`/post/${post.id}`)}
+                          className="text-sm"
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          View Full Dashboard
+                        </Button>
+
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            const newImgurLinks = prompt(
+                              "Enter new Imgur links (one per line):",
+                              post.imgurLinks?.join("\n") || ""
+                            );
+                            if (newImgurLinks !== null) {
+                              const links = newImgurLinks
+                                .split("\n")
+                                .filter((link) => link.trim());
+                              handleEditPost(post.id, { imgurLinks: links });
+                            }
+                          }}
+                          className="text-sm"
+                        >
+                          <Download className="h-4 w-4 mr-2" />
+                          Add Media
+                        </Button>
+
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            const newBatch = prompt(
+                              "Enter new batch number:",
+                              (post.batch || 1).toString()
+                            );
+                            if (newBatch !== null) {
+                              const batchNum = parseInt(newBatch);
+                              if (!isNaN(batchNum)) {
+                                handlePostBatchUpdate(post.id, batchNum);
+                              }
+                            }
+                          }}
+                          className="text-sm"
+                        >
+                          <Calendar className="h-4 w-4 mr-2" />
+                          Set Batch
+                        </Button>
+
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => deletePost(post.id)}
+                          className="text-sm"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Remove
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
         )}
 
         {activeTab === "users" && (
           <div className="space-y-6">
-            {users.length === 0 ? (
+            {/* Users Filter Controls */}
+            <Card className="bg-gray-50">
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-4 flex-wrap gap-4">
+                  <div className="flex items-center space-x-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Filter by Batch:
+                    </label>
+                    <select
+                      value={userBatchFilter}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setUserBatchFilter(
+                          value === "all" ? "all" : parseInt(value)
+                        );
+                      }}
+                      className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    >
+                      <option value="all">All Batches</option>
+                      {uniqueUserBatches.map((batch) => (
+                        <option key={batch} value={batch}>
+                          Batch {batch}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Filter by Phase:
+                    </label>
+                    <select
+                      value={userPhaseFilter}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setUserPhaseFilter(
+                          value === "all" ? "all" : parseInt(value)
+                        );
+                      }}
+                      className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    >
+                      <option value="all">All Phases</option>
+                      <option value="1">Phase 1: Initial Assessment</option>
+                      <option value="2">Phase 2: Peer Feedback</option>
+                    </select>
+                  </div>
+                  <span className="text-sm text-gray-500">
+                    Showing {filteredUsers.length} of{" "}
+                    {users.filter((u) => !u.isAdmin).length} users
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+
+            {filteredUsers.length === 0 ? (
               <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
                 <CardContent className="p-8">
                   <p className="text-gray-600 text-center py-8">
-                    No users found.
+                    No users match the selected filters.
                   </p>
                 </CardContent>
               </Card>
             ) : (
-              users
-                .filter((user) => !user.isAdmin)
-                .map((user) => {
-                  const userPosts = posts.filter((p) => p.authorId === user.id);
-                  const currentPhase = phaseUtils.getCurrentPhase(user);
+              filteredUsers.map((user) => {
+                const userPosts = posts.filter((p) => p.authorId === user.id);
+                const currentPhase = phaseUtils.getCurrentPhase(user);
 
-                  return (
-                    <Card key={user.id} className="border-2">
-                      <CardContent className="p-8">
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1 space-y-4">
-                            {/* User Info Header */}
-                            <div className="flex items-center space-x-4">
-                              <Badge
-                                variant={
-                                  user.isAdmin ? "destructive" : "outline"
-                                }
-                                className="px-3 py-1"
-                              >
-                                {user.isAdmin ? "Admin" : "User"}
-                              </Badge>
-                              <div>
-                                <h3 className="text-lg font-semibold text-gray-900">
-                                  {user.formalName} ({user.preferredName})
-                                </h3>
-                                <p className="text-sm text-gray-500">
-                                  {user.email}
-                                </p>
-                              </div>
-                              {/* Phase Badge with Color Coding */}
-                              <Badge
-                                variant={
-                                  currentPhase === 1 ? "default" : "secondary"
-                                }
-                                className={`px-4 py-2 text-sm font-medium ${
-                                  currentPhase === 1
-                                    ? "bg-blue-100 text-blue-800 border-blue-200"
-                                    : "bg-orange-100 text-orange-800 border-orange-200"
-                                }`}
-                              >
-                                {phaseUtils.getPhaseName(currentPhase)}
-                              </Badge>
+                return (
+                  <Card key={user.id} className="border-2">
+                    <CardContent className="p-8">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1 space-y-4">
+                          {/* User Info Header */}
+                          <div className="flex items-center space-x-4">
+                            <Badge
+                              variant={user.isAdmin ? "destructive" : "outline"}
+                              className="px-3 py-1"
+                            >
+                              {user.isAdmin ? "Admin" : "User"}
+                            </Badge>
+                            <div>
+                              <h3 className="text-lg font-semibold text-gray-900">
+                                {user.formalName} ({user.preferredName})
+                              </h3>
+                              <p className="text-sm text-gray-500">
+                                {user.email}
+                              </p>
                             </div>
-
-                            {/* Posts Info */}
-                            {userPosts.length > 0 && (
-                              <div className="space-y-3">
-                                <h4 className="font-semibold text-gray-900">
-                                  Posts ({userPosts.length})
-                                </h4>
-                                {userPosts.map((post, index) => (
-                                  <div
-                                    key={post.id}
-                                    className="p-4 bg-gray-50 rounded-lg border"
-                                  >
-                                    <div className="flex items-center justify-between">
-                                      <div>
-                                        <h5 className="font-medium text-gray-900">
-                                          {post.businessName ||
-                                            `Post ${index + 1}`}
-                                        </h5>
-                                        <p className="text-sm text-gray-600">
-                                          {post.serviceExperience
-                                            ?.organizationType ||
-                                            "Unknown Type"}
-                                        </p>
-                                        <p className="text-xs text-gray-500">
-                                          {formatDate(post.createdAt)}
-                                        </p>
-                                      </div>
-                                      <div className="flex items-center space-x-3">
-                                        <div className="text-right">
-                                          <div className="flex items-center space-x-2 text-sm">
-                                            <Heart className="h-4 w-4 text-orange-500" />
-                                            <span>
-                                              {post.highlights?.length || 0}{" "}
-                                              highlights
-                                            </span>
-                                          </div>
-                                          <div className="flex items-center space-x-2 text-sm text-gray-500">
-                                            <MessageSquare className="h-4 w-4" />
-                                            <span>
-                                              {post.comments.length} comments
-                                            </span>
-                                          </div>
-                                        </div>
-                                        <Button
-                                          variant="outline"
-                                          size="sm"
-                                          onClick={() =>
-                                            router.push(`/post/${post.id}`)
-                                          }
-                                          className="text-sm"
-                                        >
-                                          <Eye className="h-4 w-4 mr-2" />
-                                          View
-                                        </Button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-
-                            {/* User Details */}
-                            <div className="flex items-center space-x-6 text-sm text-gray-600">
-                              <span>ID: {user.id}</span>
-                              <span>Joined: {formatDate(user.createdAt)}</span>
-                              {user.studentId && (
-                                <span>Student ID: {user.studentId}</span>
-                              )}
-                              <span className="font-semibold text-blue-600">
-                                Batch: {user.batch || 1}
-                              </span>
-                            </div>
+                            {/* Phase Badge with Color Coding */}
+                            <Badge
+                              variant={
+                                currentPhase === 1 ? "default" : "secondary"
+                              }
+                              className={`px-4 py-2 text-sm font-medium ${
+                                currentPhase === 1
+                                  ? "bg-blue-100 text-blue-800 border-blue-200"
+                                  : "bg-orange-100 text-orange-800 border-orange-200"
+                              }`}
+                            >
+                              {phaseUtils.getPhaseName(currentPhase)}
+                            </Badge>
                           </div>
 
-                          <div className="flex flex-col space-y-4 ml-6">
-                            {/* User Management Buttons */}
-                            {!user.isAdmin && (
-                              <div className="flex flex-col space-y-3">
-                                {/* Batch Management */}
-                                <div className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                                  <span className="text-sm text-gray-600">
-                                    Batch: {user.batch || 1}
-                                  </span>
+                          {/* Posts Info */}
+                          {userPosts.length > 0 && (
+                            <div className="space-y-3">
+                              <h4 className="font-semibold text-gray-900">
+                                Posts ({userPosts.length})
+                              </h4>
+                              {userPosts.map((post, index) => (
+                                <div
+                                  key={post.id}
+                                  className="p-4 bg-gray-50 rounded-lg border"
+                                >
+                                  <div className="flex items-center justify-between">
+                                    <div>
+                                      <h5 className="font-medium text-gray-900">
+                                        {post.businessName ||
+                                          `Post ${index + 1}`}
+                                      </h5>
+                                      <p className="text-sm text-gray-600">
+                                        {post.serviceExperience
+                                          ?.organizationType || "Unknown Type"}
+                                      </p>
+                                      <p className="text-xs text-gray-500">
+                                        {formatDate(post.createdAt)}
+                                      </p>
+                                    </div>
+                                    <div className="flex items-center space-x-3">
+                                      <div className="text-right">
+                                        <div className="flex items-center space-x-2 text-sm">
+                                          <Heart className="h-4 w-4 text-orange-500" />
+                                          <span>
+                                            {post.highlights?.length || 0}{" "}
+                                            highlights
+                                          </span>
+                                        </div>
+                                        <div className="flex items-center space-x-2 text-sm text-gray-500">
+                                          <MessageSquare className="h-4 w-4" />
+                                          <span>
+                                            {post.comments.length} comments
+                                          </span>
+                                        </div>
+                                      </div>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() =>
+                                          router.push(`/post/${post.id}`)
+                                        }
+                                        className="text-sm"
+                                      >
+                                        <Eye className="h-4 w-4 mr-2" />
+                                        View
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* User Details */}
+                          <div className="flex items-center space-x-6 text-sm text-gray-600">
+                            <span>ID: {user.id}</span>
+                            <span>Joined: {formatDate(user.createdAt)}</span>
+                            {user.studentId && (
+                              <span>Student ID: {user.studentId}</span>
+                            )}
+                            <span className="font-semibold text-blue-600">
+                              Batch: {user.batch || 1}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col space-y-4 ml-6">
+                          {/* User Management Buttons */}
+                          {!user.isAdmin && (
+                            <div className="flex flex-col space-y-3">
+                              {/* Batch Management */}
+                              <div className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                                <span className="text-sm text-gray-600">
+                                  Batch: {user.batch || 1}
+                                </span>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    const newBatch = prompt(
+                                      "Enter new batch number:",
+                                      (user.batch || 1).toString()
+                                    );
+                                    if (
+                                      newBatch &&
+                                      !isNaN(parseInt(newBatch))
+                                    ) {
+                                      handleUserBatchUpdate(
+                                        user.id,
+                                        parseInt(newBatch)
+                                      );
+                                    }
+                                  }}
+                                  className="text-xs h-7 px-2"
+                                >
+                                  Change
+                                </Button>
+                              </div>
+
+                              {/* Phase Management */}
+                              <div className="flex space-x-2">
+                                {currentPhase > 1 && (
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    onClick={() => {
-                                      const newBatch = prompt(
-                                        "Enter new batch number:",
-                                        (user.batch || 1).toString()
-                                      );
-                                      if (
-                                        newBatch &&
-                                        !isNaN(parseInt(newBatch))
-                                      ) {
-                                        handleUserBatchUpdate(
-                                          user.id,
-                                          parseInt(newBatch)
-                                        );
-                                      }
-                                    }}
-                                    className="text-xs h-7 px-2"
+                                    onClick={() =>
+                                      handlePhaseChange(
+                                        user.id,
+                                        currentPhase - 1
+                                      )
+                                    }
+                                    className="text-sm border-blue-200 text-blue-700 hover:bg-blue-50"
                                   >
-                                    Change
+                                    ← Move to Phase {currentPhase - 1}
                                   </Button>
-                                </div>
-
-                                {/* Phase Management */}
-                                <div className="flex space-x-2">
-                                  {currentPhase > 1 && (
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() =>
-                                        handlePhaseChange(
-                                          user.id,
-                                          currentPhase - 1
-                                        )
-                                      }
-                                      className="text-sm border-blue-200 text-blue-700 hover:bg-blue-50"
-                                    >
-                                      ← Move to Phase {currentPhase - 1}
-                                    </Button>
-                                  )}
-                                  {currentPhase < 2 && (
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() =>
-                                        handlePhaseChange(
-                                          user.id,
-                                          currentPhase + 1
-                                        )
-                                      }
-                                      className="text-sm border-orange-200 text-orange-700 hover:bg-orange-50"
-                                    >
-                                      Move to Phase {currentPhase + 1} →
-                                    </Button>
-                                  )}
-                                </div>
-
-                                {/* Delete Actions */}
-                                <div className="flex space-x-2">
-                                  {userPosts.length > 0 && (
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() =>
-                                        handleDeleteUserPosts(user.id)
-                                      }
-                                      className="text-sm text-orange-600 hover:text-orange-700"
-                                    >
-                                      <Trash2 className="h-4 w-4 mr-2" />
-                                      Delete Posts
-                                    </Button>
-                                  )}
-
+                                )}
+                                {currentPhase < 2 && (
                                   <Button
-                                    variant="destructive"
+                                    variant="outline"
                                     size="sm"
-                                    onClick={() => handleDeleteUser(user.id)}
-                                    className="text-sm"
+                                    onClick={() =>
+                                      handlePhaseChange(
+                                        user.id,
+                                        currentPhase + 1
+                                      )
+                                    }
+                                    className="text-sm border-orange-200 text-orange-700 hover:bg-orange-50"
+                                  >
+                                    Move to Phase {currentPhase + 1} →
+                                  </Button>
+                                )}
+                              </div>
+
+                              {/* Delete Actions */}
+                              <div className="flex space-x-2">
+                                {userPosts.length > 0 && (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() =>
+                                      handleDeleteUserPosts(user.id)
+                                    }
+                                    className="text-sm text-orange-600 hover:text-orange-700"
                                   >
                                     <Trash2 className="h-4 w-4 mr-2" />
-                                    Delete User
+                                    Delete Posts
                                   </Button>
-                                </div>
+                                )}
+
+                                <Button
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={() => handleDeleteUser(user.id)}
+                                  className="text-sm"
+                                >
+                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  Delete User
+                                </Button>
                               </div>
-                            )}
-                          </div>
+                            </div>
+                          )}
                         </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })
             )}
           </div>
         )}

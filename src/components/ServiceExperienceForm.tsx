@@ -101,6 +101,55 @@ function SortableAttributeItem({
   );
 }
 
+interface SortableTargetCustomerItemProps {
+  attribute: ServiceAttribute;
+  index: number;
+}
+
+function SortableTargetCustomerItem({
+  attribute,
+  index,
+}: SortableTargetCustomerItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: `target-${attribute.name}` });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="flex items-center space-x-4 p-3 border rounded-lg bg-purple-50 border-purple-200"
+    >
+      <div
+        {...attributes}
+        {...listeners}
+        className="cursor-grab active:cursor-grabbing"
+      >
+        <GripVertical className="h-5 w-5 text-purple-400" />
+      </div>
+      <div className="flex-1">
+        <span className="font-medium text-gray-900">{attribute.name}</span>
+      </div>
+      <div className="flex items-center space-x-2">
+        <span className="text-sm text-gray-600 font-medium">
+          Rank: #{index + 1}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 const ORGANIZATION_TYPES = [
   "Activities",
   "Airlines",
@@ -230,6 +279,56 @@ export default function ServiceExperienceForm({
       }));
 
       updateFormData({ serviceAttributes: updatedAttributes });
+    }
+  };
+
+  const handleTargetCustomerDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      // Extract attribute name from the ID (format: "target-{name}")
+      const activeName = String(active.id).replace("target-", "");
+      const overName = String(over.id).replace("target-", "");
+
+      // Create sorted array matching the display order
+      const sortedAttributes = (formData.serviceAttributes || [])
+        .slice()
+        .sort((a, b) => {
+          const rankA = a.targetCustomerRanking || a.userRanking || 999;
+          const rankB = b.targetCustomerRanking || b.userRanking || 999;
+          return rankA - rankB;
+        });
+
+      const oldIndex = sortedAttributes.findIndex(
+        (attr) => attr.name === activeName
+      );
+      const newIndex = sortedAttributes.findIndex(
+        (attr) => attr.name === overName
+      );
+
+      if (oldIndex === -1 || newIndex === -1) return;
+
+      const reorderedAttributes = arrayMove(
+        sortedAttributes,
+        oldIndex,
+        newIndex
+      );
+
+      // Update target customer ranks based on new positions (1 = top, 6 = bottom)
+      // This ensures no duplicates - each rank is unique
+      const updatedAttributes = reorderedAttributes.map((attr, index) => ({
+        ...attr,
+        targetCustomerRanking: index + 1,
+      }));
+
+      // Now we need to merge these back into the original array order
+      // by finding each attribute in the original array and updating it
+      const finalAttributes = (formData.serviceAttributes || []).map((attr) => {
+        const updated = updatedAttributes.find((a) => a.name === attr.name);
+        return updated || attr;
+      });
+
+      updateFormData({ serviceAttributes: finalAttributes });
     }
   };
 
@@ -562,46 +661,6 @@ export default function ServiceExperienceForm({
               </div>
             </div>
 
-            {/* Target Customer Ranking */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Target Customer Importance Ranking
-              </label>
-              <div className="flex items-center space-x-4">
-                <select
-                  value={attr.targetCustomerRanking || ""}
-                  onChange={(e) => {
-                    const newAttributes = [
-                      ...(formData.serviceAttributes || []),
-                    ];
-                    newAttributes[index].targetCustomerRanking = parseInt(
-                      e.target.value
-                    );
-                    updateFormData({ serviceAttributes: newAttributes });
-                  }}
-                  className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-                >
-                  <option value="" disabled>
-                    Select Rank
-                  </option>
-                  {[1, 2, 3, 4, 5, 6].map((rank) => (
-                    <option key={rank} value={rank}>
-                      #{rank}{" "}
-                      {rank === 1
-                        ? "(Most Important)"
-                        : rank === 6
-                        ? "(Least Important)"
-                        : ""}
-                    </option>
-                  ))}
-                </select>
-                <span className="text-xs text-gray-500 flex-1">
-                  Rank this attribute&apos;s importance to the typical target
-                  customer.
-                </span>
-              </div>
-            </div>
-
             {/* Target Customer Performance Rating */}
             <div className="space-y-2 border-t pt-4 mt-4">
               <label className="block text-sm font-medium text-gray-700">
@@ -639,6 +698,65 @@ export default function ServiceExperienceForm({
             </div>
           </div>
         ))}
+
+        {/* Target Customer Ranking - Drag and Drop Section */}
+        <div className="mt-8 pt-8 border-t-2 border-purple-200">
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Target Customer Importance Ranking
+            </h3>
+            <p className="text-sm text-gray-600">
+              Drag and drop the attributes below to rank them by importance to
+              the typical target customer (most important at top). Each rank
+              must be unique - no duplicates allowed.
+            </p>
+          </div>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleTargetCustomerDragEnd}
+          >
+            <SortableContext
+              items={(() => {
+                // Sort attributes for display and use sorted order for SortableContext
+                const sortedAttributes = (formData.serviceAttributes || [])
+                  .slice()
+                  .sort((a, b) => {
+                    const rankA =
+                      a.targetCustomerRanking || a.userRanking || 999;
+                    const rankB =
+                      b.targetCustomerRanking || b.userRanking || 999;
+                    return rankA - rankB;
+                  });
+                return sortedAttributes.map((attr) => `target-${attr.name}`);
+              })()}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-3 bg-purple-50 p-4 rounded-lg border border-purple-200">
+                {(() => {
+                  // Create a sorted copy for display matching SortableContext order
+                  const sortedAttributes = (formData.serviceAttributes || [])
+                    .slice()
+                    .sort((a, b) => {
+                      const rankA =
+                        a.targetCustomerRanking || a.userRanking || 999;
+                      const rankB =
+                        b.targetCustomerRanking || b.userRanking || 999;
+                      return rankA - rankB;
+                    });
+
+                  return sortedAttributes.map((attr, displayIndex) => (
+                    <SortableTargetCustomerItem
+                      key={`target-${attr.name}`}
+                      attribute={attr}
+                      index={displayIndex}
+                    />
+                  ));
+                })()}
+              </div>
+            </SortableContext>
+          </DndContext>
+        </div>
       </CardContent>
     </Card>
   );

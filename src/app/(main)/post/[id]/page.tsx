@@ -329,7 +329,7 @@ export default function PostDetailPage() {
                         <h4 className="text-lg font-semibold text-gray-900 mb-4">
                           Attribute Maps: Priority Comparison
                         </h4>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                           {/* This Customer's Ranking */}
                           <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
@@ -352,7 +352,8 @@ export default function PostDetailPage() {
                                         {attr.name}
                                       </span>
                                       <span className="text-xs text-gray-500">
-                                        Performance: {attr.performanceRating || 0}/100
+                                        Performance:{" "}
+                                        {attr.performanceRating || 0}/100
                                       </span>
                                     </div>
                                   </div>

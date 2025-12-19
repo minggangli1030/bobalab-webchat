@@ -20,7 +20,9 @@ export default function FeedPage() {
   const [sortBy, setSortBy] = useState<"time" | "highlights" | "category">(
     "highlights"
   );
-  const [systemSettings, setSystemSettings] = useState<SystemSettings | null>(null);
+  const [systemSettings, setSystemSettings] = useState<SystemSettings | null>(
+    null
+  );
 
   useEffect(() => {
     const loadData = async () => {
@@ -106,14 +108,20 @@ export default function FeedPage() {
     // Batch filter
     if (user && !user.isAdmin && systemSettings) {
       const userBatch = user.batch || 1;
-      
+
       // If previous batches are NOT visible, strictly filter by batch
+      // BUT always include user's own posts regardless of batch
       if (!systemSettings.previousBatchVisible) {
-        filtered = filtered.filter((post) => (post.batch || 1) === userBatch);
+        filtered = filtered.filter(
+          (post) => (post.batch || 1) === userBatch || post.authorId === user.id
+        );
       } else {
         // If previous batches ARE visible, show posts from current and earlier batches
         // But do not show future batches (if any exist)
-        filtered = filtered.filter((post) => (post.batch || 1) <= userBatch);
+        // BUT always include user's own posts regardless of batch
+        filtered = filtered.filter(
+          (post) => (post.batch || 1) <= userBatch || post.authorId === user.id
+        );
       }
     }
 
@@ -245,8 +253,8 @@ export default function FeedPage() {
         {user && phaseUtils.getCurrentPhase(user) === 2 && !user.isAdmin && (
           <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg">
             <p className="font-medium">
-              Review your peers&apos; work and highlight posts you agree with or find
-              insightful. Click on any post to view details and add your
+              Review your peers&apos; work and highlight posts you agree with or
+              find insightful. Click on any post to view details and add your
               feedback.
             </p>
           </div>
