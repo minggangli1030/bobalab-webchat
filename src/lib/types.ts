@@ -59,6 +59,7 @@ export interface ServiceExperience {
   operationDisruptiveness: number; // 0-100 scale
   lifeDisruptiveness: number; // 0-100 scale
   imgurLinks: string[]; // Array of Imgur links instead of Firebase storage
+  videoCaption?: string; // Caption for review video
 }
 
 export interface Highlight {

@@ -281,7 +281,7 @@ export default function Phase2Dashboard({
                     </span>
                   </div>
                   <div className="flex items-center justify-between py-2 border-b border-gray-100">
-                    <span className="font-medium text-gray-700">Location:</span>
+                    <span className="font-medium text-gray-700">Store Branch:</span>
                     <span className="text-gray-900 font-medium">
                       {serviceExp.streetAddress || "N/A"}
                     </span>
@@ -293,7 +293,7 @@ export default function Phase2Dashboard({
                       Relationship Length:
                     </span>
                     <span className="text-gray-900 font-medium">
-                      {serviceExp.relationshipLength || "N/A"}
+                      {serviceExp.relationshipLength ?? "N/A"}
                     </span>
                   </div>
                   <div className="flex items-center justify-between py-2 border-b border-gray-100">
@@ -515,6 +515,16 @@ export default function Phase2Dashboard({
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
+                    {serviceExp.videoCaption && (
+                      <div className="mb-4 p-3 bg-gray-50 rounded border border-gray-200">
+                        <p className="text-sm font-medium text-gray-900">
+                          Video Caption
+                        </p>
+                        <p className="text-sm text-gray-700 italic">
+                          {serviceExp.videoCaption}
+                        </p>
+                      </div>
+                    )}
                     <div className="space-y-3">
                       {displayPost.imgurLinks.map((link, index) => {
                         const isImgurImage =

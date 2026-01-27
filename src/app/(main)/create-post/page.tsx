@@ -37,7 +37,7 @@ export default function CreatePostPage() {
       if (editPostId && user) {
         try {
           const post = await firebasePostUtils.getPostById(editPostId);
-          if (post && post.authorId === user.id) {
+          if (post && (post.authorId === user.id || user.isAdmin)) {
             setExistingPost(post);
             setIsEditing(true);
           }
@@ -65,6 +65,11 @@ export default function CreatePostPage() {
           setCanCreateMore(true);
         } else {
           setCanCreateMore(phaseUtils.canCreateMorePosts(user, postCount));
+        }
+        
+        // Admin can always create/edit
+        if (user.isAdmin) {
+          setCanCreateMore(true);
         }
       } catch (error) {
         console.error("Error checking user post count:", error);
@@ -100,10 +105,16 @@ export default function CreatePostPage() {
     setError("");
 
     try {
+      // Determine author details and batch (preserve if admin is editing)
+      // Note: If admin creates a NEW post, it will be attributed to them
+      const targetAuthorId = (isCurrentlyEditing && user.isAdmin && existingPost) ? existingPost.authorId : user.id;
+      const targetAuthorName = (isCurrentlyEditing && user.isAdmin && existingPost) ? existingPost.authorName : user.preferredName;
+      const targetBatch = (isCurrentlyEditing && user.isAdmin && existingPost) ? (existingPost.batch || 1) : (user.batch || 1);
+
       // Create post data with service experience
       const postData = {
-        authorId: user.id,
-        authorName: user.preferredName,
+        authorId: targetAuthorId,
+        authorName: targetAuthorName,
         businessName: experience.organizationName,
         content: experience.experienceNarrative,
         images: [], // Keep for backward compatibility
@@ -113,7 +124,7 @@ export default function CreatePostPage() {
         highlights: [],
         comments: [],
         phase: user.phase || PHASES.PHASE_1,
-        batch: user.batch || 1, // Assign user's batch to the post
+        batch: targetBatch,
         serviceExperience: experience,
       };
 
@@ -123,7 +134,7 @@ export default function CreatePostPage() {
         console.log("Updating post with service experience data:", postData);
         const success = await firebasePostUtils.updatePost(existingPost.id, {
           ...postData,
-          batch: user.batch || 1, // Always sync with user's current batch
+          batch: targetBatch, // Use the determined batch (preserves if admin, syncs if user)
           id: existingPost.id, // Keep the original ID
           createdAt: existingPost.createdAt, // Keep original creation date
         });
@@ -171,9 +182,11 @@ export default function CreatePostPage() {
   const isCurrentlyEditing = !!editPostId;
 
   // Allow editing even if post limit is reached
+  // Admin always allowed
   const canCreate =
-    phaseUtils.canCreateInPhase(user, currentPhase) &&
-    (canCreateMore || isCurrentlyEditing);
+    user.isAdmin ||
+    (phaseUtils.canCreateInPhase(user, currentPhase) &&
+    (canCreateMore || isCurrentlyEditing));
 
   if (!canCreate) {
     const isPhaseRestriction = !phaseUtils.canCreateInPhase(user, currentPhase);

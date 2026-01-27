@@ -17,6 +17,7 @@ import {
   Calendar,
   ArrowUp,
   Download,
+  Edit,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -1144,6 +1145,16 @@ export default function AdminPage() {
                         >
                           <Eye className="h-4 w-4 mr-2" />
                           View Full Dashboard
+                        </Button>
+
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => router.push(`/create-post?edit=${post.id}`)}
+                          className="text-sm"
+                        >
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit Post
                         </Button>
 
                         <Button

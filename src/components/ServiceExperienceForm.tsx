@@ -477,7 +477,7 @@ export default function ServiceExperienceForm({
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Store Location <span className="text-red-500">*</span>
+            Store Branch <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -1156,6 +1156,21 @@ export default function ServiceExperienceForm({
             required
           />
         </div>
+
+        <div>
+           <label className="block text-sm font-medium text-gray-700 mb-2">
+            Provide a caption for your review video
+          </label>
+          <Input
+            value={formData.videoCaption || ""}
+            onChange={(e) =>
+              updateFormData({ videoCaption: e.target.value })
+            }
+            placeholder="Enter a caption for your video review..."
+            className="mb-6"
+          />
+        </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Upload Media to Imgur and Submit Links
